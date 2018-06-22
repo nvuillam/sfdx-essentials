@@ -30,32 +30,51 @@ USAGE
 ```
 <!-- usagestop -->
 <!-- commands -->
-* [`essentials hello:org [FILE]`](#essentials-helloorg-file)
+* [`essentials essentials:change-dependency-version`](#essentials-essentialschange-dependency-version)
+* [`essentials essentials:filter-metadatas`](#essentials-essentialsfilter-metadatas)
+* [`essentials essentials:fix-lightning-attributes-names`](#essentials-essentialsfix-lightning-attributes-names)
 
-## `essentials hello:org [FILE]`
+## `essentials essentials:change-dependency-version`
 
-Prints a greeting and your org id(s)!
+Allows to change an external package dependency version
 
 ```
 USAGE
-  $ essentials hello:org [FILE]
+  $ essentials essentials:change-dependency-version
 
 OPTIONS
-  -f, --force                                      example boolean flag
-  -n, --name=name                                  name to print
-  -u, --targetusername=targetusername              username or alias for the target org; overrides default target org
-  -v, --targetdevhubusername=targetdevhubusername  username or alias for the dev hub org; overrides default dev hub org
-  --apiversion=apiversion                          override the api version used for api requests made by this command
-  --json                                           format output as json
-  --loglevel=(trace|debug|info|warn|error|fatal)   logging level for this command invocation
+  -f, --folder=folder              SFDX project folder containing files
+  -j, --majorversion=majorversion  Major version
+  -m, --minorversion=minorversion  Minor version
+  -n, --namespace=namespace        Namespace of the managed package
 
-EXAMPLES
-  $ sfdx hello:org --targetusername myOrg@example.com --targetdevhubusername devhub@org.com
-     Hello world! This is org: MyOrg and I will be around until Tue Mar 20 2018!
-     My hub org id is: 00Dxx000000001234
-  
-  $ sfdx hello:org --name myname --targetusername myOrg@example.com
-     Hello myname! This is org: MyOrg and I will be around until Tue Mar 20 2018!
+DESCRIPTION
+
+
+EXAMPLE
+  $ sfdx change-dependency:execute -n FinServ -j 214 -m 7
+```
+
+## `essentials essentials:filter-metadatas`
+
+```
+USAGE
+  $ essentials essentials:filter-metadatas
+
+OPTIONS
+  -i, --inputfolder=inputfolder    Input folder (default: "." )
+  -o, --outputfolder=outputfolder  Output folder (default: filteredMetadatas)
+  -p, --packagexml=packagexml      package.xml file path
+```
+
+## `essentials essentials:fix-lightning-attributes-names`
+
+```
+USAGE
+  $ essentials essentials:fix-lightning-attributes-names
+
+OPTIONS
+  -f, --folder=folder  SFDX project folder containing files
 ```
 <!-- commandsstop -->
 <!-- debugging-your-plugin -->
