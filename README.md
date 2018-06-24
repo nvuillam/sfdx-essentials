@@ -92,7 +92,7 @@ DESCRIPTION
 
 ```
 
-_See [conversion tables](https://github.com/nvuillam/sfdx_metadatas_filtering/blob/d1567782218fce3ba800a5e752aff45b54980585/src/commands/metadatafilter/execute.ts#L280)_
+_See [conversion tables](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/filter-metadatas.ts#L280)_
 
 EXAMPLES
 
@@ -107,7 +107,7 @@ EXAMPLES
 
 ```
 
-_See code: [src/commands/metadatafilter/execute.ts](https://github.com/nvuillam/sfdx_metadatas_filtering/blob/master/src/commands/metadatafilter/execute.ts)_
+_See code: [src/commands/essentials/filter-metadatas.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/filter-metadatas.ts)_
 
 ## `change-dependency:execute`
 
@@ -130,7 +130,7 @@ EXAMPLE
   $ sfdx essentials:change-dependency-version -n FinServ -j 214 -m 7
 ```
 
-_See code: [src/commands/change-dependency/execute.ts](https://github.com/nvuillam/sfdx-change-dependency-version/blob/master/src/commands/change-dependency/execute.ts)_
+_See code: [src/commands/essentials/change-dependency-version.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/change-dependency-version.ts)_
 
 ## `essentials:fix-lightning-attributes-names`
 
@@ -150,4 +150,4 @@ EXAMPLE
   $ sfdx essentials:change-dependency-version -n FinServ -j 214 -m 7
 ```
 
-_See code: [src/commands/change-dependency/execute.ts](https://github.com/nvuillam/sfdx-change-dependency-version/blob/master/src/commands/change-dependency/execute.ts)_
+_See code: [src/commands/essentials/fix-lightning-attributes-names.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/fix-lightning-attributes-names.ts)_
