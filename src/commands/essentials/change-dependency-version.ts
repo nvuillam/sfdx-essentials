@@ -2,12 +2,10 @@ import { Command, flags } from '@oclif/command'
 import { FILE } from 'dns';
 
 export default class ExecuteFilter extends Command {
-  static description = `Allows to change an external package dependency version
-  
+  static description = `
    `
 
   static examples = [
-    `$ sfdx change-dependency:execute -n FinServ -j 214 -m 7`,
   ]
 
   static flags = {

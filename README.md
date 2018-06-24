@@ -1,192 +1,126 @@
-essentials
-==========
+Salesforce DX Essentials
+========================
 
-Tools to cover the lacks oissingDX required functions of SFDX
+[![Version](https://img.shields.io/npm/v/sfdx_metadatas_filtering.svg)](https://npmjs.org/package/sfdx_metadatas_filtering)
+[![Downloads/week](https://img.shields.io/npm/dw/sfdx_metadatas_filtering.svg)](https://npmjs.org/package/sfdx_metadatas_filtering) 
+[![License](https://img.shields.io/npm/l/sfdx_metadatas_filtering.svg)](https://github.com/nvuillam/sfdx_metadatas_filtering/blob/master/package.json) 
+<!-- [![CircleCI](https://circleci.com/gh/nvuillam/sfdx_metadatas_filtering/tree/master.svg?style=shield)](https://circleci.com/gh/nvuillam/sfdx_metadatas_filtering/tree/master)
+[![Appveyor CI](https://ci.appveyor.com/api/projects/status/github/nvuillam/sfdx_metadatas_filtering?branch=master&svg=true)](https://ci.appveyor.com/project/heroku/sfdx_metadatas_filtering/branch/master)
+[![Codecov](https://codecov.io/gh/nvuillam/sfdx_metadatas_filtering/branch/master/graph/badge.svg)](https://codecov.io/gh/nvuillam/sfdx_metadatas_filtering)
+[![Greenkeeper](https://badges.greenkeeper.io/nvuillam/sfdx_metadatas_filtering.svg)](https://greenkeeper.io/)
+[![Known Vulnerabilities](https://snyk.io/test/github/nvuillam/sfdx_metadatas_filtering/badge.svg)](https://snyk.io/test/github/nvuillam/sfdx_metadatas_filtering) -->
 
-[![Version](https://img.shields.io/npm/v/essentials.svg)](https://npmjs.org/package/essentials)
-[![CircleCI](https://circleci.com/gh/nvuillam/sfdx-essentials/tree/master.svg?style=shield)](https://circleci.com/gh/nvuillam/sfdx-essentials/tree/master)
-[![Appveyor CI](https://ci.appveyor.com/api/projects/status/github/nvuillam/sfdx-essentials?branch=master&svg=true)](https://ci.appveyor.com/project/heroku/sfdx-essentials/branch/master)
-[![Codecov](https://codecov.io/gh/nvuillam/sfdx-essentials/branch/master/graph/badge.svg)](https://codecov.io/gh/nvuillam/sfdx-essentials)
-[![Greenkeeper](https://badges.greenkeeper.io/nvuillam/sfdx-essentials.svg)](https://greenkeeper.io/)
-[![Known Vulnerabilities](https://snyk.io/test/github/nvuillam/sfdx-essentials/badge.svg)](https://snyk.io/test/github/nvuillam/sfdx-essentials)
-[![Downloads/week](https://img.shields.io/npm/dw/essentials.svg)](https://npmjs.org/package/essentials)
-[![License](https://img.shields.io/npm/l/essentials.svg)](https://github.com/nvuillam/sfdx-essentials/blob/master/package.json)
+# PLUGIN
 
-<!-- toc -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-<!-- install -->
-<!-- usage -->
-```sh-session
-$ npm install -g essentials
-$ essentials COMMAND
-running command...
-$ essentials (-v|--version|version)
-essentials/0.0.0 win32-x64 node-v8.9.4
-$ essentials --help [COMMAND]
-USAGE
-  $ essentials COMMAND
-...
+Sometimes Salesforce tools are delivered without the mandatory capabilities allowing the advanced developments of partners and clients to survive.
+
+Sometimes Salesforce R&D team shows some understanding, but sometimes not at all, even when a new SFDC Platform version prevents to generate a managed package.
+
+So after the third plugin I needed to create (not for fun, but to allow managed package to survive!) , I decided to join them on a single plugin: **SFDX Essentials** , and to publish it as open source , by solidarity with fellow victims of savage platform upgrades :)
+
+For the moments, this plugin capabilities are :
+
+- Filtering metadatas generated from a SFDX Project in order to be able to deploy only part of them on an org 
+
+- Replace other managed packages dependency version number ( very useful when you build a managed package over another managed package, like Financial Services Cloud )
+
+- Replace reserved lightning attribute names in lightning components and apex classes ( if you named a lightning attribute like a custom apex class, since Summer 18 you simply can not generate a managed package again)
+
+Please contribute :)
+
+# INSTALLATION
+
 ```
-<!-- usagestop -->
-```sh-session
-$ npm install -g essentials
-$ essentials COMMAND
-running command...
-$ essentials (-v|--version|version)
-essentials/0.0.0 win32-x64 node-v8.9.4
-$ essentials --help [COMMAND]
-USAGE
-  $ essentials COMMAND
-...
+    sfdx plugins:install sfdx-essentials
 ```
-<!-- usagestop -->
-<!-- commands -->
-* [`essentials essentials:change-dependency-version`](#essentials-essentialschange-dependency-version)
-* [`essentials essentials:filter-metadatas`](#essentials-essentialsfilter-metadatas)
-* [`essentials essentials:fix-lightning-attributes-names`](#essentials-essentialsfix-lightning-attributes-names)
 
-## `essentials essentials:change-dependency-version`
+- Windows users: [sfdx plugin generator](https://github.com/forcedotcom/sfdx-plugin-generate) is bugged on windows (hardcode call of linux rm instruction) , so you may use [Git Bash](https://gitforwindows.org/) to run this code ( at least while it installs the plugin dependencies )
+
+# COMMANDS
+
+## `essentials:filter-metadatas`
+
+Allows to filter metadatas folder generated by sfdx force:source:convert , using your own package.xml file
+
+This can help if you need to deploy only part of the result of sfdx force:source:convert into a org, by filtering the result (usually in mdapi_output_dir) to keep only the items referenced in your own package.xml file
+
+WARNING: This version does not support all the metadata types yet, please contribute if you are in a hurry :)
+
+```
+USAGE
+  $ sfdx essentials:filter-metadatas OPTIONS
+
+OPTIONS
+  -i, --inputfolder=inputfolder    Input folder (default: "." )
+  -o, --outputfolder=outputfolder  Output folder (default: filteredMetadatas)
+  -p, --packagexml=packagexml      package.xml file path
+
+DESCRIPTION
+  
+     Package.xml types currently managed:
+
+     - ApexClass
+     - ApexComponent
+     - ApexPage
+     - ApexTrigger
+     - AuraDefinitionBundle
+     - BusinessProcess
+     - ContentAsset
+     - CustomApplication
+     - CustomField
+     - CustomLabel
+     - CustomMetadata
+     - CustomObject
+     - CustomObjectTranslation
+     - CustomTab
+     - Document
+     - EmailTemplate
+     - EscalationRules
+     - FlexiPage
+     - GlobalValueSet
+     - GlobalValueSetTranslation
+     - HomePageLayout
+     - ListView
+     - Layout
+     - NamedCredential
+     - PermissionSet
+     - Profile
+     - QuickAction
+     - RecordType
+     - RemoteSiteSetting
+     - Report
+     - StandardValueSet
+     - StaticResource
+     - Translations
+     - WebLink
+     - Workflow
+
+```
+
+_See [conversion tables](https://github.com/nvuillam/sfdx_metadatas_filtering/blob/d1567782218fce3ba800a5e752aff45b54980585/src/commands/metadatafilter/execute.ts#L280)_
+
+EXAMPLES
+
+```
+  $ sfdx essentials:filter-metadatas -p myPackage.xml
+
+  $ sfdx essentials:filter-metadatas -i md_api_output_dir -p myPackage.xml -o md_api_filtered_output_dir
+
+  $ sfdx force:source:convert -d tmp/deployDemoQuali/
+  $ sfdx essentials:filter-metadatas -i tmp/deployDemoQuali/ -p myPackage.xml -o tmp/deployDemoQualiFiltered/
+  $ sfdx force:mdapi:deploy -d tmp/deployDemoQualiFiltered/ -w 60 -u DemoQuali
+
+```
+
+_See code: [src/commands/metadatafilter/execute.ts](https://github.com/nvuillam/sfdx_metadatas_filtering/blob/master/src/commands/metadatafilter/execute.ts)_
+
+## `change-dependency:execute`
 
 Allows to change an external package dependency version
 
 ```
 USAGE
-  $ essentials essentials:change-dependency-version
+  $ essentials:change-dependency-version OPTIONS
 
 OPTIONS
   -f, --folder=folder              SFDX project folder containing files
@@ -198,105 +132,27 @@ DESCRIPTION
 
 
 EXAMPLE
-  $ sfdx change-dependency:execute -n FinServ -j 214 -m 7
+  $ sfdx essentials:change-dependency-version -n FinServ -j 214 -m 7
 ```
 
-_See code: [src\commands\essentials\change-dependency-version.ts](https://github.com/nvuillam/sfdx-essentials/blob/v0.0.0/src\commands\essentials\change-dependency-version.ts)_
+_See code: [src/commands/change-dependency/execute.ts](https://github.com/nvuillam/sfdx-change-dependency-version/blob/master/src/commands/change-dependency/execute.ts)_
 
-## `essentials essentials:filter-metadatas`
-
-```
-USAGE
-  $ essentials essentials:filter-metadatas
-
-OPTIONS
-  -i, --inputfolder=inputfolder    Input folder (default: "." )
-  -o, --outputfolder=outputfolder  Output folder (default: filteredMetadatas)
-  -p, --packagexml=packagexml      package.xml file path
-```
-
-_See code: [src\commands\essentials\filter-metadatas.ts](https://github.com/nvuillam/sfdx-essentials/blob/v0.0.0/src\commands\essentials\filter-metadatas.ts)_
-
-## `essentials essentials:fix-lightning-attributes-names`
-
-```
-USAGE
-  $ essentials essentials:fix-lightning-attributes-names
-
-OPTIONS
-  -f, --folder=folder  SFDX project folder containing files
-```
-
-_See code: [src\commands\essentials\fix-lightning-attributes-names.ts](https://github.com/nvuillam/sfdx-essentials/blob/v0.0.0/src\commands\essentials\fix-lightning-attributes-names.ts)_
-<!-- commandsstop -->
-* [`essentials essentials:change-dependency-version`](#essentials-essentialschange-dependency-version)
-* [`essentials essentials:filter-metadatas`](#essentials-essentialsfilter-metadatas)
-* [`essentials essentials:fix-lightning-attributes-names`](#essentials-essentialsfix-lightning-attributes-names)
-
-## `essentials essentials:change-dependency-version`
+## `essentials:fix-lightning-attributes-names`
 
 Allows to change an external package dependency version
 
 ```
 USAGE
-  $ essentials essentials:change-dependency-version
+  $ essentials:change-dependency-version OPTIONS
 
 OPTIONS
-  -f, --folder=folder              SFDX project folder containing files
-  -j, --majorversion=majorversion  Major version
-  -m, --minorversion=minorversion  Minor version
-  -n, --namespace=namespace        Namespace of the managed package
+  -f, --folder=folder              SFDX project folder containing files (usually 'force-app/main/default'). Default : '.'
 
 DESCRIPTION
 
 
 EXAMPLE
-  $ sfdx change-dependency:execute -n FinServ -j 214 -m 7
+  $ sfdx essentials:change-dependency-version -n FinServ -j 214 -m 7
 ```
 
-## `essentials essentials:filter-metadatas`
-
-```
-USAGE
-  $ essentials essentials:filter-metadatas
-
-OPTIONS
-  -i, --inputfolder=inputfolder    Input folder (default: "." )
-  -o, --outputfolder=outputfolder  Output folder (default: filteredMetadatas)
-  -p, --packagexml=packagexml      package.xml file path
-```
-
-## `essentials essentials:fix-lightning-attributes-names`
-
-```
-USAGE
-  $ essentials essentials:fix-lightning-attributes-names
-
-OPTIONS
-  -f, --folder=folder  SFDX project folder containing files
-```
-<!-- commandsstop -->
-<!-- debugging-your-plugin -->
-# Debugging your plugin
-We recommend using the Visual Studio Code (VS Code) IDE for your plugin development. Included in the `.vscode` directory of this plugin is a `launch.json` config file, which allows you to attach a debugger to the node process when running your commands.
-
-To debug the `hello:org` command: 
-1. Start the inspector
-  
-If you linked your plugin to the sfdx cli, call your command with the `dev-suspend` switch: 
-```sh-session
-$ sfdx hello:org -u myOrg@example.com --dev-suspend
-```
-  
-Alternatively, to call your command using the `bin/run` script, set the `NODE_OPTIONS` environment variable to `--inspect-brk` when starting the debugger:
-```sh-session
-$ NODE_OPTIONS=--inspect-brk bin/run hello:org -u myOrg@example.com
-```
-
-2. Set some breakpoints in your command code
-3. Click on the Debug icon in the Activity Bar on the side of VS Code to open up the Debug view.
-4. In the upper left hand corner of VS Code, verify that the "Attach to Remote" launch configuration has been chosen.
-5. Hit the green play button to the left of the "Attach to Remote" launch configuration window. The debugger should now be suspended on the first line of the program. 
-6. Hit the green play button at the top middle of VS Code (this play button will be to the right of the play button that you clicked in step #5).
-<br><img src=".images/vscodeScreenshot.png" width="480" height="278"><br>
-Congrats, you are debugging!
+_See code: [src/commands/change-dependency/execute.ts](https://github.com/nvuillam/sfdx-change-dependency-version/blob/master/src/commands/change-dependency/execute.ts)_
