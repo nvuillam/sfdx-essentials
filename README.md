@@ -109,7 +109,7 @@ EXAMPLES
 
 _See code: [src/commands/essentials/filter-metadatas.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/filter-metadatas.ts)_
 
-## `change-dependency:execute`
+## `essentials:change-dependency-version`
 
 Allows to change an external package dependency version
 
