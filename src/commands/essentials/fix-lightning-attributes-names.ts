@@ -203,6 +203,10 @@ export default class ExecuteFilter extends Command {
       xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `v.${reservedAttributeName} )`, `v.${self.reservedAttributeNames[reservedAttributeName].replacement})`, 'cmp')
       xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `v.${reservedAttributeName}) `, `v.${self.reservedAttributeNames[reservedAttributeName].replacement})`, 'cmp')
       xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `v.${reservedAttributeName} ) `, `v.${self.reservedAttributeNames[reservedAttributeName].replacement})`, 'cmp')
+      // special cases
+      if (xmlLine.includes(`<aura:set attribute="caseInputDataAttributes"`))
+        xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `${reservedAttributeName}`, `${self.reservedAttributeNames[reservedAttributeName].replacement}`, 'cmp')
+      xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `v._attributeContainingPackages == '${reservedAttributeName}'`, `v._attributeContainingPackages == '${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'cmp')
 
     })
     return xmlLine
@@ -217,6 +221,10 @@ export default class ExecuteFilter extends Command {
       jsLine = self.replaceExpression(jsLine, reservedAttributeName, `'v.${reservedAttributeName}'`, `'v.${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'js')
       jsLine = self.replaceExpression(jsLine, reservedAttributeName, `"v.${reservedAttributeName}"`, `"v.${self.reservedAttributeNames[reservedAttributeName].replacement}"`, 'js')
       jsLine = self.replaceExpression(jsLine, reservedAttributeName, `v.${reservedAttributeName}.`, `v.${self.reservedAttributeNames[reservedAttributeName].replacement}.`, 'js')
+      // special cases
+      jsLine = self.replaceExpression(jsLine, reservedAttributeName, `attributeContainingPackages = '${reservedAttributeName}'`, `attributeContainingPackages = '${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'js')
+      jsLine = self.replaceExpression(jsLine, reservedAttributeName, `v._attributeContainingPackages') == '${reservedAttributeName}'`, `v._attributeContainingPackages') == '${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'js')
+
     })
     return jsLine
   }
@@ -228,7 +236,7 @@ export default class ExecuteFilter extends Command {
       if (!apexLine.includes(`getGlobalDescribe().get('${reservedAttributeName}'`) &&
         !apexLine.includes(`objectReference.get('${reservedAttributeName}'`)) {
         // Attribute name ( with ugly JSON.deserialize)
-        if (itemName.endsWith('_m') || ['CaseTestQuoteContractRPINDMock','WsAiaContractParsing'].includes(itemName)) {
+        if (itemName.endsWith('_m') || ['CaseTestQuoteContractRPINDMock', 'WsAiaContractParsing'].includes(itemName)) {
           // skip deserialize cleaning if we are in these cases: too dangerous ^^
         }
         else if (itemName.startsWith('Case')) {
