@@ -193,6 +193,17 @@ export default class ExecuteFilter extends Command {
       xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, ` ${reservedAttributeName} ="`, ` ${self.reservedAttributeNames[reservedAttributeName].replacement}="`, 'cmp')
       xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, ` ${reservedAttributeName}= "`, ` ${self.reservedAttributeNames[reservedAttributeName].replacement}="`, 'cmp')
       xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, ` ${reservedAttributeName} = "`, ` ${self.reservedAttributeNames[reservedAttributeName].replacement}="`, 'cmp')
+      // reference in aura expression
+      xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `v.${reservedAttributeName}.`, `v.${self.reservedAttributeNames[reservedAttributeName].replacement}.`, 'cmp')
+      xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `v.${reservedAttributeName}}`, `v.${self.reservedAttributeNames[reservedAttributeName].replacement}}`, 'cmp')
+      xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `v.${reservedAttributeName} }`, `v.${self.reservedAttributeNames[reservedAttributeName].replacement}}`, 'cmp')
+      xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `v.${reservedAttributeName}} `, `v.${self.reservedAttributeNames[reservedAttributeName].replacement}}`, 'cmp')
+      xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `v.${reservedAttributeName} } `, `v.${self.reservedAttributeNames[reservedAttributeName].replacement}}`, 'cmp')
+      xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `v.${reservedAttributeName})`, `v.${self.reservedAttributeNames[reservedAttributeName].replacement})`, 'cmp')
+      xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `v.${reservedAttributeName} )`, `v.${self.reservedAttributeNames[reservedAttributeName].replacement})`, 'cmp')
+      xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `v.${reservedAttributeName}) `, `v.${self.reservedAttributeNames[reservedAttributeName].replacement})`, 'cmp')
+      xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `v.${reservedAttributeName} ) `, `v.${self.reservedAttributeNames[reservedAttributeName].replacement})`, 'cmp')
+
     })
     return xmlLine
   }
