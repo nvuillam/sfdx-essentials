@@ -122,7 +122,6 @@ export default class ExecuteFilter extends Command {
             // Replace in apex class files (.cls) (send function as parameter)
             self.processFile(self.folder + '/classes', reservedAttributeName, ['.cls'], self.replaceAttributeNamesInApex)
               .then(function () {
-                console.log(' resolved cls: ' + reservedAttributeName)
                 resolve()
               }).catch(function (err) {
                 console.log('Replacement promise error: ' + err)
@@ -167,13 +166,13 @@ export default class ExecuteFilter extends Command {
       var updatedFileContent = ''
       var readEachLineSync = require('read-each-line-sync');
       readEachLineSync(filePath, function (line) {
-        var newLine = replaceFunction.call(self, line.substr(0)) // (clone line var to be able to compare later)
-        updatedFileContent += newLine
+        var newLine = replaceFunction.call(self, line.substr(0), filePart) // (clone line var to be able to compare later)
+        updatedFileContent += newLine + '\n'
         if (updated === false && newLine !== line)
           updated = true
       })
       if (updated) {
-        //self.fs.writeFileSync(filePath, updatedFileContent)
+        self.fs.writeFileSync(filePath, updatedFileContent)
         console.log('Updated ' + filePath)//+ ' with content :\n' + updatedFileContent)
       }
       resolve() // Resolve promise so then is called
@@ -181,21 +180,26 @@ export default class ExecuteFilter extends Command {
   }
 
   // Replace attribute names in comonent ( xml )
-  replaceAttributeNamesInCmp(xmlLine) {
+  replaceAttributeNamesInCmp(xmlLine, _itemName) {
     var self = this
     Object.keys(this.reservedAttributeNames).forEach(reservedAttributeName => {
-      // Attribute name
+      // aura:attribute name
       xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `name="${reservedAttributeName}"`, `name="${self.reservedAttributeNames[reservedAttributeName].replacement}"`, 'cmp')
       xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `name= "${reservedAttributeName}"`, `name="${self.reservedAttributeNames[reservedAttributeName].replacement}"`, 'cmp')
       xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `name ="${reservedAttributeName}"`, `name="${self.reservedAttributeNames[reservedAttributeName].replacement}"`, 'cmp')
       xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `name = "${reservedAttributeName}"`, `name="${self.reservedAttributeNames[reservedAttributeName].replacement}"`, 'cmp')
+      // calling attribute ( in another component )
+      xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, ` ${reservedAttributeName}="`, ` ${self.reservedAttributeNames[reservedAttributeName].replacement}="`, 'cmp')
+      xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, ` ${reservedAttributeName} ="`, ` ${self.reservedAttributeNames[reservedAttributeName].replacement}="`, 'cmp')
+      xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, ` ${reservedAttributeName}= "`, ` ${self.reservedAttributeNames[reservedAttributeName].replacement}="`, 'cmp')
+      xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, ` ${reservedAttributeName} = "`, ` ${self.reservedAttributeNames[reservedAttributeName].replacement}="`, 'cmp')
     })
     return xmlLine
   }
 
 
   // Replace attribute names in javascript file
-  replaceAttributeNamesInJs(jsLine) {
+  replaceAttributeNamesInJs(jsLine, _itemName) {
     var self = this
     Object.keys(this.reservedAttributeNames).forEach(reservedAttributeName => {
       // Attribute name
@@ -207,11 +211,28 @@ export default class ExecuteFilter extends Command {
   }
 
   // Replace attribute names in javascript file
-  replaceAttributeNamesInApex(apexLine) {
+  replaceAttributeNamesInApex(apexLine, itemName) {
     var self = this
     Object.keys(this.reservedAttributeNames).forEach(reservedAttributeName => {
-      // Attribute name
-      apexLine = self.replaceExpression(apexLine, reservedAttributeName, `.get('${reservedAttributeName}'`, `.get('${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'apex')
+      if (!apexLine.includes(`getGlobalDescribe().get('${reservedAttributeName}'`) &&
+        !apexLine.includes(`objectReference.get('${reservedAttributeName}'`)) {
+        // Attribute name ( with ugly JSON.deserialize)
+        if (itemName.endsWith('_m') || ['CaseTestQuoteContractRPINDMock','WsAiaContractParsing'].includes(itemName)) {
+          // skip deserialize cleaning if we are in these cases: too dangerous ^^
+        }
+        else if (itemName.startsWith('Case')) {
+          apexLine = self.replaceExpression(apexLine, reservedAttributeName, `JSON.deserialize(JSON.serialize(InputData.get('${reservedAttributeName}')),`, `RequestM.getCaseInputData('${self.reservedAttributeNames[reservedAttributeName].replacement}',`, 'apex') // Take advantage of this script to replace dirty code ^^
+          apexLine = self.replaceExpression(apexLine, reservedAttributeName, `JSON.deserialize(UtilsApex.serializeObject(InputData.get('${reservedAttributeName}')),`, `RequestM.getCaseInputData('${self.reservedAttributeNames[reservedAttributeName].replacement}',`, 'apex') // Take advantage of this script to replace dirty code ^^
+        }
+        else {
+          apexLine = self.replaceExpression(apexLine, reservedAttributeName, `JSON.deserialize(JSON.serialize(InputData.get('${reservedAttributeName}')),`, `BackEndRequestM.getCaseInputData('${self.reservedAttributeNames[reservedAttributeName].replacement}',`, 'apex') // Take advantage of this script to replace dirty code ^^
+          apexLine = self.replaceExpression(apexLine, reservedAttributeName, `JSON.deserialize(UtilsApex.serializeObject(InputData.get('${reservedAttributeName}')),`, `BackEndRequestM.getCaseInputData('${self.reservedAttributeNames[reservedAttributeName].replacement}',`, 'apex') // Take advantage of this script to replace dirty code ^^
+        }
+        // Attribute name .get() 
+        apexLine = self.replaceExpression(apexLine, reservedAttributeName, `.get('${reservedAttributeName}'`, `.get('${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'apex')
+        // Attribute name .setCaseInputData() 
+        apexLine = self.replaceExpression(apexLine, reservedAttributeName, `setCaseInputData('${reservedAttributeName}'`, `setCaseInputData('${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'apex')
+      }
     })
     return apexLine
   }

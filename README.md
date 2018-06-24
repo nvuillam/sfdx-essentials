@@ -13,6 +13,140 @@ Tools to cover the lacks oissingDX required functions of SFDX
 [![License](https://img.shields.io/npm/l/essentials.svg)](https://github.com/nvuillam/sfdx-essentials/blob/master/package.json)
 
 <!-- toc -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
 * [Debugging your plugin](#debugging-your-plugin)
 <!-- tocstop -->
 <!-- install -->
@@ -29,7 +163,72 @@ USAGE
 ...
 ```
 <!-- usagestop -->
+```sh-session
+$ npm install -g essentials
+$ essentials COMMAND
+running command...
+$ essentials (-v|--version|version)
+essentials/0.0.0 win32-x64 node-v8.9.4
+$ essentials --help [COMMAND]
+USAGE
+  $ essentials COMMAND
+...
+```
+<!-- usagestop -->
 <!-- commands -->
+* [`essentials essentials:change-dependency-version`](#essentials-essentialschange-dependency-version)
+* [`essentials essentials:filter-metadatas`](#essentials-essentialsfilter-metadatas)
+* [`essentials essentials:fix-lightning-attributes-names`](#essentials-essentialsfix-lightning-attributes-names)
+
+## `essentials essentials:change-dependency-version`
+
+Allows to change an external package dependency version
+
+```
+USAGE
+  $ essentials essentials:change-dependency-version
+
+OPTIONS
+  -f, --folder=folder              SFDX project folder containing files
+  -j, --majorversion=majorversion  Major version
+  -m, --minorversion=minorversion  Minor version
+  -n, --namespace=namespace        Namespace of the managed package
+
+DESCRIPTION
+
+
+EXAMPLE
+  $ sfdx change-dependency:execute -n FinServ -j 214 -m 7
+```
+
+_See code: [src\commands\essentials\change-dependency-version.ts](https://github.com/nvuillam/sfdx-essentials/blob/v0.0.0/src\commands\essentials\change-dependency-version.ts)_
+
+## `essentials essentials:filter-metadatas`
+
+```
+USAGE
+  $ essentials essentials:filter-metadatas
+
+OPTIONS
+  -i, --inputfolder=inputfolder    Input folder (default: "." )
+  -o, --outputfolder=outputfolder  Output folder (default: filteredMetadatas)
+  -p, --packagexml=packagexml      package.xml file path
+```
+
+_See code: [src\commands\essentials\filter-metadatas.ts](https://github.com/nvuillam/sfdx-essentials/blob/v0.0.0/src\commands\essentials\filter-metadatas.ts)_
+
+## `essentials essentials:fix-lightning-attributes-names`
+
+```
+USAGE
+  $ essentials essentials:fix-lightning-attributes-names
+
+OPTIONS
+  -f, --folder=folder  SFDX project folder containing files
+```
+
+_See code: [src\commands\essentials\fix-lightning-attributes-names.ts](https://github.com/nvuillam/sfdx-essentials/blob/v0.0.0/src\commands\essentials\fix-lightning-attributes-names.ts)_
+<!-- commandsstop -->
 * [`essentials essentials:change-dependency-version`](#essentials-essentialschange-dependency-version)
 * [`essentials essentials:filter-metadatas`](#essentials-essentialsfilter-metadatas)
 * [`essentials essentials:fix-lightning-attributes-names`](#essentials-essentialsfix-lightning-attributes-names)
