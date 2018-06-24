@@ -1,30 +1,25 @@
 Salesforce DX Essentials
 ========================
 
-[![Version](https://img.shields.io/npm/v/sfdx_metadatas_filtering.svg)](https://npmjs.org/package/sfdx_metadatas_filtering)
-[![Downloads/week](https://img.shields.io/npm/dw/sfdx_metadatas_filtering.svg)](https://npmjs.org/package/sfdx_metadatas_filtering) 
-[![License](https://img.shields.io/npm/l/sfdx_metadatas_filtering.svg)](https://github.com/nvuillam/sfdx_metadatas_filtering/blob/master/package.json) 
-<!-- [![CircleCI](https://circleci.com/gh/nvuillam/sfdx_metadatas_filtering/tree/master.svg?style=shield)](https://circleci.com/gh/nvuillam/sfdx_metadatas_filtering/tree/master)
-[![Appveyor CI](https://ci.appveyor.com/api/projects/status/github/nvuillam/sfdx_metadatas_filtering?branch=master&svg=true)](https://ci.appveyor.com/project/heroku/sfdx_metadatas_filtering/branch/master)
-[![Codecov](https://codecov.io/gh/nvuillam/sfdx_metadatas_filtering/branch/master/graph/badge.svg)](https://codecov.io/gh/nvuillam/sfdx_metadatas_filtering)
-[![Greenkeeper](https://badges.greenkeeper.io/nvuillam/sfdx_metadatas_filtering.svg)](https://greenkeeper.io/)
-[![Known Vulnerabilities](https://snyk.io/test/github/nvuillam/sfdx_metadatas_filtering/badge.svg)](https://snyk.io/test/github/nvuillam/sfdx_metadatas_filtering) -->
+[![Version](https://img.shields.io/npm/v/sfdx-essentials.svg)](https://npmjs.org/package/sfdx-essentials)
+[![Downloads/week](https://img.shields.io/npm/dw/sfdx-essentials.svg)](https://npmjs.org/package/sfdx-essentials) 
+[![License](https://img.shields.io/npm/l/sfdx-essentials.svg)](https://github.com/nvuillam/sfdx-essentials/blob/master/package.json) 
 
 # PLUGIN
 
-Sometimes Salesforce tools are delivered without the mandatory capabilities allowing the advanced developments of partners and clients to survive.
+Sometimes ... Salesforce tools are delivered without the mandatory capabilities allowing the advanced developments of partners and clients to survive.
 
-Sometimes Salesforce R&D team shows some understanding, but sometimes not at all, even when a new SFDC Platform version prevents to generate a managed package.
+Sometimes ... Salesforce R&D team shows some understanding, but sometimes ... not at all, even when a new SFDC Platform version prevents to generate a managed package.
 
-So after the third plugin I needed to create (not for fun, but to allow our managed package to survive!) , I decided to join them on a single plugin: **SFDX Essentials** , and to publish it as open source , by solidarity with fellow victims of savage platform upgrades :)
+So after the third plugin I needed to create during a few weeks (not for fun, but to allow our managed package to survive!) , I decided to join them on a single plugin: **SFDX Essentials** , and to publish it as open source , by solidarity with fellow victims of savage platform upgrades :)
 
 For the moments, this plugin capabilities are :
 
-- Filtering metadatas generated from a SFDX Project in order to be able to deploy only part of them on an org 
+- **Filtering metadatas generated from a SFDX Project** in order to be able to deploy only part of them on an org 
 
-- Replace other managed packages dependency version number ( very useful when you build a managed package over another managed package, like Financial Services Cloud )
+- **Replace other managed packages dependency version number** ( very useful when you build a managed package over another managed package, like Financial Services Cloud )
 
-- Replace reserved lightning attribute names in lightning components and apex classes ( if you named a lightning attribute like a custom apex class, since Summer 18 you simply can not generate a managed package again)
+- **Replace reserved lightning attribute names in lightning components and apex classes** ( if you named a lightning attribute like a custom apex class, since Summer 18 you simply can not generate a managed package again)
 
 Please contribute :)
 
@@ -97,7 +92,7 @@ DESCRIPTION
 
 ```
 
-_See [conversion tables](https://github.com/nvuillam/sfdx_metadatas_filtering/blob/d1567782218fce3ba800a5e752aff45b54980585/src/commands/metadatafilter/execute.ts#L280)_
+_See [conversion tables](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/filter-metadatas.ts#L280)_
 
 EXAMPLES
 
@@ -112,9 +107,9 @@ EXAMPLES
 
 ```
 
-_See code: [src/commands/metadatafilter/execute.ts](https://github.com/nvuillam/sfdx_metadatas_filtering/blob/master/src/commands/metadatafilter/execute.ts)_
+_See code: [src/commands/essentials/filter-metadatas.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/filter-metadatas.ts)_
 
-## `change-dependency:execute`
+## `essentials:change-dependency-version`
 
 Allows to change an external package dependency version
 
@@ -135,7 +130,7 @@ EXAMPLE
   $ sfdx essentials:change-dependency-version -n FinServ -j 214 -m 7
 ```
 
-_See code: [src/commands/change-dependency/execute.ts](https://github.com/nvuillam/sfdx-change-dependency-version/blob/master/src/commands/change-dependency/execute.ts)_
+_See code: [src/commands/essentials/change-dependency-version.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/change-dependency-version.ts)_
 
 ## `essentials:fix-lightning-attributes-names`
 
@@ -155,4 +150,4 @@ EXAMPLE
   $ sfdx essentials:change-dependency-version -n FinServ -j 214 -m 7
 ```
 
-_See code: [src/commands/change-dependency/execute.ts](https://github.com/nvuillam/sfdx-change-dependency-version/blob/master/src/commands/change-dependency/execute.ts)_
+_See code: [src/commands/essentials/fix-lightning-attributes-names.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/fix-lightning-attributes-names.ts)_
