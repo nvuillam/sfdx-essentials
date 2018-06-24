@@ -16,7 +16,7 @@ Sometimes Salesforce tools are delivered without the mandatory capabilities allo
 
 Sometimes Salesforce R&D team shows some understanding, but sometimes not at all, even when a new SFDC Platform version prevents to generate a managed package.
 
-So after the third plugin I needed to create (not for fun, but to allow managed package to survive!) , I decided to join them on a single plugin: **SFDX Essentials** , and to publish it as open source , by solidarity with fellow victims of savage platform upgrades :)
+So after the third plugin I needed to create (not for fun, but to allow our managed package to survive!) , I decided to join them on a single plugin: **SFDX Essentials** , and to publish it as open source , by solidarity with fellow victims of savage platform upgrades :)
 
 For the moments, this plugin capabilities are :
 
