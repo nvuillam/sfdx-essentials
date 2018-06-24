@@ -179,7 +179,7 @@ export default class ExecuteFilter extends Command {
     })
   }
 
-  // Replace attribute names in comonent ( xml )
+  // Replace attribute names in component ( xml )
   replaceAttributeNamesInCmp(xmlLine, _itemName) {
     var self = this
     Object.keys(this.reservedAttributeNames).forEach(reservedAttributeName => {
@@ -221,9 +221,16 @@ export default class ExecuteFilter extends Command {
       jsLine = self.replaceExpression(jsLine, reservedAttributeName, `'v.${reservedAttributeName}'`, `'v.${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'js')
       jsLine = self.replaceExpression(jsLine, reservedAttributeName, `"v.${reservedAttributeName}"`, `"v.${self.reservedAttributeNames[reservedAttributeName].replacement}"`, 'js')
       jsLine = self.replaceExpression(jsLine, reservedAttributeName, `v.${reservedAttributeName}.`, `v.${self.reservedAttributeNames[reservedAttributeName].replacement}.`, 'js')
+      jsLine = self.replaceExpression(jsLine, reservedAttributeName, `'${reservedAttributeName}' :`, `'${self.reservedAttributeNames[reservedAttributeName].replacement}' :`, 'js')
+      jsLine = self.replaceExpression(jsLine, reservedAttributeName, `InputData.${reservedAttributeName}`, `InputData.${self.reservedAttributeNames[reservedAttributeName].replacement}`, 'js')
+
       // special cases
       jsLine = self.replaceExpression(jsLine, reservedAttributeName, `attributeContainingPackages = '${reservedAttributeName}'`, `attributeContainingPackages = '${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'js')
+      jsLine = self.replaceExpression(jsLine, reservedAttributeName, `attributeContainingPackages = '${reservedAttributeName}'`, `attributeContainingPackages = '${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'js')
       jsLine = self.replaceExpression(jsLine, reservedAttributeName, `v._attributeContainingPackages') == '${reservedAttributeName}'`, `v._attributeContainingPackages') == '${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'js')
+      jsLine = self.replaceExpression(jsLine, reservedAttributeName, `getOutputData('${reservedAttributeName}'`, `getOutputData('${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'js')
+
+      
 
     })
     return jsLine
@@ -239,9 +246,9 @@ export default class ExecuteFilter extends Command {
         if (itemName.endsWith('_m') || ['CaseTestQuoteContractRPINDMock', 'WsAiaContractParsing'].includes(itemName)) {
           // skip deserialize cleaning if we are in these cases: too dangerous ^^
         }
-        else if (itemName.startsWith('Case')) {
-          apexLine = self.replaceExpression(apexLine, reservedAttributeName, `JSON.deserialize(JSON.serialize(InputData.get('${reservedAttributeName}')),`, `RequestM.getCaseInputData('${self.reservedAttributeNames[reservedAttributeName].replacement}',`, 'apex') // Take advantage of this script to replace dirty code ^^
-          apexLine = self.replaceExpression(apexLine, reservedAttributeName, `JSON.deserialize(UtilsApex.serializeObject(InputData.get('${reservedAttributeName}')),`, `RequestM.getCaseInputData('${self.reservedAttributeNames[reservedAttributeName].replacement}',`, 'apex') // Take advantage of this script to replace dirty code ^^
+        else if (itemName.startsWith('CaseProcess')) {
+          apexLine = self.replaceExpression(apexLine, reservedAttributeName, `JSON.deserialize(JSON.serialize(InputData.get('${reservedAttributeName}')),`, `this.getCaseInputData('${self.reservedAttributeNames[reservedAttributeName].replacement}',`, 'apex') // Take advantage of this script to replace dirty code ^^
+          apexLine = self.replaceExpression(apexLine, reservedAttributeName, `JSON.deserialize(UtilsApex.serializeObject(InputData.get('${reservedAttributeName}')),`, `this.getCaseInputData('${self.reservedAttributeNames[reservedAttributeName].replacement}',`, 'apex') // Take advantage of this script to replace dirty code ^^
         }
         else {
           apexLine = self.replaceExpression(apexLine, reservedAttributeName, `JSON.deserialize(JSON.serialize(InputData.get('${reservedAttributeName}')),`, `BackEndRequestM.getCaseInputData('${self.reservedAttributeNames[reservedAttributeName].replacement}',`, 'apex') // Take advantage of this script to replace dirty code ^^
@@ -250,7 +257,15 @@ export default class ExecuteFilter extends Command {
         // Attribute name .get() 
         apexLine = self.replaceExpression(apexLine, reservedAttributeName, `.get('${reservedAttributeName}'`, `.get('${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'apex')
         // Attribute name .setCaseInputData() 
+        apexLine = self.replaceExpression(apexLine, reservedAttributeName, `getCaseInputData('${reservedAttributeName}'`, `getCaseInputData('${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'apex')
         apexLine = self.replaceExpression(apexLine, reservedAttributeName, `setCaseInputData('${reservedAttributeName}'`, `setCaseInputData('${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'apex')
+        apexLine = self.replaceExpression(apexLine, reservedAttributeName, `getCaseOutputData('${reservedAttributeName}'`, `getCaseOutputData('${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'apex')
+        apexLine = self.replaceExpression(apexLine, reservedAttributeName, `setCaseOutputData('${reservedAttributeName}'`, `setCaseOutputData('${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'apex')
+        apexLine = self.replaceExpression(apexLine, reservedAttributeName, `getInputData('${reservedAttributeName}'`, `getInputData('${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'apex')
+        apexLine = self.replaceExpression(apexLine, reservedAttributeName, `setInputData('${reservedAttributeName}'`, `setInputData('${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'apex')
+        apexLine = self.replaceExpression(apexLine, reservedAttributeName, `getOutputData('${reservedAttributeName}'`, `getOutputData('${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'apex')
+        apexLine = self.replaceExpression(apexLine, reservedAttributeName, `setOutputData('${reservedAttributeName}'`, `setOutputData('${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'apex')
+
       }
     })
     return apexLine
