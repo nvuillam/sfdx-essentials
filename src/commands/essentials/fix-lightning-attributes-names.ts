@@ -200,8 +200,10 @@ export default class ExecuteFilter extends Command {
       xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `v.${reservedAttributeName})`, `v.${self.reservedAttributeNames[reservedAttributeName].replacement})`, 'cmp')
       // special cases
       if (xmlLine.includes(`<aura:set attribute="caseInputDataAttributes"`)) {
-        xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `${reservedAttributeName},`, `${self.reservedAttributeNames[reservedAttributeName].replacement},`, 'cmp')
-        xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `${reservedAttributeName}"`, `${self.reservedAttributeNames[reservedAttributeName].replacement}"`, 'cmp')
+        xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `"${reservedAttributeName},`, `"${self.reservedAttributeNames[reservedAttributeName].replacement},`, 'cmp')
+        xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `"${reservedAttributeName}"`, `"${self.reservedAttributeNames[reservedAttributeName].replacement}"`, 'cmp')
+        xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `,${reservedAttributeName}"`, `,${self.reservedAttributeNames[reservedAttributeName].replacement}"`, 'cmp')
+        xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `,${reservedAttributeName},`, `,${self.reservedAttributeNames[reservedAttributeName].replacement},`, 'cmp')
       }
       xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `v._attributeContainingPackages == '${reservedAttributeName}'`, `v._attributeContainingPackages == '${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'cmp')
 
