@@ -145,7 +145,7 @@ OPTIONS
   -f, --folder=folder              SFDX project folder containing files (usually 'force-app/main/default'). Default : '.'
 
 EXAMPLE
-  $ sfdx essentials:change-dependency-version -n FinServ -j 214 -m 7
+  $ sfdx essentials:fix-lightning-attributes-names 
 ```
 
 _See code: [src/commands/essentials/fix-lightning-attributes-names.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/fix-lightning-attributes-names.ts)_
