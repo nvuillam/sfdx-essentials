@@ -115,16 +115,13 @@ Allows to change an external package dependency version
 
 ```
 USAGE
-  $ essentials:change-dependency-version OPTIONS
+  $ sfdx essentials:change-dependency-version OPTIONS
 
 OPTIONS
   -f, --folder=folder              SFDX project folder containing files
   -j, --majorversion=majorversion  Major version
   -m, --minorversion=minorversion  Minor version
   -n, --namespace=namespace        Namespace of the managed package
-
-DESCRIPTION
-
 
 EXAMPLE
   $ sfdx essentials:change-dependency-version -n FinServ -j 214 -m 7
@@ -134,20 +131,21 @@ _See code: [src/commands/essentials/change-dependency-version.ts](https://github
 
 ## `essentials:fix-lightning-attributes-names`
 
-Allows to change an external package dependency version
+If you named a lightning attribute like a custom apex class, since Summer 18 you simply can not generate a managed package again.
+
+This command lists all custom apex classes and custom objects names , then replaces all their references in lightning components and also in apex classes with their camelCase version.
+
+Ex : MyClass_x attribute would be renamed myClassX
 
 ```
 USAGE
-  $ essentials:change-dependency-version OPTIONS
+  $ sfdx essentials:fix-lightning-attributes-names OPTIONS
 
 OPTIONS
   -f, --folder=folder              SFDX project folder containing files (usually 'force-app/main/default'). Default : '.'
 
-DESCRIPTION
-
-
 EXAMPLE
-  $ sfdx essentials:change-dependency-version -n FinServ -j 214 -m 7
+  $ sfdx essentials:fix-lightning-attributes-names 
 ```
 
 _See code: [src/commands/essentials/fix-lightning-attributes-names.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/fix-lightning-attributes-names.ts)_

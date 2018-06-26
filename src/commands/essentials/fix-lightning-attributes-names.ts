@@ -179,7 +179,7 @@ export default class ExecuteFilter extends Command {
     })
   }
 
-  // Replace attribute names in comonent ( xml )
+  // Replace attribute names in component ( xml )
   replaceAttributeNamesInCmp(xmlLine, _itemName) {
     var self = this
     Object.keys(this.reservedAttributeNames).forEach(reservedAttributeName => {
@@ -191,18 +191,21 @@ export default class ExecuteFilter extends Command {
       // calling attribute ( in another component )
       xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, ` ${reservedAttributeName}="`, ` ${self.reservedAttributeNames[reservedAttributeName].replacement}="`, 'cmp')
       xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, ` ${reservedAttributeName} ="`, ` ${self.reservedAttributeNames[reservedAttributeName].replacement}="`, 'cmp')
-      xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, ` ${reservedAttributeName}= "`, ` ${self.reservedAttributeNames[reservedAttributeName].replacement}="`, 'cmp')
-      xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, ` ${reservedAttributeName} = "`, ` ${self.reservedAttributeNames[reservedAttributeName].replacement}="`, 'cmp')
       // reference in aura expression
+      xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `v.${reservedAttributeName} `, `v.${self.reservedAttributeNames[reservedAttributeName].replacement} `, 'cmp')
+      xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `v.${reservedAttributeName}.`, `v.${self.reservedAttributeNames[reservedAttributeName].replacement}.`, 'cmp')
+      xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `v.${reservedAttributeName}=`, `v.${self.reservedAttributeNames[reservedAttributeName].replacement}=`, 'cmp')
       xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `v.${reservedAttributeName}.`, `v.${self.reservedAttributeNames[reservedAttributeName].replacement}.`, 'cmp')
       xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `v.${reservedAttributeName}}`, `v.${self.reservedAttributeNames[reservedAttributeName].replacement}}`, 'cmp')
-      xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `v.${reservedAttributeName} }`, `v.${self.reservedAttributeNames[reservedAttributeName].replacement}}`, 'cmp')
-      xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `v.${reservedAttributeName}} `, `v.${self.reservedAttributeNames[reservedAttributeName].replacement}}`, 'cmp')
-      xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `v.${reservedAttributeName} } `, `v.${self.reservedAttributeNames[reservedAttributeName].replacement}}`, 'cmp')
       xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `v.${reservedAttributeName})`, `v.${self.reservedAttributeNames[reservedAttributeName].replacement})`, 'cmp')
-      xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `v.${reservedAttributeName} )`, `v.${self.reservedAttributeNames[reservedAttributeName].replacement})`, 'cmp')
-      xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `v.${reservedAttributeName}) `, `v.${self.reservedAttributeNames[reservedAttributeName].replacement})`, 'cmp')
-      xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `v.${reservedAttributeName} ) `, `v.${self.reservedAttributeNames[reservedAttributeName].replacement})`, 'cmp')
+      // special cases
+      if (xmlLine.includes(`<aura:set attribute="caseInputDataAttributes"`)) {
+        xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `"${reservedAttributeName},`, `"${self.reservedAttributeNames[reservedAttributeName].replacement},`, 'cmp')
+        xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `"${reservedAttributeName}"`, `"${self.reservedAttributeNames[reservedAttributeName].replacement}"`, 'cmp')
+        xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `,${reservedAttributeName}"`, `,${self.reservedAttributeNames[reservedAttributeName].replacement}"`, 'cmp')
+        xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `,${reservedAttributeName},`, `,${self.reservedAttributeNames[reservedAttributeName].replacement},`, 'cmp')
+      }
+      xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `v._attributeContainingPackages == '${reservedAttributeName}'`, `v._attributeContainingPackages == '${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'cmp')
 
     })
     return xmlLine
@@ -217,6 +220,17 @@ export default class ExecuteFilter extends Command {
       jsLine = self.replaceExpression(jsLine, reservedAttributeName, `'v.${reservedAttributeName}'`, `'v.${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'js')
       jsLine = self.replaceExpression(jsLine, reservedAttributeName, `"v.${reservedAttributeName}"`, `"v.${self.reservedAttributeNames[reservedAttributeName].replacement}"`, 'js')
       jsLine = self.replaceExpression(jsLine, reservedAttributeName, `v.${reservedAttributeName}.`, `v.${self.reservedAttributeNames[reservedAttributeName].replacement}.`, 'js')
+      jsLine = self.replaceExpression(jsLine, reservedAttributeName, `'${reservedAttributeName}' :`, `'${self.reservedAttributeNames[reservedAttributeName].replacement}' :`, 'js')
+
+      // special cases
+      jsLine = self.replaceExpression(jsLine, reservedAttributeName, `InputData.${reservedAttributeName}`, `InputData.${self.reservedAttributeNames[reservedAttributeName].replacement}`, 'js')
+      jsLine = self.replaceExpression(jsLine, reservedAttributeName, `attributeContainingPackages = '${reservedAttributeName}'`, `attributeContainingPackages = '${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'js')
+      jsLine = self.replaceExpression(jsLine, reservedAttributeName, `attributeContainingPackages = '${reservedAttributeName}'`, `attributeContainingPackages = '${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'js')
+      jsLine = self.replaceExpression(jsLine, reservedAttributeName, `v._attributeContainingPackages') == '${reservedAttributeName}'`, `v._attributeContainingPackages') == '${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'js')
+      jsLine = self.replaceExpression(jsLine, reservedAttributeName, `getOutputData('${reservedAttributeName}'`, `getOutputData('${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'js')
+      jsLine = self.replaceExpression(jsLine, reservedAttributeName, `ComponentParams.${reservedAttributeName}`, `ComponentParams.${self.reservedAttributeNames[reservedAttributeName].replacement}`, 'js')
+      jsLine = self.replaceExpression(jsLine, reservedAttributeName, `ContextComponentReturnParams.${reservedAttributeName}`, `ContextComponentReturnParams.${self.reservedAttributeNames[reservedAttributeName].replacement}`, 'js')
+
     })
     return jsLine
   }
@@ -227,22 +241,34 @@ export default class ExecuteFilter extends Command {
     Object.keys(this.reservedAttributeNames).forEach(reservedAttributeName => {
       if (!apexLine.includes(`getGlobalDescribe().get('${reservedAttributeName}'`) &&
         !apexLine.includes(`objectReference.get('${reservedAttributeName}'`)) {
+          // get & put in maps
+          apexLine = self.replaceExpression(apexLine, reservedAttributeName, `.get('${reservedAttributeName}'`, `.get('${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'apex')
+          apexLine = self.replaceExpression(apexLine, reservedAttributeName, `.put('${reservedAttributeName}'`, `.put('${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'apex')
+
+        // Special cases
+
         // Attribute name ( with ugly JSON.deserialize)
-        if (itemName.endsWith('_m') || ['CaseTestQuoteContractRPINDMock','WsAiaContractParsing'].includes(itemName)) {
+        if (itemName.endsWith('_m') || ['CaseTestQuoteContractRPINDMock', 'WsAiaContractParsing'].includes(itemName)) {
           // skip deserialize cleaning if we are in these cases: too dangerous ^^
         }
-        else if (itemName.startsWith('Case')) {
-          apexLine = self.replaceExpression(apexLine, reservedAttributeName, `JSON.deserialize(JSON.serialize(InputData.get('${reservedAttributeName}')),`, `RequestM.getCaseInputData('${self.reservedAttributeNames[reservedAttributeName].replacement}',`, 'apex') // Take advantage of this script to replace dirty code ^^
-          apexLine = self.replaceExpression(apexLine, reservedAttributeName, `JSON.deserialize(UtilsApex.serializeObject(InputData.get('${reservedAttributeName}')),`, `RequestM.getCaseInputData('${self.reservedAttributeNames[reservedAttributeName].replacement}',`, 'apex') // Take advantage of this script to replace dirty code ^^
+        else if (itemName.startsWith('CaseProcess')) {
+          apexLine = self.replaceExpression(apexLine, reservedAttributeName, `JSON.deserialize(JSON.serialize(InputData.get('${reservedAttributeName}')),`, `this.getCaseInputData('${self.reservedAttributeNames[reservedAttributeName].replacement}',`, 'apex') // Take advantage of this script to replace dirty code ^^
+          apexLine = self.replaceExpression(apexLine, reservedAttributeName, `JSON.deserialize(UtilsApex.serializeObject(InputData.get('${reservedAttributeName}')),`, `this.getCaseInputData('${self.reservedAttributeNames[reservedAttributeName].replacement}',`, 'apex') // Take advantage of this script to replace dirty code ^^
         }
         else {
           apexLine = self.replaceExpression(apexLine, reservedAttributeName, `JSON.deserialize(JSON.serialize(InputData.get('${reservedAttributeName}')),`, `BackEndRequestM.getCaseInputData('${self.reservedAttributeNames[reservedAttributeName].replacement}',`, 'apex') // Take advantage of this script to replace dirty code ^^
           apexLine = self.replaceExpression(apexLine, reservedAttributeName, `JSON.deserialize(UtilsApex.serializeObject(InputData.get('${reservedAttributeName}')),`, `BackEndRequestM.getCaseInputData('${self.reservedAttributeNames[reservedAttributeName].replacement}',`, 'apex') // Take advantage of this script to replace dirty code ^^
         }
-        // Attribute name .get() 
-        apexLine = self.replaceExpression(apexLine, reservedAttributeName, `.get('${reservedAttributeName}'`, `.get('${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'apex')
-        // Attribute name .setCaseInputData() 
+
+        apexLine = self.replaceExpression(apexLine, reservedAttributeName, `getCaseInputData('${reservedAttributeName}'`, `getCaseInputData('${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'apex')
         apexLine = self.replaceExpression(apexLine, reservedAttributeName, `setCaseInputData('${reservedAttributeName}'`, `setCaseInputData('${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'apex')
+        apexLine = self.replaceExpression(apexLine, reservedAttributeName, `getCaseOutputData('${reservedAttributeName}'`, `getCaseOutputData('${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'apex')
+        apexLine = self.replaceExpression(apexLine, reservedAttributeName, `setCaseOutputData('${reservedAttributeName}'`, `setCaseOutputData('${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'apex')
+        apexLine = self.replaceExpression(apexLine, reservedAttributeName, `getInputData('${reservedAttributeName}'`, `getInputData('${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'apex')
+        apexLine = self.replaceExpression(apexLine, reservedAttributeName, `setInputData('${reservedAttributeName}'`, `setInputData('${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'apex')
+        apexLine = self.replaceExpression(apexLine, reservedAttributeName, `getOutputData('${reservedAttributeName}'`, `getOutputData('${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'apex')
+        apexLine = self.replaceExpression(apexLine, reservedAttributeName, `setOutputData('${reservedAttributeName}'`, `setOutputData('${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'apex')
+
       }
     })
     return apexLine

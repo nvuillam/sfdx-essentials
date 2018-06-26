@@ -132,6 +132,11 @@ export default class ExecuteFilter extends Command {
   // Special case of SObjects: collect references to them in MetadataTypes
   collectObjectDescription(metadataType, members) {
     var self = this
+    console.log(`- collecting ${metadataType}`)
+    if (members == null) {
+      console.log(`-- Warning: no ${metadataType} in package.xml`)
+      return
+    }
     members.forEach(function (member) {
       var sobjectName = member.split('.')[0]
       var sobjectInfo = self.sobjectCollectedInfo[sobjectName] || {}
