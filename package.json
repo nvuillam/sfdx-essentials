@@ -1,7 +1,7 @@
 {
   "name": "sfdx-essentials",
   "description": "Tools to cover the lacks of missing required functions of SFDX",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "author": "NicolasVuillamy @nvuillam",
   "bugs": "https://github.com/nvuillam/sfdx-essentials/issues",
   "dependencies": {
@@ -15,7 +15,6 @@
     "fs-extra": "^6.0.1",
     "glob": "^7.1.2",
     "path": "^0.12.7",
-    "read-each-line-sync": "^1.0.5",
     "util": "^0.11.0",
     "xml2js": "^0.4.19"
   },

@@ -161,12 +161,21 @@ export default class ExecuteFilter extends Command {
         resolve()
         return
       }
-      // Read file line by line & process them
+
+      // Read file
+      var fileContent = self.fs.readFileSync(filePath)
+      if (fileContent == null) {
+        console.log('Warning: empty file -> ' + filePath)
+        resolve()
+        return
+      }
+      var arrayFileLines = fileContent.toString().split("\n");
+
+      // Process file lines one by one
       var updated = false
       var updatedFileContent = ''
-      var readEachLineSync = require('read-each-line-sync');
-      readEachLineSync(filePath, function (line) {
-        var newLine = replaceFunction.call(self, line.substr(0), filePart) // (clone line var to be able to compare later)
+      arrayFileLines.forEach(line => {
+        var newLine = replaceFunction.call(self, line, filePart) // (clone line var to be able to compare later)
         updatedFileContent += newLine + '\n'
         if (updated === false && newLine !== line)
           updated = true
@@ -241,9 +250,9 @@ export default class ExecuteFilter extends Command {
     Object.keys(this.reservedAttributeNames).forEach(reservedAttributeName => {
       if (!apexLine.includes(`getGlobalDescribe().get('${reservedAttributeName}'`) &&
         !apexLine.includes(`objectReference.get('${reservedAttributeName}'`)) {
-          // get & put in maps
-          apexLine = self.replaceExpression(apexLine, reservedAttributeName, `.get('${reservedAttributeName}'`, `.get('${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'apex')
-          apexLine = self.replaceExpression(apexLine, reservedAttributeName, `.put('${reservedAttributeName}'`, `.put('${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'apex')
+        // get & put in maps
+        apexLine = self.replaceExpression(apexLine, reservedAttributeName, `.get('${reservedAttributeName}'`, `.get('${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'apex')
+        apexLine = self.replaceExpression(apexLine, reservedAttributeName, `.put('${reservedAttributeName}'`, `.put('${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'apex')
 
         // Special cases
 
