@@ -149,3 +149,39 @@ EXAMPLE
 ```
 
 _See code: [src/commands/essentials/fix-lightning-attributes-names.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/fix-lightning-attributes-names.ts)_
+
+## `essentials:uncomment`
+
+Once you flagged a packaged method as **@Deprecated** , you can not deploy it in an org not used for generating a managed package
+
+This commands allows to uncomment desired lines just before making a deployment
+
+Before :
+
+```    // @Deprecated SFDX_ESSENTIALS_UNCOMMENT
+    global static List<OrgDebugOption__c> setDebugOption() {
+		return null;
+    }```
+
+After :
+
+``` @Deprecated // Uncommented by sfdx essentials:uncomment (https://github.com/nvuillam/sfdx-essentials)
+    global static List<OrgDebugOption__c> setDebugOption() {
+		return null;
+    }```
+
+
+```
+USAGE
+  $ sfdx essentials:uncomment OPTIONS
+
+OPTIONS
+  -f, --folder=folder              SFDX project folder containing files (usually 'force-app/main/default'). Default : '.'
+  -k, --uncommentKey=someString              Uncomment key. Default : 'SFDX_ESSENTIALS_UNCOMMENT'
+
+
+EXAMPLE
+  $ sfdx essentials:uncomment 
+```
+
+_See code: [src/commands/essentials/fix-lightning-attributes-names.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/uncomment.ts)_
