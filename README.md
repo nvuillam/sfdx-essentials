@@ -188,4 +188,4 @@ EXAMPLE
   $ sfdx essentials:uncomment 
 ```
 
-_See code: [src/commands/essentials/fix-lightning-attributes-names.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/uncomment.ts)_
+_See code: [src/commands/essentials/uncomment.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/uncomment.ts)_
