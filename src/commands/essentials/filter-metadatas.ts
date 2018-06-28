@@ -63,7 +63,7 @@ export default class ExecuteFilter extends Command {
         }
 
         // Copy package.xml file in output folder
-        self.fse.copySync(self.packageXmlFile, self.outputFolder+'/package.xml')
+        self.fse.copySync(self.packageXmlFile, self.outputFolder + '/package.xml')
 
         // Process source folder filtering and copy files into target folder
         self.filterMetadatasByType()
@@ -90,11 +90,13 @@ export default class ExecuteFilter extends Command {
       // Simply copy files
       if (metadataDesc.folder != null)
         self.copyMetadataFiles(metadataDesc, metadataType, members)
-      // Collect for .object filtering
-      else if (metadataDesc.sobjectRelated === true)
+
+      // Collect for .object & .objectTranslation filtering
+      if (metadataDesc.sobjectRelated === true)
         self.collectObjectDescription(metadataType, members)
+
       // Collect for translation filtering
-      else if (metadataDesc.translationRelated === true)
+      if (metadataDesc.translationRelated === true)
         self.collectTranslationDescription(metadataType, members)
 
     });
@@ -166,7 +168,7 @@ export default class ExecuteFilter extends Command {
     members.forEach(function (member) {
       self.translatedLanguageList.push(member)
     })
-    console.log('- collected language list:'+self.translatedLanguageList.toString())
+    console.log('- collected language list:' + self.translatedLanguageList.toString())
   }
 
   // get Metadatype description
@@ -178,9 +180,14 @@ export default class ExecuteFilter extends Command {
   // Copy objects based on information gathered with 'sobjectRelated' metadatas
   copyImpactedObjects() {
     var self = this
+    // Create objects folder
     this.fs.mkdirSync(self.outputFolder + '/objects/')
+    // Create objectTranslations folder if necessary
+    if (self.translatedLanguageList.length > 0)
+      this.fs.mkdirSync(self.outputFolder + '/objectTranslations/')
+
+    // Process all SObjects
     Object.keys(this.sobjectCollectedInfo).forEach(function (objectName) {
-      //NV:  Warning: this tool will be completed when .object file will be filtered to keep only related CustomFields, BusinessProcess, etc ... gathered from package.xml
       console.log('- processing SObject ' + objectName)
       var objectContentToKeep = self.sobjectCollectedInfo[objectName]
 
@@ -190,15 +197,14 @@ export default class ExecuteFilter extends Command {
       var data = self.fs.readFileSync(inputObjectFileName)
       parser.parseString(data, function (err2, parsedObjectFile) {
         // Filter .object file to keep only items referenced in package.xml ( and collected during filterMetadatasByType) 
-        //console.log(`- parsed .object file \n` + self.util.inspect(parsedObjectFile, false, null) + `\nto filter with ` + self.util.inspect(objectContentToKeep, false, null))
         if (objectContentToKeep == null)
           console.log('-- no filtering for ' + objectName)
         else
           parsedObjectFile = self.filterSObjectFile(parsedObjectFile, objectName, objectContentToKeep)
 
+        // Write output .object file
         var builder = new self.xml2js.Builder();
         var updatedObjectXml = builder.buildObject(parsedObjectFile);
-
         var outputObjectFileName = self.outputFolder + '/objects/' + objectName + '.object'
         self.fs.writeFileSync(outputObjectFileName, updatedObjectXml)
       });
@@ -208,30 +214,29 @@ export default class ExecuteFilter extends Command {
       if (self.translatedLanguageList.length > 0) {
         console.log('- processing SObject translation for ' + objectName)
         self.translatedLanguageList.forEach(translationCode => {
-          var inputObjectTranslationFileName = self.inputFolder + '/objectTranslations/' + objectName +'-'+translationCode+ '.objectTranslation'
+          var inputObjectTranslationFileName = self.inputFolder + '/objectTranslations/' + objectName + '-' + translationCode + '.objectTranslation'
           // Check objectTranslation file exists for this language
           if (!self.fs.existsSync(inputObjectTranslationFileName))
-            return 
+            return
           // Read .objectTranslation file
           var parserTr = new self.xml2js.Parser();
-          var dataTr = self.fs.readFileSync(inputObjectTranslationFileName)     
+          var dataTr = self.fs.readFileSync(inputObjectTranslationFileName)
           parserTr.parseString(dataTr, function (err2, parsedObjectFileTr) {
             // Filter .objectTranslation file to keep only items referenced in package.xml ( and collected during filterMetadatasByType) 
-            //console.log(`- parsed .object file \n` + self.util.inspect(parsedObjectFile, false, null) + `\nto filter with ` + self.util.inspect(objectContentToKeep, false, null))
             if (objectContentToKeep == null)
               console.log('-- no filtering for ' + objectName)
             else
               parsedObjectFileTr = self.filterSObjectTranslationFile(parsedObjectFileTr, objectName, objectContentToKeep)
-    
+
+            // Write output .objectTranslation file
             var builderTrx = new self.xml2js.Builder();
             var updatedObjectXmlTr = builderTrx.buildObject(parsedObjectFileTr);
-    
-            var outputObjectFileNameTr = self.outputFolder + '/objectTranslations/' + objectName +'-'+translationCode+ '.objectTranslation'
+            var outputObjectFileNameTr = self.outputFolder + '/objectTranslations/' + objectName + '-' + translationCode + '.objectTranslation'
             self.fs.writeFileSync(outputObjectFileNameTr, updatedObjectXmlTr)
           });
-          self.summaryResult.objectsTranslations.push(objectName+'-'+translationCode)          
+          self.summaryResult.objectsTranslations.push(objectName + '-' + translationCode)
         })
- 
+
       }
 
     });
@@ -256,7 +261,7 @@ export default class ExecuteFilter extends Command {
           var pos = 0
           parsedObjectFile['CustomObject'][objectXmlPropName].forEach(function (itemDscrptn) {
             var itemName = itemDscrptn[nameProperty]
-            if (!self.arrayIncludes(compareList,itemName)) {
+            if (!self.arrayIncludes(compareList, itemName)) {
               console.log(`---- removed ${packageXmlPropName} ` + itemDscrptn[nameProperty])
               delete parsedObjectFile['CustomObject'][objectXmlPropName][pos]
             }
@@ -290,7 +295,7 @@ export default class ExecuteFilter extends Command {
           var pos = 0
           parsedObjectFile['CustomObjectTranslation'][objectXmlPropName].forEach(function (itemDscrptn) {
             var itemName = itemDscrptn[nameProperty]
-            if (!self.arrayIncludes(compareList,itemName)) {
+            if (!self.arrayIncludes(compareList, itemName)) {
               console.log(`---- removed translation ${packageXmlPropName} ` + itemDscrptn[nameProperty])
               delete parsedObjectFile['CustomObjectTranslation'][objectXmlPropName][pos]
             }
@@ -306,8 +311,8 @@ export default class ExecuteFilter extends Command {
     return parsedObjectFile
   }
 
-  arrayIncludes(zeArray,zeItem) {
-    var result = false 
+  arrayIncludes(zeArray, zeItem) {
+    var result = false
     zeArray.forEach(function (elt) {
       if (elt == zeItem)
         result = true
@@ -333,11 +338,11 @@ export default class ExecuteFilter extends Command {
       'ApexPage': { folder: 'pages', nameSuffixList: ['.page', '.page-meta.xml'] },
       'ApexTrigger': { folder: 'triggers', nameSuffixList: ['.trigger', '.trigger-meta.xml'] },
       'AuraDefinitionBundle': { folder: 'aura', nameSuffixList: [''] },
-      'ContentAsset': { folder: 'contentassets', nameSuffixList: ['.asset','.asset-meta.xml'] },
+      'ContentAsset': { folder: 'contentassets', nameSuffixList: ['.asset', '.asset-meta.xml'] },
       'CustomApplication': { folder: 'applications', nameSuffixList: ['.app'] },
       'CustomLabel': { folder: 'labels', nameSuffixList: [''] },
       'CustomMetadata': { folder: 'customMetadata', nameSuffixList: ['.md'] },
-      'CustomObjectTranslation': { folder: 'objectTranslations', nameSuffixList: ['.objectTranslation'] },
+      //      'CustomObjectTranslation': { folder: 'objectTranslations', nameSuffixList: ['.objectTranslation'] }, we use Translations to define the list of objectTranslations to filter & copy
       'CustomTab': { folder: 'tabs', nameSuffixList: ['.tab'] },
       'Document': { folder: 'documents', nameSuffixList: ['', '-meta.xml'] },
       'EmailTemplate': { folder: 'email', nameSuffixList: ['.email', '.email-meta.xml'] },
@@ -355,19 +360,20 @@ export default class ExecuteFilter extends Command {
       'Report': { folder: 'reports', nameSuffixList: ['', '-meta.xml'] },
       'StandardValueSet': { folder: 'standardValueSets', nameSuffixList: ['.standardValueSet'] },
       'StaticResource': { folder: 'staticresources', nameSuffixList: ['.resource', '.resource-meta.xml'] },
-//      'Translations': { folder: 'translations', nameSuffixList: ['.translation'] }, processed apart, as they need to be filtered
+      //      'Translations': { folder: 'translations', nameSuffixList: ['.translation'] }, processed apart, as they need to be filtered
       'Workflow': { folder: 'workflows', nameSuffixList: ['.workflow'] },
 
       // Metadatas to use for building objects folder ( SObjects )
       'BusinessProcess': { sobjectRelated: true },
+      'CompactLayout': { sobjectRelated: true },
       'CustomField': { sobjectRelated: true },
       'CustomObject': { sobjectRelated: true },
       'ListView': { sobjectRelated: true },
       'RecordType': { sobjectRelated: true },
       'WebLink': { sobjectRelated: true },
 
-      // Translations
-      'Translations': { translationRelated: true },
+      // Special case: Translations, used for object copy and for filtering 
+      'Translations': { translationRelated: true , folder: 'translations', nameSuffixList: ['.translation'] },
 
     }
     return metadataTypesDescription
@@ -377,12 +383,13 @@ export default class ExecuteFilter extends Command {
   describeObjectFilteringProperties() {
 
     const objectFilteringProperties = [
-      { objectXmlPropName: 'businessProcesses', packageXmlPropName: 'BusinessProcess', nameProperty: 'fullName',translationNameProperty: 'name' },
-      { objectXmlPropName: 'fields', packageXmlPropName: 'CustomField', nameProperty: 'fullName',translationNameProperty: 'name' },
-      { objectXmlPropName: 'listviews', packageXmlPropName: 'ListView', nameProperty: 'fullName',translationNameProperty: 'name' },
-      { objectXmlPropName: 'layouts', packageXmlPropName: 'Layouts', nameProperty: 'fullName',translationNameProperty: 'layout' },
-      { objectXmlPropName: 'recordTypes', packageXmlPropName: 'RecordType', nameProperty: 'fullName',translationNameProperty: 'name' },
-      { objectXmlPropName: 'weblinks', packageXmlPropName: 'WebLink', nameProperty: 'fullName',translationNameProperty: 'name' }
+      { objectXmlPropName: 'businessProcesses', packageXmlPropName: 'BusinessProcess', nameProperty: 'fullName', translationNameProperty: 'name' },
+      { objectXmlPropName: 'compactLayouts', packageXmlPropName: 'CompactLayout', nameProperty: 'fullName', translationNameProperty: 'layout' },
+      { objectXmlPropName: 'fields', packageXmlPropName: 'CustomField', nameProperty: 'fullName', translationNameProperty: 'name' },
+      { objectXmlPropName: 'listViews', packageXmlPropName: 'ListView', nameProperty: 'fullName', translationNameProperty: 'name' },
+      { objectXmlPropName: 'layouts', packageXmlPropName: 'Layout', nameProperty: 'fullName', translationNameProperty: 'layout' },
+      { objectXmlPropName: 'recordTypes', packageXmlPropName: 'RecordType', nameProperty: 'fullName', translationNameProperty: 'name' },
+      { objectXmlPropName: 'webLinks', packageXmlPropName: 'WebLink', nameProperty: 'fullName', translationNameProperty: 'name' }
     ]
     return objectFilteringProperties
   }
