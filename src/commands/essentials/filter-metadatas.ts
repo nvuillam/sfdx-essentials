@@ -28,7 +28,8 @@ export default class ExecuteFilter extends Command {
   path = require('path')
   packageXmlMetadatasTypeLs = []
   sobjectCollectedInfo = {}
-  summaryResult = { metadataTypes: {}, objects: [] }
+  translatedLanguageList = []
+  summaryResult = { metadataTypes: {}, objects: [], objectsTranslations: [] }
 
   // Runtime methods
   async run() {
@@ -86,10 +87,15 @@ export default class ExecuteFilter extends Command {
       if (metadataDesc == null) {
         return
       }
+      // Simply copy files
       if (metadataDesc.folder != null)
         self.copyMetadataFiles(metadataDesc, metadataType, members)
+      // Collect for .object filtering
       else if (metadataDesc.sobjectRelated === true)
         self.collectObjectDescription(metadataType, members)
+      // Collect for translation filtering
+      else if (metadataDesc.translationRelated === true)
+        self.collectTranslationDescription(metadataType, members)
 
     });
   }
@@ -149,7 +155,19 @@ export default class ExecuteFilter extends Command {
     })
   }
 
-
+  // Special case of SObjects: collect references to them in MetadataTypes
+  collectTranslationDescription(metadataType, members) {
+    var self = this
+    console.log(`- collecting ${metadataType}`)
+    if (members == null) {
+      console.log(`-- Warning: no ${metadataType} in package.xml`)
+      return
+    }
+    members.forEach(function (member) {
+      self.translatedLanguageList.push(member)
+    })
+    console.log('- collected language list:'+self.translatedLanguageList.toString())
+  }
 
   // get Metadatype description
   getMetadataTypeDescription(md_type) {
@@ -169,12 +187,10 @@ export default class ExecuteFilter extends Command {
       // Read .object file
       var inputObjectFileName = self.inputFolder + '/objects/' + objectName + '.object'
       var parser = new self.xml2js.Parser();
-
       var data = self.fs.readFileSync(inputObjectFileName)
       parser.parseString(data, function (err2, parsedObjectFile) {
         // Filter .object file to keep only items referenced in package.xml ( and collected during filterMetadatasByType) 
         //console.log(`- parsed .object file \n` + self.util.inspect(parsedObjectFile, false, null) + `\nto filter with ` + self.util.inspect(objectContentToKeep, false, null))
-
         if (objectContentToKeep == null)
           console.log('-- no filtering for ' + objectName)
         else
@@ -187,6 +203,36 @@ export default class ExecuteFilter extends Command {
         self.fs.writeFileSync(outputObjectFileName, updatedObjectXml)
       });
       self.summaryResult.objects.push(objectName)
+
+      // Manage objectTranslations
+      if (self.translatedLanguageList.length > 0) {
+        console.log('- processing SObject translation for ' + objectName)
+        self.translatedLanguageList.forEach(translationCode => {
+          var inputObjectTranslationFileName = self.inputFolder + '/objectTranslations/' + objectName +'-'+translationCode+ '.objectTranslation'
+          // Check objectTranslation file exists for this language
+          if (!self.fs.existsSync(inputObjectTranslationFileName))
+            return 
+          // Read .objectTranslation file
+          var parserTr = new self.xml2js.Parser();
+          var dataTr = self.fs.readFileSync(inputObjectTranslationFileName)     
+          parserTr.parseString(dataTr, function (err2, parsedObjectFileTr) {
+            // Filter .objectTranslation file to keep only items referenced in package.xml ( and collected during filterMetadatasByType) 
+            //console.log(`- parsed .object file \n` + self.util.inspect(parsedObjectFile, false, null) + `\nto filter with ` + self.util.inspect(objectContentToKeep, false, null))
+            if (objectContentToKeep == null)
+              console.log('-- no filtering for ' + objectName)
+            else
+              parsedObjectFileTr = self.filterSObjectTranslationFile(parsedObjectFileTr, objectName, objectContentToKeep)
+    
+            var builderTrx = new self.xml2js.Builder();
+            var updatedObjectXmlTr = builderTrx.buildObject(parsedObjectFileTr);
+    
+            var outputObjectFileNameTr = self.outputFolder + '/objectTranslations/' + objectName +'-'+translationCode+ '.objectTranslation'
+            self.fs.writeFileSync(outputObjectFileNameTr, updatedObjectXmlTr)
+          });
+          self.summaryResult.objectsTranslations.push(objectName+'-'+translationCode)          
+        })
+ 
+      }
 
     });
     self.summaryResult.objects.sort()
@@ -216,6 +262,40 @@ export default class ExecuteFilter extends Command {
             }
             else {
               console.log(`-- kept ${packageXmlPropName} ` + itemDscrptn[nameProperty])
+            }
+            pos++
+          })
+        }
+      }
+    });
+
+    return parsedObjectFile
+  }
+
+  // Filter output XML of .object file
+  filterSObjectTranslationFile(parsedObjectFile, objectName, objectContentToKeep) {
+    const objectFilteringProperties = this.describeObjectFilteringProperties()
+    var self = this
+    objectFilteringProperties.forEach(function (objectFilterProp) {
+      // Filter fields,layouts,businessProcesses, listView,WebLink
+      var objectXmlPropName = objectFilterProp['objectXmlPropName']
+      var packageXmlPropName = objectFilterProp['packageXmlPropName']
+      var nameProperty = objectFilterProp['translationNameProperty']
+      if (parsedObjectFile['CustomObjectTranslation'][objectXmlPropName] != null) {
+
+        var compareList = objectContentToKeep[packageXmlPropName] || []
+        if (parsedObjectFile['CustomObjectTranslation'][objectXmlPropName] == null) {
+          console.warn('/!\ can not filter translation ' + objectXmlPropName + ' : not found')
+        } else {
+          var pos = 0
+          parsedObjectFile['CustomObjectTranslation'][objectXmlPropName].forEach(function (itemDscrptn) {
+            var itemName = itemDscrptn[nameProperty]
+            if (!self.arrayIncludes(compareList,itemName)) {
+              console.log(`---- removed translation ${packageXmlPropName} ` + itemDscrptn[nameProperty])
+              delete parsedObjectFile['CustomObjectTranslation'][objectXmlPropName][pos]
+            }
+            else {
+              console.log(`-- kept translation ${packageXmlPropName} ` + itemDscrptn[nameProperty])
             }
             pos++
           })
@@ -275,7 +355,7 @@ export default class ExecuteFilter extends Command {
       'Report': { folder: 'reports', nameSuffixList: ['', '-meta.xml'] },
       'StandardValueSet': { folder: 'standardValueSets', nameSuffixList: ['.standardValueSet'] },
       'StaticResource': { folder: 'staticresources', nameSuffixList: ['.resource', '.resource-meta.xml'] },
-      'Translations': { folder: 'translations', nameSuffixList: ['.translation'] },
+//      'Translations': { folder: 'translations', nameSuffixList: ['.translation'] }, processed apart, as they need to be filtered
       'Workflow': { folder: 'workflows', nameSuffixList: ['.workflow'] },
 
       // Metadatas to use for building objects folder ( SObjects )
@@ -284,7 +364,10 @@ export default class ExecuteFilter extends Command {
       'CustomObject': { sobjectRelated: true },
       'ListView': { sobjectRelated: true },
       'RecordType': { sobjectRelated: true },
-      'WebLink': { sobjectRelated: true }
+      'WebLink': { sobjectRelated: true },
+
+      // Translations
+      'Translations': { translationRelated: true },
 
     }
     return metadataTypesDescription
@@ -294,11 +377,12 @@ export default class ExecuteFilter extends Command {
   describeObjectFilteringProperties() {
 
     const objectFilteringProperties = [
-      { objectXmlPropName: 'businessProcesses', packageXmlPropName: 'BusinessProcess', nameProperty: 'fullName' },
-      { objectXmlPropName: 'fields', packageXmlPropName: 'CustomField', nameProperty: 'fullName' },
-      { objectXmlPropName: 'listviews', packageXmlPropName: 'ListView', nameProperty: 'fullName' },
-      { objectXmlPropName: 'recordTypes', packageXmlPropName: 'RecordType', nameProperty: 'fullName' },
-      { objectXmlPropName: 'weblinks', packageXmlPropName: 'WebLink', nameProperty: 'fullName' }
+      { objectXmlPropName: 'businessProcesses', packageXmlPropName: 'BusinessProcess', nameProperty: 'fullName',translationNameProperty: 'name' },
+      { objectXmlPropName: 'fields', packageXmlPropName: 'CustomField', nameProperty: 'fullName',translationNameProperty: 'name' },
+      { objectXmlPropName: 'listviews', packageXmlPropName: 'ListView', nameProperty: 'fullName',translationNameProperty: 'name' },
+      { objectXmlPropName: 'layouts', packageXmlPropName: 'Layouts', nameProperty: 'fullName',translationNameProperty: 'layout' },
+      { objectXmlPropName: 'recordTypes', packageXmlPropName: 'RecordType', nameProperty: 'fullName',translationNameProperty: 'name' },
+      { objectXmlPropName: 'weblinks', packageXmlPropName: 'WebLink', nameProperty: 'fullName',translationNameProperty: 'name' }
     ]
     return objectFilteringProperties
   }
