@@ -158,17 +158,21 @@ This commands allows to uncomment desired lines just before making a deployment
 
 Before :
 
-```    // @Deprecated SFDX_ESSENTIALS_UNCOMMENT
-    global static List<OrgDebugOption__c> setDebugOption() {
-		return null;
-    }```
+``` 
+// @Deprecated SFDX_ESSENTIALS_UNCOMMENT
+global static List<OrgDebugOption__c> setDebugOption() {
+	return null;
+}
+```
 
 After :
 
-``` @Deprecated // Uncommented by sfdx essentials:uncomment (https://github.com/nvuillam/sfdx-essentials)
-    global static List<OrgDebugOption__c> setDebugOption() {
-		return null;
-    }```
+```
+@Deprecated // Uncommented by sfdx essentials:uncomment (https://github.com/nvuillam/sfdx-essentials)
+global static List<OrgDebugOption__c> setDebugOption() {
+	return null;
+}
+```
 
 
 ```
