@@ -33,6 +33,8 @@ export default class ExecuteFilter extends Command {
     this.folder = flags.folder || '.'
     this.uncommentKey = flags.uncommentKey || 'SFDX_ESSENTIALS_UNCOMMENT'
 
+    console.log('Starting sfdx essentials:uncomment with uncomment key "'+this.uncommentKey+'"')
+
     // List apex classes
     var fetchClassesExpression = this.folder + '/classes/*.cls'
     console.log('Fetching classes with expression : ' + fetchClassesExpression)
@@ -75,9 +77,8 @@ export default class ExecuteFilter extends Command {
       arrayFileLines.forEach(line => {
         // Uncomment if SFDX_ESSENTIALS_UNCOMMENT is contained in a commented line (can be overriden sending uncommentKey argument)
         if (line.includes(this.uncommentKey)) {
-          line = line.replace('//','').replace(this.uncommentKey,'').trim()
+          line = line.replace('//','').replace(this.uncommentKey,'// '+this.uncommentKey+' uncommented by sfdx essentials:uncomment (https://github.com/nvuillam/sfdx-essentials)')
           console.log('- uncommented: '+line)
-          line= line+ ' // Uncommented by sfdx essentials:uncomment (https://github.com/nvuillam/sfdx-essentials)'
           updated = true
         }
         updatedFileContent += line + '\n'
