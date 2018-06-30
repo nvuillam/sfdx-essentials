@@ -43,16 +43,28 @@ export default class ExecuteFilter extends Command {
     customApexClassFileNameList.forEach(customApexClassFileName => {
       self.processFile(customApexClassFileName)
     })
+    console.log('Completed uncomment in : ' + fetchClassesExpression)
+
+    // List aura items
+    var fetchAuraExpression = this.folder + '/aura/**/*.js'
+    console.log('Fetching aura with expression : ' + fetchAuraExpression)
+    var customAuraFileNameList = this.glob.sync(fetchAuraExpression)
+
+    // Replace commented lines in each aura item
+    var self = this
+    customAuraFileNameList.forEach(customAuraFileName => {
+      self.processFile(customAuraFileName)
+    })
+    console.log('Completed uncomment in : ' + fetchAuraExpression)    
 
   }
 
   // Process component file
-  processFile(customApexClassFileName) {
-
+  processFile(fileName) {
     // Read file
-      var fileContent = this.fs.readFileSync(customApexClassFileName)
+      var fileContent = this.fs.readFileSync(fileName)
       if (fileContent == null) {
-        console.log('Warning: empty file -> ' + customApexClassFileName)
+        console.log('Warning: empty file -> ' + fileName)
         return
       }
       var arrayFileLines = fileContent.toString().split("\n");
@@ -72,14 +84,11 @@ export default class ExecuteFilter extends Command {
       })
       // Update file if content has been updated
       if (updated) {
-        this.fs.writeFileSync(customApexClassFileName, updatedFileContent)
-        console.log('Updated ' + customApexClassFileName)//+ ' with content :\n' + updatedFileContent)
+        this.fs.writeFileSync(fileName, updatedFileContent)
+        console.log('Updated ' + fileName)//+ ' with content :\n' + updatedFileContent)
       }
 
   }
-
-
-
 
 }
 

@@ -17,7 +17,14 @@
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.stat/-/fs.stat-1.1.0.tgz#50c1e2260ac0ed9439a181de3725a0168d59c48a"
 
-"@oclif/command@1", "@oclif/command@^1.4.29", "@oclif/command@^1.4.30", "@oclif/command@^1.4.33":
+"@oclif/command@1.4.2":
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/@oclif/command/-/command-1.4.2.tgz#f20ead470e87f629812ce21ddd72042c88517a5d"
+  dependencies:
+    "@oclif/parser" "^3.2.9"
+    semver "^5.5.0"
+
+"@oclif/command@^1.4.29", "@oclif/command@^1.4.30", "@oclif/command@^1.4.33":
   version "1.4.33"
   resolved "https://registry.yarnpkg.com/@oclif/command/-/command-1.4.33.tgz#40a48e7384d6b4394c2ca20e5c05ff45541087f5"
   dependencies:
@@ -26,11 +33,13 @@
     debug "^3.1.0"
     semver "^5.5.0"
 
-"@oclif/command@1.4.2":
-  version "1.4.2"
-  resolved "https://registry.yarnpkg.com/@oclif/command/-/command-1.4.2.tgz#f20ead470e87f629812ce21ddd72042c88517a5d"
+"@oclif/command@^1.4.34":
+  version "1.4.34"
+  resolved "https://registry.yarnpkg.com/@oclif/command/-/command-1.4.34.tgz#05a8798740e9a01209732cba6557f21629043b30"
   dependencies:
-    "@oclif/parser" "^3.2.9"
+    "@oclif/errors" "^1.1.2"
+    "@oclif/parser" "^3.5.2"
+    debug "^3.1.0"
     semver "^5.5.0"
 
 "@oclif/config@^1.6.33":
@@ -40,9 +49,9 @@
     debug "^3.1.0"
     tslib "^1.9.2"
 
-"@oclif/dev-cli@^1.15.3":
-  version "1.15.3"
-  resolved "https://registry.yarnpkg.com/@oclif/dev-cli/-/dev-cli-1.15.3.tgz#e8b5989536d460d18c470eaa1c41cfac926fef4b"
+"@oclif/dev-cli@^1.15.4":
+  version "1.15.4"
+  resolved "https://registry.yarnpkg.com/@oclif/dev-cli/-/dev-cli-1.15.4.tgz#ffd91e36adcb08dcecc7b8c905428ba0ca17bef3"
   dependencies:
     "@oclif/command" "^1.4.33"
     "@oclif/config" "^1.6.33"
@@ -82,6 +91,14 @@
   dependencies:
     "@oclif/linewrap" "^1.0.0"
     chalk "^2.4.1"
+
+"@oclif/parser@^3.5.2":
+  version "3.5.3"
+  resolved "https://registry.yarnpkg.com/@oclif/parser/-/parser-3.5.3.tgz#fa5d0cc616a18240bcaefab02c7b7c9cb322656c"
+  dependencies:
+    "@oclif/linewrap" "^1.0.0"
+    chalk "^2.4.1"
+    tslib "^1.9.3"
 
 "@oclif/plugin-help@1", "@oclif/plugin-help@^1.2.7":
   version "1.2.11"
@@ -223,9 +240,9 @@
   version "5.2.2"
   resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-5.2.2.tgz#202d2b8fe1364c5b617b439b26a54f0e75eac0a7"
 
-"@types/mocha@^5.2.3":
-  version "5.2.3"
-  resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-5.2.3.tgz#11f3a5629d67cd444fa6c94536576244e6a52ea9"
+"@types/mocha@^5.2.4":
+  version "5.2.4"
+  resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-5.2.4.tgz#2f8fbdf95c69ebf82150a7864864010f186745bf"
 
 "@types/nock@^9.1.3":
   version "9.1.3"
@@ -1873,10 +1890,6 @@ qqjs@^0.3.10:
 qs@~6.5.1:
   version "6.5.2"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.2.tgz#cb3ae806e8740444584ef154ce8ee98d403f3e36"
-
-read-each-line-sync@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/read-each-line-sync/-/read-each-line-sync-1.0.5.tgz#3de3dfa8f950d14b5ec89e62147aa158b901b455"
 
 readable-stream@^2.0.5, readable-stream@^2.1.0, readable-stream@^2.3.0, readable-stream@^2.3.5:
   version "2.3.6"
