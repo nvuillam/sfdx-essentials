@@ -33,6 +33,8 @@ export default class ExecuteFilter extends Command {
     this.folder = flags.folder || '.'
     this.uncommentKey = flags.uncommentKey || 'SFDX_ESSENTIALS_UNCOMMENT'
 
+    console.log('Starting sfdx essentials:uncomment with uncomment key "'+this.uncommentKey+'"')
+
     // List apex classes
     var fetchClassesExpression = this.folder + '/classes/*.cls'
     console.log('Fetching classes with expression : ' + fetchClassesExpression)
@@ -43,16 +45,28 @@ export default class ExecuteFilter extends Command {
     customApexClassFileNameList.forEach(customApexClassFileName => {
       self.processFile(customApexClassFileName)
     })
+    console.log('Completed uncomment in : ' + fetchClassesExpression)
+
+    // List aura items
+    var fetchAuraExpression = this.folder + '/aura/**/*.js'
+    console.log('Fetching aura with expression : ' + fetchAuraExpression)
+    var customAuraFileNameList = this.glob.sync(fetchAuraExpression)
+
+    // Replace commented lines in each aura item
+    var self = this
+    customAuraFileNameList.forEach(customAuraFileName => {
+      self.processFile(customAuraFileName)
+    })
+    console.log('Completed uncomment in : ' + fetchAuraExpression)    
 
   }
 
   // Process component file
-  processFile(customApexClassFileName) {
-
+  processFile(fileName) {
     // Read file
-      var fileContent = this.fs.readFileSync(customApexClassFileName)
+      var fileContent = this.fs.readFileSync(fileName)
       if (fileContent == null) {
-        console.log('Warning: empty file -> ' + customApexClassFileName)
+        console.log('Warning: empty file -> ' + fileName)
         return
       }
       var arrayFileLines = fileContent.toString().split("\n");
@@ -63,23 +77,19 @@ export default class ExecuteFilter extends Command {
       arrayFileLines.forEach(line => {
         // Uncomment if SFDX_ESSENTIALS_UNCOMMENT is contained in a commented line (can be overriden sending uncommentKey argument)
         if (line.includes(this.uncommentKey)) {
-          line = line.replace('//','').replace(this.uncommentKey,'').trim()
+          line = line.replace('//','').replace(this.uncommentKey,'// '+this.uncommentKey+' uncommented by sfdx essentials:uncomment (https://github.com/nvuillam/sfdx-essentials)')
           console.log('- uncommented: '+line)
-          line= line+ ' // Uncommented by sfdx essentials:uncomment (https://github.com/nvuillam/sfdx-essentials)'
           updated = true
         }
         updatedFileContent += line + '\n'
       })
       // Update file if content has been updated
       if (updated) {
-        this.fs.writeFileSync(customApexClassFileName, updatedFileContent)
-        console.log('Updated ' + customApexClassFileName)//+ ' with content :\n' + updatedFileContent)
+        this.fs.writeFileSync(fileName, updatedFileContent)
+        console.log('Updated ' + fileName)//+ ' with content :\n' + updatedFileContent)
       }
 
   }
-
-
-
 
 }
 

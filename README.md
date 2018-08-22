@@ -31,6 +31,14 @@ Please contribute :)
 
 - Windows users: [sfdx plugin generator](https://github.com/forcedotcom/sfdx-plugin-generate) is bugged on windows (hardcode call of linux rm instruction) , so you may use [Git Bash](https://gitforwindows.org/) to run this code ( at least while it installs the plugin dependencies )
 
+# UPGRADE
+
+Its seems that sfdx plugins:update and sfdx update does not always work, in that case , uninstall then reinstall the plugin
+```
+    sfdx plugins:uninstall sfdx-essentials
+    sfdx plugins:install sfdx-essentials
+```
+
 # COMMANDS
 
 ## `essentials:filter-metadatas`
@@ -158,17 +166,21 @@ This commands allows to uncomment desired lines just before making a deployment
 
 Before :
 
-```    // @Deprecated SFDX_ESSENTIALS_UNCOMMENT
-    global static List<OrgDebugOption__c> setDebugOption() {
-		return null;
-    }```
+``` 
+// @Deprecated SFDX_ESSENTIALS_UNCOMMENT
+global static List<OrgDebugOption__c> setDebugOption() {
+	return null;
+}
+```
 
 After :
 
-``` @Deprecated // Uncommented by sfdx essentials:uncomment (https://github.com/nvuillam/sfdx-essentials)
-    global static List<OrgDebugOption__c> setDebugOption() {
-		return null;
-    }```
+```
+@Deprecated // Uncommented by sfdx essentials:uncomment (https://github.com/nvuillam/sfdx-essentials)
+global static List<OrgDebugOption__c> setDebugOption() {
+	return null;
+}
+```
 
 
 ```
@@ -184,4 +196,4 @@ EXAMPLE
   $ sfdx essentials:uncomment 
 ```
 
-_See code: [src/commands/essentials/fix-lightning-attributes-names.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/uncomment.ts)_
+_See code: [src/commands/essentials/uncomment.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/uncomment.ts)_
