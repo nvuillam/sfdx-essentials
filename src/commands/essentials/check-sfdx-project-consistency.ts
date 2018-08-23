@@ -1,6 +1,5 @@
 import { Command, flags } from '@oclif/command'
 import { FILE } from 'dns';
-import { describeMetadataTypes, describeObjectFilteringProperties } from '../../common/metadata_utils';
 
 export default class ExecuteFilter extends Command {
   static description = ``
@@ -26,7 +25,10 @@ export default class ExecuteFilter extends Command {
   xml2js = require('xml2js')
   util = require('util')
   path = require('path')
+  MetadataUtils = require('../../common/metadata-utils');
   allPackageXmlFilesTypes = {}
+  allSfdxFilesTypes = {}
+
   sobjectCollectedInfo = {}
   translatedLanguageList = []
   summaryResult = { metadataTypes: {}, objects: [], objectsTranslations: [] }
@@ -48,7 +50,7 @@ export default class ExecuteFilter extends Command {
     this.listSfdxProjectItems()
 
   }
-    // Read package.xml files and build concatenated list of items
+  // Read package.xml files and build concatenated list of items
   appendPackageXmlFilesContent() {
     var self = this
     // loop on packageXml files
@@ -58,7 +60,7 @@ export default class ExecuteFilter extends Command {
       var data = self.fs.readFileSync(packageXmlFile)
       // parse xml content
       parser.parseString(data, function (err2, result) {
-         console.log(`Parsed ${packageXmlFile} :\n` + self.util.inspect(result, false, null))
+        console.log(`Parsed ${packageXmlFile} :\n` + self.util.inspect(result, false, null))
         var packageXmlMetadatasTypeLs
         // get metadata types in parse result
         try { packageXmlMetadatasTypeLs = result.Package.types }
@@ -81,15 +83,58 @@ export default class ExecuteFilter extends Command {
   // List all SFDX project items
   listSfdxProjectItems() {
     var self = this
+
+    // List sub folders
     console.log('Analyzing SFDX project ...')
     const { readdirSync, statSync } = require('fs')
     const { join } = require('path')
     const listFoldersFunc = p => readdirSync(p).filter(f => statSync(join(p, f)).isDirectory())
     var sfdxProjectFolders = listFoldersFunc(this.inputFolder)
-    console.log('SFDX Project subFolders :\n'+sfdxProjectFolders)
+    console.log('SFDX Project subFolders :\n' + sfdxProjectFolders.join('\n'))
 
+    // collect elements and build allSfdxFilesTypes
+    sfdxProjectFolders.forEach(folder => {
+        var sfdxTypeDesc = self.getSfdxTypeDescription(folder)
+        if (sfdxTypeDesc == null) {
+          console.log('Skipped '+folder+' (no description found)')
+          return
+        }
+        // list items in folder
+        var itemList = []
+
+        var folderFiles = readdirSync(this.inputFolder+'/'+folder)
+        folderFiles.forEach(element => {
+          // Build item name
+          var fpath = element.replace(/\\/g, '/');
+          var fileName = fpath.substring(fpath.lastIndexOf('/')+1);
+          sfdxTypeDesc.sfdxNameSuffixList.forEach(suffix => {
+            if (suffix !== '')
+              fileName = fileName.replace(suffix,'')
+          }); 
+          // add item name if not already in the list
+          if (!(itemList.indexOf(fileName) > -1) && !fileName.endsWith('-meta') )
+            itemList.push(fileName)
+        });
+
+        // Add items in allSfdxFilesTypes
+        var nameKey = sfdxTypeDesc.metadataType
+        self.allSfdxFilesTypes[nameKey] = itemList
+
+    });
+    console.log(`SFDX Project browsing results :\n` + self.util.inspect(this.allSfdxFilesTypes, false, null))
   }
 
-  
+  // get Metadatype description
+  getSfdxTypeDescription(sfdxTypeFolder) {
+    var descAll = this.MetadataUtils.describeMetadataTypes()
+    var typeDesc = null
+    for (var key in descAll) {
+      if (descAll[key].folder === sfdxTypeFolder) {
+        descAll[key].metadataType = key
+        typeDesc = descAll[key]
+      }    
+    };
+    return typeDesc
+  }
 
 }
