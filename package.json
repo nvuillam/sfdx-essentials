@@ -1,7 +1,7 @@
 {
   "name": "sfdx-essentials",
   "description": "Tools to cover the lacks of missing required functions of SFDX",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "author": "NicolasVuillamy @nvuillam",
   "bugs": "https://github.com/nvuillam/sfdx-essentials/issues",
   "dependencies": {
@@ -9,6 +9,7 @@
     "@oclif/config": "^1.6.28",
     "@oclif/errors": "^1.2.0",
     "@salesforce/command": "0.1.5",
+    "array-compare": "^2.0.0",
     "camelcase": "^5.0.0",
     "cint": "^8.2.1",
     "fs": "0.0.1-security",

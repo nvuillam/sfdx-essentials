@@ -100,7 +100,7 @@ DESCRIPTION
 
 ```
 
-_See [conversion tables](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/filter-metadatas.ts#L280)_
+_See [conversion tables](https://github.com/nvuillam/sfdx-essentials/blob/master/src/common/metadata-utils.ts)_
 
 EXAMPLES
 
@@ -193,7 +193,26 @@ OPTIONS
 
 
 EXAMPLE
-  $ sfdx essentials:uncomment 
+  $ sfdx essentials:uncomment --folder "./Projects/DevRootSource/tmp/deployPackagingDxcDevFiltered" --uncommentKey "SFDX_ESSENTIALS_UNCOMMENT_DxcDev_"
 ```
 
 _See code: [src/commands/essentials/uncomment.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/uncomment.ts)_
+
+## `essentials:check-sfdx-project-consistency`
+
+Allows to compare the content of a SFDX and the content of one or several package.xml files ( append, if several )
+
+```
+USAGE
+  $ sfdx essentials:check-sfdx-project-consistency OPTIONS
+
+OPTIONS
+  -p, --folder=folder              List of package.xml files path
+  -i, --inputfolder=someString              SFDX Project folder . Default : '.'
+
+EXAMPLE
+  $  sfdx essentials:check-sfdx-project-consistency -p "./Config/packageXml/package_DevRoot_Managed.xml,./Config/packageXml/package_DevRoot_xDemo.xml" -i "./Projects/DevRootSource/force-app/main/default"
+```
+
+_See code: [src/commands/essentials/check-sfdx-project-consistency.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/check-sfdx-project-consistency.ts)_
+
