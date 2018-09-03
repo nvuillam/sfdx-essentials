@@ -55,16 +55,23 @@ export class MetadataUtils {
   }
 
   // Describe .object file <=> package.xml formats
-  static describeObjectFilteringProperties() {
+  static describeObjectProperties() {
 
     const objectFilteringProperties = [
-      { objectXmlPropName: 'businessProcesses', packageXmlPropName: 'BusinessProcess', nameProperty: 'fullName', translationNameProperty: 'name' },
-      { objectXmlPropName: 'compactLayouts', packageXmlPropName: 'CompactLayout', nameProperty: 'fullName', translationNameProperty: 'layout' },
-      { objectXmlPropName: 'fields', packageXmlPropName: 'CustomField', nameProperty: 'fullName', translationNameProperty: 'name' },
-      { objectXmlPropName: 'listViews', packageXmlPropName: 'ListView', nameProperty: 'fullName', translationNameProperty: 'name' },
-      { objectXmlPropName: 'layouts', packageXmlPropName: 'Layout', nameProperty: 'fullName', translationNameProperty: 'layout' },
-      { objectXmlPropName: 'recordTypes', packageXmlPropName: 'RecordType', nameProperty: 'fullName', translationNameProperty: 'name' },
-      { objectXmlPropName: 'webLinks', packageXmlPropName: 'WebLink', nameProperty: 'fullName', translationNameProperty: 'name' }
+      { objectXmlPropName: 'businessProcesses', packageXmlPropName: 'BusinessProcess', nameProperty: 'fullName', translationNameProperty: 'name',
+        sfdxNameSuffixList: ['.businessProcess-meta.xml'] },
+      { objectXmlPropName: 'compactLayouts', packageXmlPropName: 'CompactLayout', nameProperty: 'fullName', translationNameProperty: 'layout',
+        sfdxNameSuffixList: ['.compactLayout-meta.xml'] },
+      { objectXmlPropName: 'fields', packageXmlPropName: 'CustomField', nameProperty: 'fullName', translationNameProperty: 'name',
+        sfdxNameSuffixList: ['.field-meta.xml'] },
+      { objectXmlPropName: 'listViews', packageXmlPropName: 'ListView', nameProperty: 'fullName', translationNameProperty: 'name',
+        sfdxNameSuffixList: ['.listView-meta.xml'] },
+      { objectXmlPropName: 'layouts', packageXmlPropName: 'Layout', nameProperty: 'fullName', translationNameProperty: 'layout',
+        sfdxNameSuffixList: ['.layout-meta.xml'] },
+      { objectXmlPropName: 'recordTypes', packageXmlPropName: 'RecordType', nameProperty: 'fullName', translationNameProperty: 'name',
+        sfdxNameSuffixList: ['.recordType-meta.xml'] },
+      { objectXmlPropName: 'webLinks', packageXmlPropName: 'WebLink', nameProperty: 'fullName', translationNameProperty: 'name',
+        sfdxNameSuffixList: ['.webLink-meta.xml'] }
     ]
     return objectFilteringProperties
   }

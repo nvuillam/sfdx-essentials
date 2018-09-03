@@ -246,7 +246,7 @@ export default class ExecuteFilter extends Command {
 
   // Filter output XML of .object file
   filterSObjectFile(parsedObjectFile, objectName, objectContentToKeep) {
-    const objectFilteringProperties = this.MetadataUtils.describeObjectFilteringProperties()
+    const objectFilteringProperties = this.MetadataUtils.describeObjectProperties()
     var self = this
     objectFilteringProperties.forEach(function (objectFilterProp) {
       // Filter fields
@@ -280,7 +280,7 @@ export default class ExecuteFilter extends Command {
 
   // Filter output XML of .object file
   filterSObjectTranslationFile(parsedObjectFile, objectName, objectContentToKeep) {
-    const objectFilteringProperties = this.MetadataUtils.describeObjectFilteringProperties()
+    const objectFilteringProperties = this.MetadataUtils.describeObjectProperties()
     var self = this
     objectFilteringProperties.forEach(function (objectFilterProp) {
       // Filter fields,layouts,businessProcesses, listView,WebLink

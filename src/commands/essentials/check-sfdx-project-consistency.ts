@@ -25,6 +25,7 @@ export default class ExecuteFilter extends Command {
   xml2js = require('xml2js')
   util = require('util')
   path = require('path')
+  arrayCompare = require('array-compare')
   MetadataUtils = require('../../common/metadata-utils');
   allPackageXmlFilesTypes = {}
   allSfdxFilesTypes = {}
@@ -44,10 +45,16 @@ export default class ExecuteFilter extends Command {
     this.log(`Initialize consistency check of SFDX project ${this.inputFolder} ,using ${flags.packageXmlList}`)
 
     // gather elements defined in package.xml files
+    this.log(`\n\nAppending ${flags.packageXmlList} ...\n`)
     this.appendPackageXmlFilesContent()
 
     // gather elements defined in SFDX project
+    this.log(`\n\nBrowsing ${flags.packageXmlList} ...\n`)
     this.listSfdxProjectItems()
+
+    // compare append of packageXmls and sfdx content
+    this.log(`\n\nComparing ${flags.packageXmlList} ...\n`)
+    this.compareResults()
 
   }
   // Read package.xml files and build concatenated list of items
@@ -77,6 +84,7 @@ export default class ExecuteFilter extends Command {
         })
       });
     })
+    this.allPackageXmlFilesTypes = self.sortObject(this.allPackageXmlFilesTypes)
     console.log(`Package.xml files concatenation results :\n` + self.util.inspect(this.allPackageXmlFilesTypes, false, null))
   }
 
@@ -121,6 +129,59 @@ export default class ExecuteFilter extends Command {
         self.allSfdxFilesTypes[nameKey] = itemList
 
     });
+
+    // Special case of objects folder
+    var sfdxObjectFolders = listFoldersFunc(this.inputFolder+'/objects')
+    sfdxObjectFolders.forEach(objectFolder => {
+        console.log('Browsing object folder '+objectFolder+' ...')
+        // If custom, add in CustomObject
+        if (objectFolder.endsWith('__c') || objectFolder.endsWith('__mdt')) {
+          if (self.allSfdxFilesTypes['CustomObject'] == null)
+            self.allSfdxFilesTypes['CustomObject'] = [objectFolder]
+          else 
+            self.allSfdxFilesTypes['CustomObject'] = self.allSfdxFilesTypes['CustomObject'].concat([objectFolder])
+        }
+        // Manage object sub-attributes
+        var sfdxObjectSubFolders = listFoldersFunc(this.inputFolder+'/objects/'+objectFolder)
+        sfdxObjectSubFolders.forEach(sfdxObjectSubFolder => {
+            console.log('  Browsing object subfolder '+sfdxObjectSubFolder+' ...')
+            // Get SubFolder description
+            var objectPropertyDesc = self.getSfdxObjectPropertyDescription(sfdxObjectSubFolder)
+            if (objectPropertyDesc == null) {
+              console.log('Skipped '+objectFolder+'/'+sfdxObjectSubFolder+' (no description found)')
+              return
+            }     
+
+            // list items in folder
+            var subItemList = []
+
+            var subfolderFiles = readdirSync(this.inputFolder+'/objects/'+objectFolder+'/'+sfdxObjectSubFolder)
+            subfolderFiles.forEach(element => {
+              // Build item name
+              var fpath = element.replace(/\\/g, '/');
+              var fileName = fpath.substring(fpath.lastIndexOf('/')+1);
+              objectPropertyDesc.sfdxNameSuffixList.forEach(suffix => {
+                if (suffix !== '')
+                  fileName = fileName.replace(suffix,'')
+              }); 
+              // add sub item name if not already in the list
+              var fullSubItemName = objectFolder+'.'+fileName
+              if (!(subItemList.indexOf(fullSubItemName) > -1) && !fullSubItemName.endsWith('-meta') )
+                  subItemList.push(fullSubItemName)
+            }); 
+            
+            // Add items in allSfdxFilesTypes
+            var nameKey = objectPropertyDesc.packageXmlPropName
+            if (self.allSfdxFilesTypes[nameKey] == null)
+                self.allSfdxFilesTypes[nameKey] = subItemList    
+            else 
+                self.allSfdxFilesTypes[nameKey] = self.allSfdxFilesTypes[nameKey].concat(subItemList)
+
+        })
+
+
+    })
+    this.allSfdxFilesTypes = self.sortObject(this.allSfdxFilesTypes)
     console.log(`SFDX Project browsing results :\n` + self.util.inspect(this.allSfdxFilesTypes, false, null))
   }
 
@@ -135,6 +196,52 @@ export default class ExecuteFilter extends Command {
       }    
     };
     return typeDesc
+  }
+
+  // get Metadatype description
+  getSfdxObjectPropertyDescription(sfdxObjectPropertyFolder) {
+    var descAllObjectProperties = this.MetadataUtils.describeObjectProperties()
+    var objectPropDesc = null
+    descAllObjectProperties.forEach(element => {
+      if (element.objectXmlPropName === sfdxObjectPropertyFolder || element.sfdxFolderName === sfdxObjectPropertyFolder) {
+         objectPropDesc = element
+      }          
+    });
+    return objectPropDesc
+  }
+
+  // Sort object for debug ( yeah yeah I know objects are not sortable , blah blah blah ^^ )
+  sortObject(o) {
+    return Object.keys(o).sort().reduce((r, k) => (r[k] = o[k], r), {});
+  }
+
+  getListObjValues(listObj) {
+    var res = []
+    listObj.forEach(element => {
+      res.push(Object.values(element))
+    });
+    return res
+  }
+
+  // Compare results
+  compareResults() {
+    console.log('a is SFDX project content, b is packageXml content')
+    for (var mdType in this.allSfdxFilesTypes) {
+      var sfdxProjectTypeItems = this.allSfdxFilesTypes[mdType]
+      var packageXmlTypeItems = this.allPackageXmlFilesTypes[mdType]
+      var compareResult = this.arrayCompare(sfdxProjectTypeItems, packageXmlTypeItems)
+      var compareResultDisp = JSON.parse(JSON.stringify(compareResult))
+      console.log('\n' + mdType + ':')
+      if (packageXmlTypeItems.length === 1 && packageXmlTypeItems[0] === '*')
+        console.log('  - wildcard (*) used in packageXmls, comparison is not necessary')
+      else {
+        console.log('  - ' + compareResultDisp['found'].length + ' identical item(s)')
+        if (compareResultDisp['missing'].length > 0 )
+          console.log('  - '+compareResultDisp['missing'].length+ ' items in SFDX project but not in packageXmls : \n    - '+this.getListObjValues(compareResultDisp['missing']))
+        if (compareResultDisp['added'].length > 0)
+          console.log('  - '+compareResultDisp['added'].length+ ' items in packageXmls but not in SFDX project : \n    - '+this.getListObjValues(compareResultDisp['added']))
+      }
+    }
   }
 
 }
