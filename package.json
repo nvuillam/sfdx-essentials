@@ -1,7 +1,7 @@
 {
   "name": "sfdx-essentials",
   "description": "Tools to cover the lacks of missing required functions of SFDX",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "author": "NicolasVuillamy @nvuillam",
   "bugs": "https://github.com/nvuillam/sfdx-essentials/issues",
   "dependencies": {
@@ -31,7 +31,7 @@
     "chai": "4",
     "globby": "8",
     "mocha": "5",
-    "sinon": "5",
+    "sinon": "5.0.2",
     "ts-node": "5",
     "tslib": "^1.9.3",
     "typescript": "2.8"
