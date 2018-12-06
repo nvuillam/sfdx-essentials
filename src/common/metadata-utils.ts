@@ -10,7 +10,7 @@ export class MetadataUtils {
       // Metadatas to use for copy
       'ApexClass': { folder: 'classes', nameSuffixList: ['.cls', '.cls-meta.xml'], sfdxNameSuffixList: ['.cls', '-meta.xml'] },
       'ApexComponent': { folder: 'components', nameSuffixList: ['.component', '.component-meta.xml'],sfdxNameSuffixList: ['.component', '.component-meta.xml'] },
-      'ApexPage': { folder: 'pages', nameSuffixList: ['.page', '.page-meta.xml'],sfdxNameSuffixList: ['.page', '-meta.xml.dup','-meta.xml'] },
+      'ApexPage': { folder: 'pages', nameSuffixList: ['.page', '.page-meta.xml'],sfdxNameSuffixList: ['.page', '-meta.xml'] },
       'ApexTrigger': { folder: 'triggers', nameSuffixList: ['.trigger', '.trigger-meta.xml'],sfdxNameSuffixList: ['.trigger', '-meta.xml'] },
       'AuraDefinitionBundle': { folder: 'aura', nameSuffixList: [''], sfdxNameSuffixList: [''] },
       'ContentAsset': { folder: 'contentassets', nameSuffixList: ['.asset', '.asset-meta.xml'] ,sfdxNameSuffixList: ['.asset','.asset-meta.xml']},
@@ -35,7 +35,7 @@ export class MetadataUtils {
       'QuickAction': { folder: 'quickActions', nameSuffixList: ['.quickAction'],sfdxNameSuffixList: ['.quickAction-meta.xml'] },
       'RemoteSiteSetting': { folder: 'remoteSiteSettings', nameSuffixList: ['.remoteSite'],sfdxNameSuffixList: ['.remoteSite-meta.xml'] },
       'Report': { folder: 'reports', nameSuffixList: ['', '-meta.xml'],sfdxNameSuffixList: ['.reportFolder-meta.xml'] },
-      'SiteDotCom': { folder: 'siteDotComSites', nameSuffixList: ['.siteDotCom'],sfdxNameSuffixList: ['.site-meta.xml'] },
+      'SiteDotCom': { folder: 'siteDotComSites', nameSuffixList: ['.site','.site-meta.xml'],sfdxNameSuffixList: ['.site','.site-meta.xml'] },
       'StandardValueSet': { folder: 'standardValueSets', nameSuffixList: ['.standardValueSet'],sfdxNameSuffixList: ['.standardValueSet-meta.xml'] },
       'StaticResource': { folder: 'staticresources', nameSuffixList: ['.resource', '.resource-meta.xml'] ,sfdxNameSuffixList: ['.resource-meta.xml','.json','.txt','.bin','.js','.mp3','.gif']},
       //      'Translations': { folder: 'translations', nameSuffixList: ['.translation'] }, processed apart, as they need to be filtered
