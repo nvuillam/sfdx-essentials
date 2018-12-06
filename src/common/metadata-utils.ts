@@ -17,7 +17,8 @@ export class MetadataUtils {
       'CustomApplication': { folder: 'applications', nameSuffixList: ['.app'], sfdxNameSuffixList: ['.app-meta.xml'] },
       'CustomLabel': { folder: 'labels', nameSuffixList: [''] ,sfdxNameSuffixList: ['.labels-meta.xml']},
       'CustomMetadata': { folder: 'customMetadata', nameSuffixList: ['.md'],sfdxNameSuffixList: ['.md-meta.xml'] },
-      //      'CustomObjectTranslation': { folder: 'objectTranslations', nameSuffixList: ['.objectTranslation'] }, we use Translations to define the list of objectTranslations to filter & copy
+      'CustomSite': { folder: 'sites', nameSuffixList: ['.site'],sfdxNameSuffixList: ['.site-meta.xml'] },
+//      'CustomObjectTranslation': { folder: 'objectTranslations', nameSuffixList: ['.objectTranslation'] }, we use Translations to define the list of objectTranslations to filter & copy
       'CustomTab': { folder: 'tabs', nameSuffixList: ['.tab'],sfdxNameSuffixList: ['.tab-meta.xml'] },
       'Document': { folder: 'documents', nameSuffixList: ['', '-meta.xml'],sfdxNameSuffixList: ['.documentFolder-meta.xml'] },
       'EmailTemplate': { folder: 'email', nameSuffixList: ['.email', '.email-meta.xml'],sfdxNameSuffixList: [] },
@@ -28,11 +29,13 @@ export class MetadataUtils {
       'HomePageLayout': { folder: 'homePageLayouts', nameSuffixList: ['.homePageLayout'],sfdxNameSuffixList: ['.homePageLayout-meta.xml'] },
       'Layout': { folder: 'layouts', nameSuffixList: ['.layout'],sfdxNameSuffixList: ['.layout-meta.xml'] },
       'NamedCredential': { folder: 'namedCredentials', nameSuffixList: ['.namedCredential'],sfdxNameSuffixList: ['.namedCredential-meta.xml'] },
+      'Network': { folder: 'networks', nameSuffixList: ['.network'],sfdxNameSuffixList: ['.network-meta.xml'] },
       'PermissionSet': { folder: 'permissionsets', nameSuffixList: ['.permissionset'],sfdxNameSuffixList: ['.permissionset-meta.xml'] },
       'Profile': { folder: 'profiles', nameSuffixList: ['.profile'],sfdxNameSuffixList: ['.profile-meta.xml'] },
       'QuickAction': { folder: 'quickActions', nameSuffixList: ['.quickAction'],sfdxNameSuffixList: ['.quickAction-meta.xml'] },
       'RemoteSiteSetting': { folder: 'remoteSiteSettings', nameSuffixList: ['.remoteSite'],sfdxNameSuffixList: ['.remoteSite-meta.xml'] },
       'Report': { folder: 'reports', nameSuffixList: ['', '-meta.xml'],sfdxNameSuffixList: ['.reportFolder-meta.xml'] },
+      'SiteDotCom': { folder: 'siteDotComSites', nameSuffixList: ['.siteDotCom'],sfdxNameSuffixList: ['.site-meta.xml'] },
       'StandardValueSet': { folder: 'standardValueSets', nameSuffixList: ['.standardValueSet'],sfdxNameSuffixList: ['.standardValueSet-meta.xml'] },
       'StaticResource': { folder: 'staticresources', nameSuffixList: ['.resource', '.resource-meta.xml'] ,sfdxNameSuffixList: ['.resource-meta.xml','.json','.txt','.bin','.js','.mp3','.gif']},
       //      'Translations': { folder: 'translations', nameSuffixList: ['.translation'] }, processed apart, as they need to be filtered
