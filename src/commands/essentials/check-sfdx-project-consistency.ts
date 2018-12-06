@@ -227,11 +227,13 @@ export default class ExecuteFilter extends Command {
   compareResults() {
     console.log('a is SFDX project content, b is packageXml content')
     for (var mdType in this.allSfdxFilesTypes) {
-      var sfdxProjectTypeItems = this.allSfdxFilesTypes[mdType]
-      var packageXmlTypeItems = this.allPackageXmlFilesTypes[mdType]
+      console.log('\n' + mdType + ':')
+      var sfdxProjectTypeItems = this.allSfdxFilesTypes[mdType] || []
+      var packageXmlTypeItems = this.allPackageXmlFilesTypes[mdType] || []
+          
       var compareResult = this.arrayCompare(sfdxProjectTypeItems, packageXmlTypeItems)
       var compareResultDisp = JSON.parse(JSON.stringify(compareResult))
-      console.log('\n' + mdType + ':')
+
       if (packageXmlTypeItems.length === 1 && packageXmlTypeItems[0] === '*')
         console.log('  - wildcard (*) used in packageXmls, comparison is not necessary')
       else {
