@@ -215,3 +215,4 @@ EXAMPLE
 ```
 
 _See code: [src/commands/essentials/check-sfdx-project-consistency.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/check-sfdx-project-consistency.ts)_
+
