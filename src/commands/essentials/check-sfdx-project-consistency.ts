@@ -9,7 +9,9 @@ export default class ExecuteFilter extends Command {
   static flags = {
     // flag with a value (-n, --name=VALUE)
     packageXmlList: flags.string({ char: 'p', description: 'List of package.xml files path' }),
-    inputfolder: flags.string({ char: 'i', description: 'SFDX Project folder (default: "." )' })
+    inputfolder: flags.string({ char: 'i', description: 'SFDX Project folder (default: "." )' }),
+    chatty: flags.boolean({ char: 'c', description: 'Chatty logs'}),
+    jsonLogging: flags.boolean({ char: 'j', description: 'JSON logs'})
   }
 
   static args = []
@@ -30,6 +32,7 @@ export default class ExecuteFilter extends Command {
   allPackageXmlFilesTypes = {}
   allSfdxFilesTypes = {}
   
+  jsonLogs = false
   chattyLogs = false
   sobjectCollectedInfo = {}
   translatedLanguageList = []
@@ -44,6 +47,10 @@ export default class ExecuteFilter extends Command {
     // Get input arguments or default values
     this.packageXmlFileList = flags.packageXmlList.split(',')
     this.inputFolder = flags.inputfolder || '.'
+    this.jsonLogs = flags.jsonLogging || false
+    this.chattyLogs = flags.chatty || false
+    if (this.jsonLogs === false && this.chattyLogs === false)
+      this.chattyLogs = true 
     this.log(`Initialize consistency check of SFDX project ${this.inputFolder} ,using ${flags.packageXmlList}`)
 
     // gather elements defined in package.xml files
@@ -58,7 +65,8 @@ export default class ExecuteFilter extends Command {
     this.log(`\n\nComparing ${flags.packageXmlList} ...\n`)
     this.compareResults()
 
-    console.log(JSON.stringify(this.cmdLog))
+    if (this.jsonLogs)
+      console.log(JSON.stringify(this.cmdLog))
 
   }
   // Read package.xml files and build concatenated list of items
