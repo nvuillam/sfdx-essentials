@@ -37,6 +37,7 @@ export class MetadataUtils {
       'Report': { folder: 'reports', nameSuffixList: ['', '-meta.xml'],sfdxNameSuffixList: ['.reportFolder-meta.xml'] },
       'SiteDotCom': { folder: 'siteDotComSites', nameSuffixList: ['.site','.site-meta.xml'],sfdxNameSuffixList: ['.site','.site-meta.xml'] },
       'StandardValueSet': { folder: 'standardValueSets', nameSuffixList: ['.standardValueSet'],sfdxNameSuffixList: ['.standardValueSet-meta.xml'] },
+      'StandardValueSetTranslation': { folder: 'standardValueSetTranslations', nameSuffixList: ['.standardValueSetTranslation'],sfdxNameSuffixList: ['.standardValueSetTranslation-meta.xml'] },
       'StaticResource': { folder: 'staticresources', nameSuffixList: ['.resource', '.resource-meta.xml'] ,sfdxNameSuffixList: ['.resource-meta.xml','.json','.txt','.bin','.js','.mp3','.gif']},
       //      'Translations': { folder: 'translations', nameSuffixList: ['.translation'] }, processed apart, as they need to be filtered
       'Workflow': { folder: 'workflows', nameSuffixList: ['.workflow'],sfdxNameSuffixList: ['.workflow-meta.xml'] },
