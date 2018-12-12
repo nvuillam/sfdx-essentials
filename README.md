@@ -13,19 +13,15 @@ Sometimes ... Salesforce R&D team shows some understanding, but sometimes ... no
 
 So after the third plugin I needed to create during a few weeks (not for fun, but to allow our managed package to survive!) , I decided to join them on a single plugin: **SFDX Essentials** , and to publish it as open source , by solidarity with fellow victims of savage platform upgrades :)
 
-For the moments, this plugin capabilities are :
+Command list
 
-- [essentials:filter-metadatas](#essentialsfilter-metadatas): **Filter metadatas generated from a SFDX Project** in order to be able to deploy only part of them on an org 
-
-- [essentials:filter-xml-content](#essentialsfilter-xml-content): **Filter content of metadatas (XML)** in order to be able to deploy only part of them on an org 
-
-- [essentials:change-dependency-version](#essentialschange-dependency-version): **Replace other managed packages dependency version number** ( very useful when you build a managed package over another managed package, like Financial Services Cloud )
-
-- [essentials:fix-lightning-attributes-names](#essentialsfix-lightning-attributes-names): **Replace reserved lightning attribute names in lightning components and apex classes** ( if you named a lightning attribute like a custom apex class, since Summer 18 you simply can not generate a managed package again)
-
-- [essentials:uncomment](#essentialsuncomment): **Uncomment lines in sfdx/md files** (useful to manage @Deprecated annotations with managed packages)
-
-- [essentials:check-sfdx-project-consistency](essentialscheck-sfdx-project-consistency): **Check consistency between a SFDX project files and package.xml files**
+| Command | Description |
+| [essentials:filter-metadatas](#essentialsfilter-metadatas) | **Filter metadatas generated from a SFDX Project** in order to be able to deploy only part of them on an org |
+| [essentials:filter-xml-content](#essentialsfilter-xml-content) | **Filter content of metadatas (XML)** in order to be able to deploy only part of them on an org |
+| [essentials:change-dependency-version](#essentialschange-dependency-version) | **Replace other managed packages dependency version number** ( very useful when you build a managed package over another managed package, like Financial Services Cloud ) |
+| [essentials:fix-lightning-attributes-names](#essentialsfix-lightning-attributes-names) | **Replace reserved lightning attribute names in lightning components and apex classes** ( if you named a lightning attribute like a custom apex class, since Summer 18 you simply can not generate a managed package again) |
+| [essentials:uncomment](#essentialsuncomment) | **Uncomment lines in sfdx/md files** (useful to manage @Deprecated annotations with managed packages) |
+| [essentials:check-sfdx-project-consistency](#essentialscheck-sfdx-project-consistency) | **Check consistency between a SFDX project files and package.xml files** |
 
 Please contribute :)
 
