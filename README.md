@@ -166,7 +166,7 @@ This script requires a filter-config.json file following this example
 
 ```
 USAGE
-  $ sfdx essentials:fix-lightning-attributes-names OPTIONS
+  $ sfdx essentials:filter-xml-content OPTIONS
 
 OPTIONS
   -i, --inputfolder=inputfolder    Input folder (default: "." )
