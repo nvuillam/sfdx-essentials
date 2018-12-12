@@ -16,6 +16,7 @@ So after the third plugin I needed to create during a few weeks (not for fun, bu
 Command list
 
 | Command | Description |
+| ------------- | ------------- |
 | [essentials:filter-metadatas](#essentialsfilter-metadatas) | **Filter metadatas generated from a SFDX Project** in order to be able to deploy only part of them on an org |
 | [essentials:filter-xml-content](#essentialsfilter-xml-content) | **Filter content of metadatas (XML)** in order to be able to deploy only part of them on an org |
 | [essentials:change-dependency-version](#essentialschange-dependency-version) | **Replace other managed packages dependency version number** ( very useful when you build a managed package over another managed package, like Financial Services Cloud ) |
