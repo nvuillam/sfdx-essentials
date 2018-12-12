@@ -13,13 +13,16 @@ Sometimes ... Salesforce R&D team shows some understanding, but sometimes ... no
 
 So after the third plugin I needed to create during a few weeks (not for fun, but to allow our managed package to survive!) , I decided to join them on a single plugin: **SFDX Essentials** , and to publish it as open source , by solidarity with fellow victims of savage platform upgrades :)
 
-For the moments, this plugin capabilities are :
+Command list
 
-- **Filtering metadatas generated from a SFDX Project** in order to be able to deploy only part of them on an org 
-
-- **Replace other managed packages dependency version number** ( very useful when you build a managed package over another managed package, like Financial Services Cloud )
-
-- **Replace reserved lightning attribute names in lightning components and apex classes** ( if you named a lightning attribute like a custom apex class, since Summer 18 you simply can not generate a managed package again)
+| Command | Description |
+| ------------- | ------------- |
+| [essentials:filter-metadatas](#essentialsfilter-metadatas) | **Filter metadatas generated from a SFDX Project** in order to be able to deploy only part of them on an org |
+| [essentials:filter-xml-content](#essentialsfilter-xml-content) | **Filter content of metadatas (XML)** in order to be able to deploy only part of them on an org |
+| [essentials:change-dependency-version](#essentialschange-dependency-version) | **Replace other managed packages dependency version number** ( very useful when you build a managed package over another managed package, like Financial Services Cloud ) |
+| [essentials:fix-lightning-attributes-names](#essentialsfix-lightning-attributes-names) | **Replace reserved lightning attribute names in lightning components and apex classes** ( if you named a lightning attribute like a custom apex class, since Summer 18 you simply can not generate a managed package again) |
+| [essentials:uncomment](#essentialsuncomment) | **Uncomment lines in sfdx/md files** (useful to manage @Deprecated annotations with managed packages) |
+| [essentials:check-sfdx-project-consistency](#essentialscheck-sfdx-project-consistency) | **Check consistency between a SFDX project files and package.xml files** |
 
 Please contribute :)
 
@@ -75,6 +78,7 @@ DESCRIPTION
      - CustomMetadata
      - CustomObject
      - CustomObjectTranslation
+     - CustomSite
      - CustomTab
      - Document
      - EmailTemplate
@@ -86,13 +90,16 @@ DESCRIPTION
      - ListView
      - Layout
      - NamedCredential
+     - Network
      - PermissionSet
      - Profile
      - QuickAction
      - RecordType
      - RemoteSiteSetting
      - Report
+     - SiteDotCom
      - StandardValueSet
+     - StandardValueSetTranslation
      - StaticResource
      - Translations
      - WebLink
@@ -116,6 +123,65 @@ EXAMPLES
 ```
 
 _See code: [src/commands/essentials/filter-metadatas.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/filter-metadatas.ts)_
+
+## `essentials:filter-xml-content`
+
+When you perform deployments from one org to another, the features activated in the target org may not fit the content of the sfdx/metadata files extracted from the source org.
+
+You may need to filter some elements in the XML files, for example in the Profiles
+
+This script requires a filter-config.json file following this example
+```json
+{
+	"filters" : [
+		{
+			"name" : "ProfileFiltering",
+			"description" :"Remove unwanted stuff in profiles",
+			"folders": 		[
+				"profiles"
+			],
+			"file_extensions":   [
+				"profile"
+			],
+			"exclude_list" : [
+				{ 
+					"type_tag":"userPermissions",
+					"identifier_tag" : "name",
+					"values" : [
+							"AllowUniversalSearch",
+							"EnableNotifications"
+					]
+				},
+				{
+					"type_tag":"tabVisibilities",
+					"identifier_tag" : "tab",
+					"values" : [
+							"TabExportScripts",
+							"TabInstallScripts"
+					]
+				}
+			]
+		}
+	]
+}
+```
+
+
+```
+USAGE
+  $ sfdx essentials:filter-xml-content OPTIONS
+
+OPTIONS
+  -i, --inputfolder=inputfolder    Input folder (default: "." )
+  -o, --outputfolder=outputfolder  Output folder (default: Input Folder + _xml_content_filtered)
+  -p, --configFile=configFile      JSON file containing configuration. Default: filter-config.json
+
+EXAMPLE
+  $ sfdx essentials:filter-xml-content -i "retrieveUnpackaged" 
+
+```
+
+_See code: [src/commands/essentials/filter-xml-content.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/filter-xml-content.ts)_
 
 ## `essentials:change-dependency-version`
 
