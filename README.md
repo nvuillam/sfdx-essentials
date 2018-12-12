@@ -75,6 +75,7 @@ DESCRIPTION
      - CustomMetadata
      - CustomObject
      - CustomObjectTranslation
+     - CustomSite
      - CustomTab
      - Document
      - EmailTemplate
@@ -86,13 +87,16 @@ DESCRIPTION
      - ListView
      - Layout
      - NamedCredential
+     - Network
      - PermissionSet
      - Profile
      - QuickAction
      - RecordType
      - RemoteSiteSetting
      - Report
+     - SiteDotCom
      - StandardValueSet
+     - StandardValueSetTranslation
      - StaticResource
      - Translations
      - WebLink
@@ -116,6 +120,65 @@ EXAMPLES
 ```
 
 _See code: [src/commands/essentials/filter-metadatas.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/filter-metadatas.ts)_
+
+## `essentials:filter-xml-content`
+
+When you perform deployments from one org to another, the features activated in the target org may not fit the content of the sfdx/metadata files extracted from the source org.
+
+You may need to filter some elements in the XML files, for example in the Profiles
+
+This script requires a filter-config.json file following this example
+```json
+{
+	"filters" : [
+		{
+			"name" : "ProfileFiltering",
+			"description" :"Remove unwanted stuff in profiles",
+			"folders": 		[
+				"profiles"
+			],
+			"file_extensions":   [
+				"profile"
+			],
+			"exclude_list" : [
+				{ 
+					"type_tag":"userPermissions",
+					"identifier_tag" : "name",
+					"values" : [
+							"AllowUniversalSearch",
+							"EnableNotifications"
+					]
+				},
+				{
+					"type_tag":"tabVisibilities",
+					"identifier_tag" : "tab",
+					"values" : [
+							"TabExportScripts",
+							"TabInstallScripts"
+					]
+				}
+			]
+		}
+	]
+}
+```
+
+
+```
+USAGE
+  $ sfdx essentials:fix-lightning-attributes-names OPTIONS
+
+OPTIONS
+  -i, --inputfolder=inputfolder    Input folder (default: "." )
+  -o, --outputfolder=outputfolder  Output folder (default: Input Folder + _xml_content_filtered)
+  -p, --configFile=configFile      JSON file containing configuration. Default: filter-config.json
+
+EXAMPLE
+  $ sfdx essentials:filter-xml-content -i "retrieveUnpackaged" 
+
+```
+
+_See code: [src/commands/essentials/filter-xml-content.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/filter-xml-content.ts)_
 
 ## `essentials:change-dependency-version`
 

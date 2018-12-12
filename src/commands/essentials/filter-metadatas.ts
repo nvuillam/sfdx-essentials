@@ -43,6 +43,7 @@ export default class ExecuteFilter extends Command {
     this.outputFolder = flags.outputfolder || 'filteredMetadatas'
     this.log(`Initialize filtering of ${this.inputFolder} ,using ${this.packageXmlFile} , into ${this.outputFolder}`)
 
+    
     // Read package.xml file
     var parser = new this.xml2js.Parser();
     var self = this
@@ -323,7 +324,7 @@ export default class ExecuteFilter extends Command {
 
   // Display results as JSON
   displayResults() {
-    console.log(this.util.inspect(this.summaryResult, false, null))
+    console.log(JSON.stringify(this.summaryResult))
   }
 
 }
