@@ -31,6 +31,7 @@ export class MetadataUtils {
       'NamedCredential': { folder: 'namedCredentials', nameSuffixList: ['.namedCredential'],sfdxNameSuffixList: ['.namedCredential-meta.xml'] },
       'Network': { folder: 'networks', nameSuffixList: ['.network'],sfdxNameSuffixList: ['.network-meta.xml'] },
       'PermissionSet': { folder: 'permissionsets', nameSuffixList: ['.permissionset'],sfdxNameSuffixList: ['.permissionset-meta.xml'] },
+      'PlatformCachePartition' : { folder: 'cachePartitions', nameSuffixList: ['.cachePartition'],sfdxNameSuffixList: ['.cachePartition-meta.xml'] },
       'Profile': { folder: 'profiles', nameSuffixList: ['.profile'],sfdxNameSuffixList: ['.profile-meta.xml'] },
       'QuickAction': { folder: 'quickActions', nameSuffixList: ['.quickAction'],sfdxNameSuffixList: ['.quickAction-meta.xml'] },
       'RemoteSiteSetting': { folder: 'remoteSiteSettings', nameSuffixList: ['.remoteSite'],sfdxNameSuffixList: ['.remoteSite-meta.xml'] },
