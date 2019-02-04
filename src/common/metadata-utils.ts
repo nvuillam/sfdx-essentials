@@ -37,6 +37,7 @@ export class MetadataUtils {
       'RemoteSiteSetting': { folder: 'remoteSiteSettings', nameSuffixList: ['.remoteSite'],sfdxNameSuffixList: ['.remoteSite-meta.xml'] },
       'Report': { folder: 'reports', nameSuffixList: ['', '-meta.xml'],sfdxNameSuffixList: ['.reportFolder-meta.xml'] },
       'Role': { folder: 'roles', nameSuffixList: ['.role'],sfdxNameSuffixList: ['.role-meta.xml'] },
+      'Settings': { folder: 'settings', nameSuffixList: ['.settings'],sfdxNameSuffixList: ['.settings-meta.xml'] },
       'SiteDotCom': { folder: 'siteDotComSites', nameSuffixList: ['.site','.site-meta.xml'],sfdxNameSuffixList: ['.site','.site-meta.xml'] },
       'StandardValueSet': { folder: 'standardValueSets', nameSuffixList: ['.standardValueSet'],sfdxNameSuffixList: ['.standardValueSet-meta.xml'] },
       'StandardValueSetTranslation': { folder: 'standardValueSetTranslations', nameSuffixList: ['.standardValueSetTranslation'],sfdxNameSuffixList: ['.standardValueSetTranslation-meta.xml'] },
