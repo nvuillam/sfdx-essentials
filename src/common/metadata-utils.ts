@@ -13,6 +13,7 @@ export class MetadataUtils {
       'ApexPage': { folder: 'pages', nameSuffixList: ['.page', '.page-meta.xml'],sfdxNameSuffixList: ['.page', '-meta.xml'] },
       'ApexTrigger': { folder: 'triggers', nameSuffixList: ['.trigger', '.trigger-meta.xml'],sfdxNameSuffixList: ['.trigger', '-meta.xml'] },
       'AuraDefinitionBundle': { folder: 'aura', nameSuffixList: [''], sfdxNameSuffixList: [''] },
+      'LightningComponentBundle': { folder: 'lwc', nameSuffixList: [''], sfdxNameSuffixList: [''] },
       'ContentAsset': { folder: 'contentassets', nameSuffixList: ['.asset', '.asset-meta.xml'] ,sfdxNameSuffixList: ['.asset','.asset-meta.xml']},
       'CustomApplication': { folder: 'applications', nameSuffixList: ['.app'], sfdxNameSuffixList: ['.app-meta.xml'] },
       'CustomLabel': { folder: 'labels', nameSuffixList: [''] ,sfdxNameSuffixList: ['.labels-meta.xml']},
