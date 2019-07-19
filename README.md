@@ -84,10 +84,12 @@ DESCRIPTION
      - EmailTemplate
      - EscalationRules
      - FlexiPage
+     - FieldSet
      - GlobalValueSet
      - GlobalValueSetTranslation
      - HomePageLayout
      - ListView
+     - LightningComponentBundle
      - Layout
      - NamedCredential
      - Network
@@ -102,6 +104,7 @@ DESCRIPTION
      - StandardValueSetTranslation
      - StaticResource
      - Translations
+     - ValidationRule
      - WebLink
      - Workflow
 
