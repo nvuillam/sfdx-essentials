@@ -55,7 +55,7 @@ export class MetadataUtils {
       'RecordType': { sobjectRelated: true },
       'WebLink': { sobjectRelated: true },
       'ValidationRule': { sobjectRelated: true },
-      'Fieldset': { sobjectRelated: true },
+      'FieldSet': { sobjectRelated: true },
 
       // Special case: Translations, used for object copy and for filtering 
       'Translations': { translationRelated: true, folder: 'translations', nameSuffixList: ['.translation'],sfdxNameSuffixList: ['.translation-meta.xml'] },
@@ -84,7 +84,7 @@ export class MetadataUtils {
         sfdxNameSuffixList: ['.webLink-meta.xml'] },
       { objectXmlPropName: 'validationRules', packageXmlPropName: 'ValidationRule', nameProperty: 'fullName', translationNameProperty: 'name',
         sfdxNameSuffixList: ['.validationRule-meta.xml'] },
-      { objectXmlPropName: 'fieldSets', packageXmlPropName: 'Fieldset', nameProperty: 'fullName', translationNameProperty: 'name',
+      { objectXmlPropName: 'fieldSets', packageXmlPropName: 'FieldSet', nameProperty: 'fullName', translationNameProperty: 'name',
         sfdxNameSuffixList: ['.fieldSet-meta.xml'] }
     ]
     return objectFilteringProperties
