@@ -69,6 +69,7 @@ DESCRIPTION
      - ApexComponent
      - ApexPage
      - ApexTrigger
+     - ApprovalProcess
      - AuraDefinitionBundle
      - BusinessProcess
      - ContentAsset

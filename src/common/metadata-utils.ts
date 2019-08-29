@@ -3,7 +3,7 @@ export class MetadataUtils {
   // Describe packageXml <=> metadata folder correspondance
   static describeMetadataTypes() {
 
-    // folder is the corresponding folder in metadatas folder 
+    // folder is the corresponding folder in metadatas folder
     // nameSuffixList are the files and/or folder names , built from the name of the package.xml item ( in <members> )
 
     const metadataTypesDescription = {
@@ -12,6 +12,7 @@ export class MetadataUtils {
       'ApexComponent': { folder: 'components', nameSuffixList: ['.component', '.component-meta.xml'],sfdxNameSuffixList: ['.component', '.component-meta.xml'] },
       'ApexPage': { folder: 'pages', nameSuffixList: ['.page', '.page-meta.xml'],sfdxNameSuffixList: ['.page', '-meta.xml'] },
       'ApexTrigger': { folder: 'triggers', nameSuffixList: ['.trigger', '.trigger-meta.xml'],sfdxNameSuffixList: ['.trigger', '-meta.xml'] },
+      'ApprovalProcess': { folder: 'approvalProcesses', nameSuffixList: ['.approvalProcess'],sfdxNameSuffixList: ['.approvalProcess-meta.xml'] },
       'AuraDefinitionBundle': { folder: 'aura', nameSuffixList: [''], sfdxNameSuffixList: [''] },
       'LightningComponentBundle': { folder: 'lwc', nameSuffixList: [''], sfdxNameSuffixList: [''] },
       'ContentAsset': { folder: 'contentassets', nameSuffixList: ['.asset', '.asset-meta.xml'] ,sfdxNameSuffixList: ['.asset','.asset-meta.xml']},
@@ -57,7 +58,7 @@ export class MetadataUtils {
       'ValidationRule': { sobjectRelated: true },
       'FieldSet': { sobjectRelated: true },
 
-      // Special case: Translations, used for object copy and for filtering 
+      // Special case: Translations, used for object copy and for filtering
       'Translations': { translationRelated: true, folder: 'translations', nameSuffixList: ['.translation'],sfdxNameSuffixList: ['.translation-meta.xml'] },
 
     }
