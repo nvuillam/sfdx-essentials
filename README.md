@@ -96,6 +96,7 @@ DESCRIPTION
      - Network
      - PermissionSet
      - Profile
+     - Queue
      - QuickAction
      - RecordType
      - RemoteSiteSetting

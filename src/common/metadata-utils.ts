@@ -35,6 +35,7 @@ export class MetadataUtils {
       'PermissionSet': { folder: 'permissionsets', nameSuffixList: ['.permissionset'],sfdxNameSuffixList: ['.permissionset-meta.xml'] },
       'PlatformCachePartition' : { folder: 'cachePartitions', nameSuffixList: ['.cachePartition'],sfdxNameSuffixList: ['.cachePartition-meta.xml'] },
       'Profile': { folder: 'profiles', nameSuffixList: ['.profile'],sfdxNameSuffixList: ['.profile-meta.xml'] },
+      'Queue': { folder: 'queues', nameSuffixList: ['.queue'],sfdxNameSuffixList: ['.queue-meta.xml'] },
       'QuickAction': { folder: 'quickActions', nameSuffixList: ['.quickAction'],sfdxNameSuffixList: ['.quickAction-meta.xml'] },
       'RemoteSiteSetting': { folder: 'remoteSiteSettings', nameSuffixList: ['.remoteSite'],sfdxNameSuffixList: ['.remoteSite-meta.xml'] },
       'Report': { folder: 'reports', nameSuffixList: ['', '-meta.xml'],sfdxNameSuffixList: ['.reportFolder-meta.xml'] },
