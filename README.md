@@ -85,6 +85,7 @@ DESCRIPTION
      - EmailTemplate
      - EscalationRules
      - FlexiPage
+     - Flow
      - FieldSet
      - GlobalValueSet
      - GlobalValueSetTranslation
