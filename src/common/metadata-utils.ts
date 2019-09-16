@@ -26,6 +26,7 @@ export class MetadataUtils {
       'EmailTemplate': { folder: 'email', nameSuffixList: ['.email', '.email-meta.xml'],sfdxNameSuffixList: [] },
       'EscalationRules': { folder: 'escalationRules', nameSuffixList: ['.escalationRules'],sfdxNameSuffixList: ['.escalationRules-meta.xml'] },
       'FlexiPage': { folder: 'flexipages', nameSuffixList: ['.flexipage'],sfdxNameSuffixList: ['.flexipage-meta.xml'] },
+      'Flow': { folder: 'flows', nameSuffixList: ['.flow']},
       'GlobalValueSet': { folder: 'globalValueSets', nameSuffixList: ['.globalValueSet'],sfdxNameSuffixList: ['.globalValueSet-meta.xml'] },
       'GlobalValueSetTranslation': { folder: 'globalValueSetTranslations', nameSuffixList: ['.globalValueSetTranslation'],sfdxNameSuffixList: ['.globalValueSetTranslation-meta.xml'] },
       'HomePageLayout': { folder: 'homePageLayouts', nameSuffixList: ['.homePageLayout'],sfdxNameSuffixList: ['.homePageLayout-meta.xml'] },
