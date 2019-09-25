@@ -17,7 +17,7 @@ export class MetadataUtils {
       'LightningComponentBundle': { folder: 'lwc', nameSuffixList: [''], sfdxNameSuffixList: [''] },
       'ContentAsset': { folder: 'contentassets', nameSuffixList: ['.asset', '.asset-meta.xml'] ,sfdxNameSuffixList: ['.asset','.asset-meta.xml']},
       'CustomApplication': { folder: 'applications', nameSuffixList: ['.app'], sfdxNameSuffixList: ['.app-meta.xml'] },
-      'CustomLabel': { folder: 'labels', nameSuffixList: [''] ,sfdxNameSuffixList: ['.labels-meta.xml']},
+      'CustomLabel': { folder: 'labels', nameSuffixList: ['.labels'] ,sfdxNameSuffixList: ['.labels-meta.xml']},
       'CustomMetadata': { folder: 'customMetadata', nameSuffixList: ['.md'],sfdxNameSuffixList: ['.md-meta.xml'] },
       'CustomSite': { folder: 'sites', nameSuffixList: ['.site'],sfdxNameSuffixList: ['.site-meta.xml'] },
 //      'CustomObjectTranslation': { folder: 'objectTranslations', nameSuffixList: ['.objectTranslation'] }, we use Translations to define the list of objectTranslations to filter & copy

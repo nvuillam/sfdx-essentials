@@ -43,7 +43,7 @@ export default class ExecuteFilter extends Command {
     this.outputFolder = flags.outputfolder || 'filteredMetadatas'
     this.log(`Initialize filtering of ${this.inputFolder} ,using ${this.packageXmlFile} , into ${this.outputFolder}`)
 
-    
+
     // Read package.xml file
     var parser = new this.xml2js.Parser();
     var self = this
@@ -101,6 +101,10 @@ export default class ExecuteFilter extends Command {
       if (metadataDesc.translationRelated === true)
         self.collectTranslationDescription(metadataType, members)
 
+      //Collect custom labels
+      if (metadataType == 'CustomLabel') {
+        self.collectAndFilterCustomLabels(metadataDesc, metadataType, members)
+      }
     });
   }
 
@@ -173,6 +177,47 @@ export default class ExecuteFilter extends Command {
     console.log('- collected language list:' + self.translatedLanguageList.toString())
   }
 
+  //special case for custom labels
+  collectAndFilterCustomLabels(metadataDesc, metadataType, members) {
+    console.log(`- processing custom labels:`);
+    var self = this;
+    var typeInputFolder = self.inputFolder + '/' + metadataDesc.folder;
+    if (self.fs.existsSync(typeInputFolder)) {
+      var typeOutputFolder = self.outputFolder + '/' + metadataDesc.folder;
+      var allLabels = typeInputFolder + '/CustomLabels.labels';
+      var copyTargetFile = typeOutputFolder + '/CustomLabels.labels';
+      self.fse.copySync(allLabels, copyTargetFile);
+      var parser = new self.xml2js.Parser();
+      var data = self.fs.readFileSync(copyTargetFile);
+      parser.parseString(data, function (err2, parsedObjectFile) {
+
+        if (members != null && members[0] === '*') {
+          console.log('-- including all labels ');
+        } else {
+          var pos = 0;
+          parsedObjectFile['CustomLabels']['labels'].forEach(function (itemDscrptn) {
+            var itemName = itemDscrptn['fullName'];
+
+            if (!self.arrayIncludes(members, itemName)) {
+              console.log(`---- removed ${itemName} `);
+              delete parsedObjectFile['CustomLabels']['labels'][pos];
+            }
+            else {
+              console.log(`-- kept ${itemName} `);
+            }
+            pos++
+          });
+        }
+
+        // Write output .labels file
+        var builder = new self.xml2js.Builder();
+        var updatedObjectXml = builder.buildObject(parsedObjectFile);
+        var outputObjectFileName = typeOutputFolder + '/CustomLabels.labels';
+        self.fs.writeFileSync(outputObjectFileName, updatedObjectXml);
+      });
+    }
+  }
+
   // get Metadatype description
   getMetadataTypeDescription(md_type) {
     var desc = this.MetadataUtils.describeMetadataTypes()[md_type]
@@ -198,7 +243,7 @@ export default class ExecuteFilter extends Command {
       var parser = new self.xml2js.Parser();
       var data = self.fs.readFileSync(inputObjectFileName)
       parser.parseString(data, function (err2, parsedObjectFile) {
-        // Filter .object file to keep only items referenced in package.xml ( and collected during filterMetadatasByType) 
+        // Filter .object file to keep only items referenced in package.xml ( and collected during filterMetadatasByType)
         if (objectContentToKeep == null)
           console.log('-- no filtering for ' + objectName)
         else
@@ -224,7 +269,7 @@ export default class ExecuteFilter extends Command {
           var parserTr = new self.xml2js.Parser();
           var dataTr = self.fs.readFileSync(inputObjectTranslationFileName)
           parserTr.parseString(dataTr, function (err2, parsedObjectFileTr) {
-            // Filter .objectTranslation file to keep only items referenced in package.xml ( and collected during filterMetadatasByType) 
+            // Filter .objectTranslation file to keep only items referenced in package.xml ( and collected during filterMetadatasByType)
             if (objectContentToKeep == null)
               console.log('-- no filtering for ' + objectName)
             else
