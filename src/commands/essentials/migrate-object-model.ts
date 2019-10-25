@@ -45,41 +45,28 @@ export default class ExecuteFilter extends Command {
     // Add list of custom class names in reserved variables
     var fetchExpressionList = this.inputFolders.split(',')
     console.log('Fetching classes with expression : ' + fetchExpressionList)
-
-    await Promise.all(fetchExpressionList.map(async (fetchExpression: any) => {
-      var customFileNameList = this.glob.sync(fetchExpression)
-      await Promise.all(customFileNameList.map(async (customFileName: any) => {
+    const self = this
+    fetchExpressionList.forEach(function (fetchExpression) {
+      var customFileNameList = self.glob.sync(fetchExpression)
+      const self1 = self
+      customFileNameList.forEach(function (customFileName) {
         if (fetchExpression.includes('objects') && fetchExpression.includes('fields')) {
-          var self = this
-          new Promise(function (resolve, reject) {
-
-            //  dataModel file to read
-            let jsonDataModelToMigrate = self.fs.readFileSync(self.dataModelFolder + '/' + self.dataModelFiles)
-            let jsonConfig = JSON.parse(jsonDataModelToMigrate)
-            let objectsToMigrate = jsonConfig.objects
-            // create a new lookup fields which match with the new object
-            self.processFileXmlFields(customFileName, objectsToMigrate).then(function () {
-            }).catch(function (err) {
-              console.log('Replacement promise error: ' + err)
-              resolve()
-            })
+          //  dataModel file to read
+          let jsonDataModelToMigrate = self1.fs.readFileSync(self.dataModelFolder + '/' + self.dataModelFiles)
+          let jsonConfig = JSON.parse(jsonDataModelToMigrate)
+          let objectsToMigrate = jsonConfig.objects
+          // create a new lookup fields which match with the new object
+          self.processFileXmlFields(customFileName, objectsToMigrate).then(function () {
           })
         } else {
-          const replaceList = this.getObjectAndFieldToReplace(fetchExpression);
+          const replaceList = self1.getObjectAndFieldToReplace(fetchExpression);
 
-          var self = this
-          new Promise(function (resolve, reject) {
-            // Replace in .cmp, .app & .evt files (send function as parameter)
-            self.processFileApexJsCmp(customFileName, replaceList).then(function () {
-            }).catch(function (err) {
-              console.log('Replacement promise error: ' + err)
-              resolve()
-            })
+          // Replace in .cmp, .app & .evt files (send function as parameter)
+          self1.processFileApexJsCmp(customFileName, replaceList).then(function () {
           })
-
         }
-      }))
-    }))
+      })
+    })
   }
 
   // Process component file
@@ -131,6 +118,8 @@ export default class ExecuteFilter extends Command {
           let className = filePath.split('/')[filePath.split('/').length - 1]
           className = className.substring(0, className.indexOf('.' + extensionElement))
 
+
+          // Create the exclude and include element list for specific object or field
           if (rep[3] && rep[3].exclude && rep[3].exclude[extensionElement] != undefined) {
             excludeList = rep[3].exclude[extensionElement]
           }
@@ -195,25 +184,28 @@ export default class ExecuteFilter extends Command {
       const builder = new self.xml2js.Builder();
 
 
+      //Create a new file to migrate the lookup field
       const data = self.fs.readFileSync(xmlFile);
       parser.parseString(data, function (err2, fileXmlContent) {
-        Object.keys(fileXmlContent).forEach(eltKey => {
-          for (let i = 0; i < replaceField.length; i++) {
-            if (fileXmlContent[eltKey].referenceTo && fileXmlContent[eltKey].referenceTo[0] && fileXmlContent[eltKey].referenceTo[0] == replaceField[i].previousObject) {
-              fileXmlContent[eltKey].referenceTo[0] = replaceField[i].newObject
-              fileXmlContent[eltKey].label[0] = replaceField[i].newLabel
-              fileXmlContent[eltKey].fullName[0] = replaceField[i].newObject
+        if (fileXmlContent) {
+          Object.keys(fileXmlContent).forEach(eltKey => {
+            for (let i = 0; i < replaceField.length; i++) {
+              if (fileXmlContent[eltKey].referenceTo && fileXmlContent[eltKey].referenceTo[0] && fileXmlContent[eltKey].referenceTo[0] == replaceField[i].previousObject) {
+                fileXmlContent[eltKey].referenceTo[0] = replaceField[i].newObject
+                fileXmlContent[eltKey].label[0] = replaceField[i].newLabel
+                fileXmlContent[eltKey].fullName[0] = replaceField[i].newObject
 
-              fileXmlContent[eltKey].relationshipName[0] = fileXmlContent[eltKey].relationshipName[0].replace('_', '')
+                fileXmlContent[eltKey].relationshipName[0] = fileXmlContent[eltKey].relationshipName[0].replace('_', '')
 
-              xmlFile = xmlFile.substring(0, xmlFile.indexOf('fields')) + 'fields/' + replaceField[i].newObject + '.field-meta.xml'
-              var updatedObjectXml = builder.buildObject(fileXmlContent);
-              self.fs.writeFileSync(xmlFile, updatedObjectXml)
-              break
+                xmlFile = xmlFile.substring(0, xmlFile.indexOf('fields')) + 'fields/' + replaceField[i].newObject + '.field-meta.xml'
+                var updatedObjectXml = builder.buildObject(fileXmlContent);
+                self.fs.writeFileSync(xmlFile, updatedObjectXml)
+                break
+              }
             }
-          }
 
-        });
+          });
+        }
       })
       resolve()
 
@@ -221,6 +213,8 @@ export default class ExecuteFilter extends Command {
     return processFileXmlFields
   }
 
+
+  // add specific caracter around the field/object we need to replace
   getObjectAndFieldToReplace(fetchExpression: string) {
     //  dataModel file to read
     let jsonDataModelToMigrate = this.fs.readFileSync(this.dataModelFolder + '/' + this.dataModelFiles)
@@ -240,7 +234,9 @@ export default class ExecuteFilter extends Command {
       { name: 'parenthesis', before: '\(', after: '\)' },
       { name: 'loop', before: '\(', after: '\ ' }, //  for (MyObject object : MyObjectList)
       { name: 'newObject', before: '\ ', after: '\(' },      // ex: MyObject myObj = new MyObject()
-      { name: 'object', before: '"', after: '.' } // value="MyObject__c.Field__c"
+      { name: 'objectInParenthesis', before: '\ ', after: '\)' },      //  System.assert( object instanceof objectInstance__c);
+      { name: 'object', before: '"', after: '.' }, // value="MyObject__c.Field__c"
+      { name: 'fieldEndline', before: ' ', after: '$' } // Select Id FROM MyObject__c \n WHERE Field == 'tes''
     ]
 
     // Complete aroundCharReplaceList with json config (replae by name value , or append if name not found)
@@ -261,6 +257,7 @@ export default class ExecuteFilter extends Command {
       { name: 'pointArgument', before: '.', after: ',' }, //  className.method(myObject.field1__r,myObject.field1__C);
       { name: 'pointEndParenthesis', before: '.', after: ')' },    //field in parenthesis className.method(myObject.field1__r,myObject.field1__C);
       { name: 'SOQLRequest', before: ',', after: '.' }, //lookup fields SELECT Id,Name,lookupField__r.fields
+      { name: 'newObjectInitialize', before: ' ', after: '=' }, //l new myObject(field1__c=acc.Id, Field2__c='Owner')
       { name: 'firstSOQLRequest', before: 'SELECT ', after: ' ' },    //in request soql SELECT field FROM
       { name: 'firstSOQLRequestofList', before: 'SELECT ', after: ',' }, //in request soql SELECT field, field2 FROM
       { name: 'SOQLRequestofList', before: ' ', after: ',' }, //in request soql SELECT field, field2 FROM
@@ -268,9 +265,12 @@ export default class ExecuteFilter extends Command {
       { name: 'equality', before: '.', after: '=' },    //field== 'value'
       { name: 'list', before: '.', after: '}' },    //new List<String>{MyOject.Field__c});
       { name: 'inequality', before: '.', after: '!' },    //field!= 'value'
+      { name: 'Concatenation', before: '.', after: '+' },    //String test = SFObject.Field1__c+';'+SFObject.Field2__c;
       { name: 'comaComa', before: ',', after: ',' }, // in select example Select field,field,field FROM Object
       { name: 'pointCalculator', before: '.', after: '*' }, //operation on field Myobject.Field__c*2
-      { name: 'componentfield', before: '.', after: '"' } // value="MyObject__c.Field__c"
+      { name: 'componentfield', before: '.', after: '"' }, // value="MyObject__c.Field__c"
+      { name: 'DeclarationField', before: '"', after: '"' }, //  <aura:attribute name="Fields__c" type="String" />
+      { name: 'fieldEndline', before: '.', after: '$' } // if  MyObject__c.Field == MyObject__c.Field2 \n || etc...
     ]
 
     // Complete aroundCharReplaceList with json config (replae by name value , or append if name not found)
@@ -281,8 +281,17 @@ export default class ExecuteFilter extends Command {
     objectsToMigrate.forEach(object => {
 
       aroundCharReplaceObjectList.forEach(function (aroundChars) {
-        const oldString = '\\' + aroundChars.before + object.previousObject + '\\' + aroundChars.after
-        let newString = aroundChars.before + object.newObject + aroundChars.after
+        let oldString
+        if (!aroundChars.after.includes('$')) {
+          oldString = '\\' + aroundChars.before + object.previousObject + '\\' + aroundChars.after
+        } else {
+          oldString = '\\' + aroundChars.before + object.previousObject + aroundChars.after
+        }
+        let newString = aroundChars.before + object.newObject
+
+        if (aroundChars.after != '$') {
+          newString += aroundChars.after
+        }
         if (aroundChars.replacementPrefix) {
           newString = aroundChars.replacementPrefix + newString
         }
@@ -307,8 +316,17 @@ export default class ExecuteFilter extends Command {
         object.fieldsMapping.forEach(fieldToChange => {
 
           aroundCharReplacefieldList.forEach(function (aroundChars) {
-            const oldString = '\\' + aroundChars.before + fieldToChange.previousField + '\\' + aroundChars.after
-            let newString = aroundChars.before + fieldToChange.newField + aroundChars.after
+            let oldString
+            if (!aroundChars.after.includes('$')) {
+              oldString = '\\' + aroundChars.before + fieldToChange.previousField + '\\' + aroundChars.after
+            } else {
+              oldString = '\\' + aroundChars.before + fieldToChange.previousField + aroundChars.after
+            }
+            let newString = aroundChars.before + fieldToChange.newField
+
+            if (aroundChars.after != '$') {
+              newString += aroundChars.after
+            }
             if (aroundChars.replacementPrefix) {
               newString = aroundChars.replacementPrefix + newString
             }
@@ -334,6 +352,7 @@ export default class ExecuteFilter extends Command {
     return replaceList
   }
 
+  //add element to the list
   aroundCharReplaceList(aroundCharReplaceObjectList: any, aroundCharReplaceListOverride: any, fetchExpression: string) {
     aroundCharReplaceListOverride.forEach(function (aroundCharsOverride: any) {
       let replaced: boolean = false
@@ -352,24 +371,23 @@ export default class ExecuteFilter extends Command {
   }
 
   readAndReplaceFile(arrayFileLines: any, caseSensitive: boolean, toReplace: string, replaceBy: string, replaceObject: any, regexEpression: any, filePath: string) {
-    console.log('processing ' + filePath + ' ' + toReplace + ' ' + replaceBy)
+    // console.log('processing ' + filePath + ' ' + toReplace + ' ' + replaceBy)
     let updated: boolean = false
     let updatedFileContent: string = ''
     let lineUpdated: boolean = false
-    let createNewFile: boolean = false
     let toReplaceWithRegex: string = toReplace
-    if (filePath.includes('objects') && filePath.includes('fields')) {
-      createNewFile = true
-    }
 
     arrayFileLines.forEach(line => {
-      const newLinePrev = line
+      lineUpdated = false
       let newLine: string
       let regExGlobalRules: string = 'g'
       if (!line.trim().startsWith('//')) {
+        line = line.replace('\r', '')
+        const newLinePrev = line
         if (!caseSensitive) {
           regExGlobalRules += 'i'
         }
+
         newLine = line.replace(new RegExp((regexEpression.Before != null ? regexEpression.Before : '') + toReplaceWithRegex + (regexEpression.After != null ? regexEpression.After : ''), regExGlobalRules), replaceBy)
 
         if (newLine != newLinePrev) {
@@ -379,21 +397,28 @@ export default class ExecuteFilter extends Command {
         }
       }
       if (lineUpdated)
-        updatedFileContent += line + '\n'
+        updatedFileContent += newLine + "\n"
       if (!lineUpdated)
-        updatedFileContent += line + '\n'
+        updatedFileContent += line + "\n"
     })
-    if (updated && createNewFile) {
-      arrayFileLines = updatedFileContent.toString().split("\n");
-      filePath = filePath.replace('FinancialAccount__c', replaceObject.newObject)
-      console.log('created ' + filePath)//+ ' with content :\n' + updatedFileContent)
-      this.fs.writeFileSync(filePath, updatedFileContent);
-    }
-    else if (updated) {
-      arrayFileLines = updatedFileContent.toString().split("\n");
-      this.fs.writeFileSync(filePath, updatedFileContent)
-      console.log('Updated ' + filePath)//+ ' with content :\n' + updatedFileContent)
+
+
+    if (updated) {
+      arrayFileLines = this.createOrUpdatefile(false, arrayFileLines, updatedFileContent, filePath, replaceObject)
     }
     return arrayFileLines
+  }
+
+  createOrUpdatefile(toCreate: boolean, arrayFileLines: any, updatedFileContent: any, filePath: any, replaceObject: any) {
+    if (toCreate) {
+      filePath = filePath.replace('FinancialAccount__c', replaceObject.newObject)
+    }
+    arrayFileLines = updatedFileContent.toString().split("\n");
+    this.fs.writeFileSync(filePath, updatedFileContent)
+    console.log((toCreate ? 'Created' : 'Updated ') + filePath)//+ ' with content :\n' + updatedFileContent)
+
+    return arrayFileLines
+
+
   }
 }
