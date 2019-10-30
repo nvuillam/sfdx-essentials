@@ -253,7 +253,10 @@ export default class ExecuteFilter extends Command {
       { name: 'pointQuote', before: '.', after: '\'' },//ClassName.MEthodNmae('MyObject.Myfield');
       { name: 'spacePoint', before: ' ', after: '.' }, //Database.upsert( objectList, fieldobject.Fields.fieldName__c,false) ;
       { name: 'pointEndLine', before: '.', after: ';' }, //Select id FROM MyObject__c WHERE ObjectFields__r.objectField__c 
-      { name: 'pointArgument', before: '(', after: '=' }, //   Object myObject = new Object(field1__c=value1, field2__c = value2);
+      { name: 'objectArgument', before: '(', after: '=' }, //   Object myObject = new Object(field1__c=value1, field2__c = value2);
+      { name: 'fieldParenthesis', before: '(', after: ')' }, //   toLabel(field1__c)
+      { name: 'endOfstring', before: ' ', after: '\'' }, //   database.query('Select id, Fields1__c, Fields__c FROM MyObject__c WHERE ObjectFields__r.objectField__c')
+      { name: 'selectfields', before: ' ', after: ',' }, //   Select id, Fields1__c, Fields__c FROM MyObject__c WHERE ObjectFields__r.objectField__c 
       { name: 'pointArgument', before: '.', after: ',' }, //  className.method(myObject.field1__r,myObject.field1__C);
       { name: 'pointEndParenthesis', before: '.', after: ')' },    //field in parenthesis className.method(myObject.field1__r,myObject.field1__C);
       { name: 'SOQLRequest', before: ',', after: '.' }, //lookup fields SELECT Id,Name,lookupField__r.fields
@@ -404,18 +407,15 @@ export default class ExecuteFilter extends Command {
 
 
     if (updated) {
-      arrayFileLines = this.createOrUpdatefile(false, arrayFileLines, updatedFileContent, filePath, replaceObject)
+      arrayFileLines = this.createOrUpdatefile(arrayFileLines, updatedFileContent, filePath, replaceObject)
     }
     return arrayFileLines
   }
 
-  createOrUpdatefile(toCreate: boolean, arrayFileLines: any, updatedFileContent: any, filePath: any, replaceObject: any) {
-    if (toCreate) {
-      filePath = filePath.replace('FinancialAccount__c', replaceObject.newObject)
-    }
+  createOrUpdatefile(arrayFileLines: any, updatedFileContent: any, filePath: any, replaceObject: any) {
     arrayFileLines = updatedFileContent.toString().split("\n");
     this.fs.writeFileSync(filePath, updatedFileContent)
-    console.log((toCreate ? 'Created' : 'Updated ') + filePath)//+ ' with content :\n' + updatedFileContent)
+    console.log('Updated ' + filePath)//+ ' with content :\n' + updatedFileContent)
 
     return arrayFileLines
 
