@@ -29,6 +29,7 @@ export default class ExecuteFilter extends Command {
   fs = require('fs')
   util = require('util')
   xml2js = require('xml2js')
+  rimraf = require("rimraf");
 
 
   // Runtime methods
@@ -67,6 +68,7 @@ export default class ExecuteFilter extends Command {
         }
       })
     })
+    this.deleteOldDataModelReferency()
   }
 
   // Process component file
@@ -250,6 +252,8 @@ export default class ExecuteFilter extends Command {
       { name: 'simpleQuoteFields', before: '\'', after: '.', replacementPrefix: null, replacementSuffix: null },
       { name: 'point', before: '.', after: '.' },
       { name: 'pointSpace', before: '.', after: ' ' },
+      { name: 'xmlFile', before: '>', after: '</' },
+      { name: 'xmlFile', before: '.', after: '</' },
       { name: 'pointQuote', before: '.', after: '\'' },//ClassName.MEthodNmae('MyObject.Myfield');
       { name: 'spacePoint', before: ' ', after: '.' }, //Database.upsert( objectList, fieldobject.Fields.fieldName__c,false) ;
       { name: 'pointEndLine', before: '.', after: ';' }, //Select id FROM MyObject__c WHERE ObjectFields__r.objectField__c 
@@ -265,6 +269,7 @@ export default class ExecuteFilter extends Command {
       { name: 'firstSOQLRequestofList', before: 'SELECT ', after: ',' }, //in request soql SELECT field, field2 FROM
       { name: 'SOQLRequestofList', before: ' ', after: ',' }, //in request soql SELECT field, field2 FROM
       { name: 'lastSOQLRequestofList', before: ' ', after: ' FROM' },    //in request soql SELECT field, field2 FROM
+      { name: 'lastSOQLRequestofList', before: ',', after: ' FROM' },    //in request soql SELECT field,field2 FROM
       { name: 'equality', before: '.', after: '=' },    //field== 'value'
       { name: 'list', before: '.', after: '}' },    //new List<String>{MyOject.Field__c});
       { name: 'inequality', before: '.', after: '!' },    //field!= 'value'
@@ -421,4 +426,112 @@ export default class ExecuteFilter extends Command {
 
 
   }
+
+  async deleteOldDataModelReferency() {
+    const jsonDataModelToMigrate = this.fs.readFileSync(this.dataModelFolder + '/' + this.dataModelFiles)
+    const jsonConfig = JSON.parse(jsonDataModelToMigrate)
+    const objectToDelete = jsonConfig.objectToDelete
+    const customFileNameList = this.glob.sync('./*/*')
+
+    this.deleteFileeOrFolder(customFileNameList, objectToDelete)
+
+
+  }
+  async deleteFileeOrFolder(customFileNameList: any, objectToDelete: any) {
+
+    await Promise.all(customFileNameList.map(async (file: any) => {
+
+      const self = this
+      if (file.includes(objectToDelete.prefixe)) {
+
+        this.fs.unlink(file, function (err: any) {
+          if (err) throw err;
+          // if no error, file has been deleted successfully
+          console.log('deleted file :' + file);
+        });
+        this.rimraf(file, function (err: any) {
+          if (err) throw err;
+          // if no error, file has been deleted successfully
+          console.log('deleted folder :' + file);
+        });
+
+      } else if (!file.match(/\.[0-9a-z]+$/i)) {
+        const customFileNameList = this.glob.sync(file + '/*')
+        this.deleteFileeOrFolder(customFileNameList, objectToDelete)
+      } else if (file.match(/\.field-meta\.xml+$/i)) {
+        //Create a new file to migrate the lookup field
+        const data = this.fs.readFileSync(file);
+        const parser = new this.xml2js.Parser();
+        parser.parseString(data, function (err2, fileXmlContent) {
+          if (fileXmlContent) {
+            for (let i = 0; i < Object.keys(fileXmlContent).length; i++) {
+              const eltKey = Object.keys(fileXmlContent)[i]
+              if (fileXmlContent[eltKey].referenceTo && fileXmlContent[eltKey].referenceTo[0] && fileXmlContent[eltKey].referenceTo[0].includes(objectToDelete.prefixe)) {
+                self.fs.unlink(file, function (err: any) {
+                  if (err) throw err;
+                  // if no error, file has been deleted successfully
+                  console.log('deleted file :' + file);
+                });
+                break
+              }
+
+
+            };
+          }
+        })
+
+      }
+      else if (file.match(/\.layout-meta\.xml+$/i)) {
+        const data = this.fs.readFileSync(file);
+        const parser = new this.xml2js.Parser();
+
+        parser.parseString(data, function (err2, fileXmlContent) {
+          if (fileXmlContent["Layout"]["layoutSections"]) {
+            for (let i = 0; i < fileXmlContent["Layout"]["layoutSections"].length; i++) {
+              const layoutSections = fileXmlContent["Layout"]["layoutSections"][i]
+              if (layoutSections["layoutColumns"]) {
+                for (let j = 0; j < layoutSections["layoutColumns"].length; j++) {
+                  if (layoutSections["layoutColumns"][j]["layoutItems"]) {
+                    for (let k = 0; k < layoutSections["layoutColumns"][j]["layoutItems"].length; k++) {
+                      if (layoutSections["layoutColumns"][j]["layoutItems"][k]["field"] && (layoutSections["layoutColumns"][j]["layoutItems"][k]["field"][0].includes(objectToDelete.prefixe) || layoutSections["layoutColumns"][j]["layoutItems"][k]["field"][0].includes('FinancialAccount__c'))) {
+                        self.fs.unlink(file, function (err: any) {
+                          if (err) throw err;
+                          // if no error, file has been deleted successfully
+                          console.log('deleted file :' + file);
+                        });
+                      }
+                    }
+
+                  }
+                }
+
+              }
+            }
+          }
+          if (fileXmlContent["Layout"]["platformActionList"]) {
+            for (let i = 0; i < fileXmlContent["Layout"]["platformActionList"].length; i++) {
+              const platformActionList = fileXmlContent["Layout"]["platformActionList"][i]
+              if (platformActionList["platformActionListItems"]) {
+                for (let k = 0; k < platformActionList["platformActionListItems"].length; k++) {
+                  if (platformActionList["platformActionListItems"][k]["actionName"] && platformActionList["platformActionListItems"][k]["actionName"][0].includes(objectToDelete.prefixe)) {
+                    self.fs.unlink(file, function (err: any) {
+                      if (err) throw err;
+                      // if no error, file has been deleted successfully
+                      console.log('deleted file :' + file);
+                    });
+                  }
+                }
+
+              }
+            }
+
+          }
+
+        })
+
+      }
+
+    }))
+  }
+
 }
