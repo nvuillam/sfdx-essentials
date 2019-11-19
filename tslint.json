@@ -1,4 +1,36 @@
 {
-    "extends": "@salesforce/dev-config/tslint"
+  "extends": "@salesforce/dev-config/tslint",
+  "rules": {
+    "comment-format": [
+      true,
+      "check-space"
+    ],
+    "no-any": {
+      "severity": "warning"
+    },
+    "no-unsafe-any": {
+      "severity": "warning"
+    },
+    "no-unused-variable": [
+      true,
+      {
+        "ignore-pattern": "^_"
+      }
+    ],
+    "prefer-const": [
+      "error",
+      {
+        "destructuring": "any",
+        "ignoreReadBeforeAssign": false
+      }
+    ],
+    "prefer-for-of": {
+      "severity": "warning"
+    },
+    "triple-equals": [
+      true,
+      "allow-null-check",
+      "allow-undefined-check"
+    ]
   }
-  
+}
