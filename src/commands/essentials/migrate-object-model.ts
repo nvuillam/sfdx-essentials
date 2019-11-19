@@ -238,6 +238,8 @@ export default class ExecuteFilter extends Command {
       { name: 'newObject', before: '\ ', after: '\(' },      // ex: MyObject myObj = new MyObject()
       { name: 'objectInParenthesis', before: '\ ', after: '\)' },      //  System.assert( object instanceof objectInstance__c);
       { name: 'object', before: '"', after: '.' }, // value="MyObject__c.Field__c"
+      { name: 'DeclarationObject', before: '"', after: '"' }, //  <aura:attribute name="Fields__c" type="String" />
+      { name: 'GetRecordtypeinjson', before: '"', after: '@' }, //  TO PUT IN THE JSONCONFIG FILE NOT HERE
       { name: 'fieldEndline', before: ' ', after: '$' } // Select Id FROM MyObject__c \n WHERE Field == 'tes''
     ]
 
@@ -432,9 +434,9 @@ export default class ExecuteFilter extends Command {
     const jsonConfig = JSON.parse(jsonDataModelToMigrate)
     const objectToDelete = jsonConfig.objectToDelete
     const customFileNameList = this.glob.sync('./*/*')
-
-    this.deleteFileeOrFolder(customFileNameList, objectToDelete)
-
+    if (objectToDelete) {
+      this.deleteFileeOrFolder(customFileNameList, objectToDelete)
+    }
 
   }
   async deleteFileeOrFolder(customFileNameList: any, objectToDelete: any) {
