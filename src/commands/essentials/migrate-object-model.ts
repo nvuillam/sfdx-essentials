@@ -42,6 +42,7 @@ export default class ExecuteFilter extends Command {
   // Runtime methods
   public async run() {
 
+    console.time('migrate-object-model');
     // tslint:disable-next-line:no-shadowed-variable
     const { args, flags } = this.parse(ExecuteFilter);
 
@@ -68,10 +69,12 @@ export default class ExecuteFilter extends Command {
       const customFileNameList = glob.sync(this.inputFolder + '/' + fetchExpression);
       this.multibars[fetchExpression] = this.multibar.create(customFileNameList.length, 0, { name: fetchExpression.padEnd(30, " "), file: "N/A" });
     });
+    this.multibars.deleteFiles = this.multibar.create(1, 0, { name: 'Delete files & folders'.padEnd(30, " "), file: "N/A" });
     this.multibar.update();
 
     // Iterate on each expression to browse files
     for (const fetchExpression of this.fetchExpressionList) {
+      const fetchExprStartTime = Date.now();
       // Get all files matching expression
       const customFileNameList = glob.sync(this.inputFolder + '/' + fetchExpression);
 
@@ -94,13 +97,17 @@ export default class ExecuteFilter extends Command {
         this.multibars[fetchExpression].increment();
         this.multibar.update();
       }
+      // progress bar update
+      const elapsedTime = Math.round((Date.now() - fetchExprStartTime) / 1000);
+      this.multibars[fetchExpression].update(null, { file: 'Completed in ' + elapsedTime + 's' });
       this.multibars.total.increment();
       this.multibar.update();
-
     }
     this.deleteOldDataModelReferency();
     this.multibars.total.stop();
     this.multibar.stop();
+
+    console.timeEnd('migrate-object-model');
   }
 
   // Process component file
@@ -123,6 +130,7 @@ export default class ExecuteFilter extends Command {
       return;
     }
     let arrayFileLines = fileContent.toString().split('\n');
+    const initialArrayFileLines = arrayFileLines;
 
     // Process file lines one by one
     //  dataModel file to read
@@ -132,7 +140,12 @@ export default class ExecuteFilter extends Command {
       regexEpression.After = this.configData.globalConfig.regexEpressionAfterElement;
     }
     if (replaceList) {
-      await Promise.all(replaceList.map(async (rep: any) => {
+
+      const extensionElement = filePath.split('.')[filePath.split('.').length - 1];
+      let className = filePath.split('/')[filePath.split('/').length - 1];
+      className = className.substring(0, className.indexOf('.' + extensionElement));
+
+      for (const rep of replaceList) {
         const toReplace = rep[0];
         const replaceBy = rep[1];
         const caseSensitive = rep[2];
@@ -140,10 +153,6 @@ export default class ExecuteFilter extends Command {
         let excludeList: any[];
         let includeList: any[];
         let replace: boolean = true;
-
-        const extensionElement = filePath.split('.')[filePath.split('.').length - 1];
-        let className = filePath.split('/')[filePath.split('/').length - 1];
-        className = className.substring(0, className.indexOf('.' + extensionElement));
 
         // Create the exclude and include element list for specific object or field
         if (rep[3] && rep[3].exclude && rep[3].exclude[extensionElement] !== undefined) {
@@ -172,29 +181,33 @@ export default class ExecuteFilter extends Command {
             }
           }
           if (replace) {
-            arrayFileLines = await this.readAndReplaceFile(arrayFileLines, caseSensitive, toReplace, replaceBy, rep[4], regexEpression, filePath);
+            arrayFileLines = await this.readAndReplace(arrayFileLines, caseSensitive, toReplace, replaceBy, rep[4], regexEpression);
           }
         } else if (includeList) {
           // if includelist exist but empty that means no element should be replace
           if (includeList.length !== 0) {
-            await Promise.all(includeList.map(async (includeItem: any) => {
-              if (includeItem === className) {
-                replace = true;
-              } else if (includeItem.endsWith('%') && className.toUpperCase().startsWith(includeItem.substring(0, includeItem.indexOf('%')).toUpperCase())) {
-                replace = true;
-              } else {
-                replace = false;
-              }
+            for (const includeItem of includeList) {
+              for (const includeItem of includeList)
+                if (includeItem === className) {
+                  replace = true;
+                } else if (includeItem.endsWith('%') && className.toUpperCase().startsWith(includeItem.substring(0, includeItem.indexOf('%')).toUpperCase())) {
+                  replace = true;
+                } else {
+                  replace = false;
+                }
               if (replace) {
-                arrayFileLines = await this.readAndReplaceFile(arrayFileLines, caseSensitive, toReplace, replaceBy, rep[4], regexEpression, filePath);
+                arrayFileLines = await this.readAndReplace(arrayFileLines, caseSensitive, toReplace, replaceBy, rep[4], regexEpression);
               }
-            }));
+            }
           }
         } else {
-          arrayFileLines = await this.readAndReplaceFile(arrayFileLines, caseSensitive, toReplace, replaceBy, rep[4], regexEpression, filePath);
+          arrayFileLines = await this.readAndReplace(arrayFileLines, caseSensitive, toReplace, replaceBy, rep[4], regexEpression);
         }
-
-      }));
+      };
+    }
+    // Write new version of the file if updated
+    if (initialArrayFileLines !== arrayFileLines) {
+      this.createOrUpdatefile(arrayFileLines, filePath);
     }
   }
 
@@ -298,7 +311,7 @@ export default class ExecuteFilter extends Command {
         fetchExpression);
     }
 
-    objectsToMigrate.forEach((object) => {
+    objectsToMigrate.forEach((object: any) => {
 
       aroundCharReplaceObjectList.forEach((aroundChars) => {
         let oldString: string;
@@ -391,51 +404,28 @@ export default class ExecuteFilter extends Command {
     return aroundCharReplaceObjectList;
   }
 
-  public async readAndReplaceFile(arrayFileLines: any, caseSensitive: boolean, toReplace: string, replaceBy: string, replaceObject: any, regexEpression: any, filePath: string) {
+  public async readAndReplace(arrayFileLines: any, caseSensitive: boolean, toReplace: string, replaceBy: string, replaceObject: any, regexEpression: any) {
     // console.log('processing ' + filePath + ' ' + toReplace + ' ' + replaceBy)
-    let updated: boolean = false;
-    let updatedFileContent: string = '';
-    let lineUpdated: boolean = false;
     const toReplaceWithRegex: string = toReplace;
 
-    arrayFileLines.forEach((line) => {
-      lineUpdated = false;
-      let newLine: string;
+    const arrayFileLinesNew: string[] = [];
+
+    arrayFileLines.forEach((line: string) => {
       let regExGlobalRules: string = 'g';
-      if (!line.trim().startsWith('//')) {
-        line = line.replace('\r', '');
-        const newLinePrev = line;
+      if (!line.trim().startsWith('//')) { // Do not convert commented lines
         if (!caseSensitive) {
           regExGlobalRules += 'i';
         }
-
-        newLine = line.replace(new RegExp((regexEpression.Before != null ? regexEpression.Before : '') + toReplaceWithRegex + (regexEpression.After != null ? regexEpression.After : ''), regExGlobalRules), replaceBy);
-
-        if (newLine !== newLinePrev) {
-          line = newLine;
-          lineUpdated = true;
-          updated = true;
-        }
+        line = line.replace(new RegExp((regexEpression.Before != null ? regexEpression.Before : '') + toReplaceWithRegex + (regexEpression.After != null ? regexEpression.After : ''), regExGlobalRules), replaceBy);
       }
-      if (lineUpdated) {
-        updatedFileContent += newLine + '\n';
-      }
-      if (!lineUpdated) {
-        updatedFileContent += line + '\n';
-      }
+      arrayFileLinesNew.push(line);
     });
-
-    if (updated) {
-      arrayFileLines = await this.createOrUpdatefile(arrayFileLines, updatedFileContent, filePath, replaceObject);
-    }
-    return arrayFileLines;
+    return arrayFileLinesNew;
   }
 
-  public async createOrUpdatefile(arrayFileLines: any, updatedFileContent: any, filePath: any, replaceObject: any) {
-    arrayFileLines = updatedFileContent.toString().split('\n');
-    fs.writeFile(filePath, updatedFileContent, () => {
-      console.log('Updated ' + filePath);
-    });
+  public async createOrUpdatefile(arrayFileLines: any, filePath: any) {
+    const updatedFileContent: string = arrayFileLines.join('\n');
+    fs.writeFileSync(filePath, updatedFileContent);
     // + ' with content :\n' + updatedFileContent)
     return arrayFileLines;
   }
@@ -446,6 +436,7 @@ export default class ExecuteFilter extends Command {
     if (objectToDelete) {
       this.deleteFileeOrFolder(customFileNameList, objectToDelete);
     }
+    this.multibars.deleteFiles.increment();
     this.multibars.total.increment();
   }
 
@@ -457,12 +448,16 @@ export default class ExecuteFilter extends Command {
         fs.unlink(file, (err: any) => {
           if (err) { throw err; }
           // if no error, file has been deleted successfully
-          console.log('deleted file :' + file);
+          //console.log('deleted file :' + file);
+          this.multibars.deleteFiles.update(null, { file: file });
+          this.multibar.update();
         });
         rimraf(file, (err: any) => {
           if (err) { throw err; }
           // if no error, file has been deleted successfully
-          console.log('deleted folder :' + file);
+          //console.log('deleted folder :' + file);
+          this.multibars.deleteFiles.update(null, { file: file });
+          this.multibar.update();
         });
 
       } else if (!file.match(/\.[0-9a-z]+$/i)) {
@@ -480,7 +475,9 @@ export default class ExecuteFilter extends Command {
                 fs.unlink(file, (err: any) => {
                   if (err) { throw err; }
                   // if no error, file has been deleted successfully
-                  console.log('deleted file :' + file);
+                  //console.log('deleted file :' + file);
+                  this.multibars.deleteFiles.update(null, { file: file });
+                  this.multibar.update();
                 });
                 break;
               }
@@ -505,7 +502,9 @@ export default class ExecuteFilter extends Command {
                         fs.unlink(file, (err: any) => {
                           if (err) { throw err; }
                           // if no error, file has been deleted successfully
-                          console.log('deleted file :' + file);
+                          //console.log('deleted file :' + file);
+                          this.multibars.deleteFiles.update(null, { file: file });
+                          this.multibar.update();
                         });
                       }
                     }
@@ -525,7 +524,9 @@ export default class ExecuteFilter extends Command {
                     fs.unlink(file, (err: any) => {
                       if (err) { throw err; }
                       // if no error, file has been deleted successfully
-                      console.log('deleted file :' + file);
+                      //console.log('deleted file :' + file);
+                      this.multibars.deleteFiles.update(null, { file: file });
+                      this.multibar.update();
                     });
                   }
                 }
