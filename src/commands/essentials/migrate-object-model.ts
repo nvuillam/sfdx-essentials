@@ -103,7 +103,7 @@ export default class ExecuteFilter extends Command {
       this.multibars.total.increment();
       this.multibar.update();
     }
-    this.deleteOldDataModelReferency();
+    await this.deleteOldDataModelReferency();
     this.multibars.total.stop();
     this.multibar.stop();
 
@@ -229,8 +229,13 @@ export default class ExecuteFilter extends Command {
               fileXmlContent[eltKey].relationshipName[0] = fileXmlContent[eltKey].relationshipName[0].replace('_', '');
 
               xmlFile = xmlFile.substring(0, xmlFile.indexOf('fields')) + 'fields/' + replaceField[i].newObject + '.field-meta.xml';
-              const updatedObjectXml = builder.buildObject(fileXmlContent);
-              fs.writeFileSync(xmlFile, updatedObjectXml);
+              try {
+                const updatedObjectXml = builder.buildObject(fileXmlContent);
+                fs.writeFileSync(xmlFile, updatedObjectXml);
+              } catch (e) {
+                console.error(e.message);
+                console.error(fileXmlContent);
+              }
               break;
             }
           }
@@ -434,7 +439,7 @@ export default class ExecuteFilter extends Command {
     const objectToDelete = this.configData.objectToDelete;
     const customFileNameList = glob.sync('./*/*');
     if (objectToDelete) {
-      this.deleteFileeOrFolder(customFileNameList, objectToDelete);
+      await this.deleteFileeOrFolder(customFileNameList, objectToDelete);
     }
     this.multibars.deleteFiles.increment();
     this.multibars.total.increment();
@@ -462,7 +467,7 @@ export default class ExecuteFilter extends Command {
 
       } else if (!file.match(/\.[0-9a-z]+$/i)) {
         const customFileNameList2 = glob.sync(file + '/*');
-        this.deleteFileeOrFolder(customFileNameList2, objectToDelete);
+        await this.deleteFileeOrFolder(customFileNameList2, objectToDelete);
       } else if (file.match(/\.field-meta\.xml+$/i)) {
         // Create a new file to migrate the lookup field
         const data = fs.readFileSync(file);
