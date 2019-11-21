@@ -14,7 +14,7 @@ export default class ExecuteFilter extends Command {
     // flag with a value (-n, --name=VALUE)
     configFile: flags.string({ char: 'c', description: 'JSON config file' }),
     inputFolder: flags.string({ char: 'i', description: 'Input folder (default: "." )' }),
-    fetchExpressionList: flags.string({ char: 'f', description: 'Fetch expression list. Let default if you dont know. ex: /aura/**/*.js,./aura/**/*.cmp,./classes/*.cls,./objects/*/fields/*.xml,./objects/*/recordTypes/*.xml,./triggers/*.trigger,./permissionsets/*.xml,./profiles/*.xml,./staticresources/*.json' }),
+    fetchExpressionList: flags.string({ char: 'f', description: 'Fetch expression list. Let default if you dont know. ex: /aura/**/*.js,./aura/**/*.cmp,./classes/*.cls,./objects/*/fields/*.xml,./objects/*/recordTypes/*.xml,./triggers/*.trigger,./permissionsets/*.xml,./profiles/*.xml,./staticresources/*.json' })
   };
 
   public static args = [];
@@ -56,7 +56,7 @@ export default class ExecuteFilter extends Command {
     const jsonDataModelToMigrate = fs.readFileSync(this.configFile);
     this.configData = JSON.parse(jsonDataModelToMigrate.toString());
 
-    // Build progress bars 
+    // Build progress bars
     // @ts-ignore
     this.multibar = new cliProgress.MultiBar({
       clearOnComplete: false,
@@ -64,12 +64,12 @@ export default class ExecuteFilter extends Command {
       fps: 500,
       format: '{name} [{bar}] {percentage}% | {value}/{total} | {file} '
     }, cliProgress.Presets.shades_grey);
-    this.multibars.total = this.multibar.create(this.fetchExpressionList.length + 1, 0, { name: 'Total'.padEnd(30, " "), file: "N/A" });
+    this.multibars.total = this.multibar.create(this.fetchExpressionList.length + 1, 0, { name: 'Total'.padEnd(30, ' '), file: 'N/A' });
     this.fetchExpressionList.forEach((fetchExpression: string) => {
       const customFileNameList = glob.sync(this.inputFolder + '/' + fetchExpression);
-      this.multibars[fetchExpression] = this.multibar.create(customFileNameList.length, 0, { name: fetchExpression.padEnd(30, " "), file: "N/A" });
+      this.multibars[fetchExpression] = this.multibar.create(customFileNameList.length, 0, { name: fetchExpression.padEnd(30, ' '), file: 'N/A' });
     });
-    this.multibars.deleteFiles = this.multibar.create(1, 0, { name: 'Delete files & folders'.padEnd(30, " "), file: "N/A" });
+    this.multibars.deleteFiles = this.multibar.create(1, 0, { name: 'Delete files & folders'.padEnd(30, ' '), file: 'N/A' });
     this.multibar.update();
 
     // Iterate on each expression to browse files
@@ -86,13 +86,12 @@ export default class ExecuteFilter extends Command {
           //  dataModel file to read
           const objectsToMigrate = this.configData.objects;
           // create a new lookup fields which match with the new object
-          await this.processFileXmlFields(customFileName, objectsToMigrate)
-        }
-        else {
+          await this.processFileXmlFields(customFileName, objectsToMigrate);
+        } else {
           const replaceList = this.getObjectAndFieldToReplace(fetchExpression);
 
           // Replace in .cmp, .app & .evt files (send function as parameter)
-          await this.processFileApexJsCmp(customFileName, replaceList)
+          await this.processFileApexJsCmp(customFileName, replaceList);
         }
         this.multibars[fetchExpression].increment();
         this.multibar.update();
@@ -187,14 +186,13 @@ export default class ExecuteFilter extends Command {
           // if includelist exist but empty that means no element should be replace
           if (includeList.length !== 0) {
             for (const includeItem of includeList) {
-              for (const includeItem of includeList)
-                if (includeItem === className) {
-                  replace = true;
-                } else if (includeItem.endsWith('%') && className.toUpperCase().startsWith(includeItem.substring(0, includeItem.indexOf('%')).toUpperCase())) {
-                  replace = true;
-                } else {
-                  replace = false;
-                }
+              if (includeItem === className) {
+                replace = true;
+              } else if (includeItem.endsWith('%') && className.toUpperCase().startsWith(includeItem.substring(0, includeItem.indexOf('%')).toUpperCase())) {
+                replace = true;
+              } else {
+                replace = false;
+              }
               if (replace) {
                 arrayFileLines = await this.readAndReplace(arrayFileLines, caseSensitive, toReplace, replaceBy, rep[4], regexEpression);
               }
@@ -203,7 +201,7 @@ export default class ExecuteFilter extends Command {
         } else {
           arrayFileLines = await this.readAndReplace(arrayFileLines, caseSensitive, toReplace, replaceBy, rep[4], regexEpression);
         }
-      };
+      }
     }
     // Write new version of the file if updated
     if (initialArrayFileLines !== arrayFileLines) {
@@ -219,7 +217,7 @@ export default class ExecuteFilter extends Command {
     const data = fs.readFileSync(xmlFile);
     parser.parseString(data, async (err2, fileXmlContent) => {
       if (fileXmlContent) {
-        await Promise.all(Object.keys(fileXmlContent).map(async (eltKey: any) => {
+        for (const eltKey of Object.keys(fileXmlContent)) {
           for (let i = 0; i < replaceField.length; i++) {
             if (fileXmlContent[eltKey].referenceTo && fileXmlContent[eltKey].referenceTo[0] && fileXmlContent[eltKey].referenceTo[0] === replaceField[i].previousObject) {
               fileXmlContent[eltKey].referenceTo[0] = replaceField[i].newObject;
@@ -234,12 +232,13 @@ export default class ExecuteFilter extends Command {
                 fs.writeFileSync(xmlFile, updatedObjectXml);
               } catch (e) {
                 console.error(e.message);
+                console.error(xmlFile);
                 console.error(fileXmlContent);
               }
               break;
             }
           }
-        }));
+        }
       }
     });
   }
@@ -439,35 +438,34 @@ export default class ExecuteFilter extends Command {
     const objectToDelete = this.configData.objectToDelete;
     const customFileNameList = glob.sync('./*/*');
     if (objectToDelete) {
-      await this.deleteFileeOrFolder(customFileNameList, objectToDelete);
+      this.multibars.deleteFiles.setTotal(customFileNameList.length);
+      await this.deleteFileOrFolder(customFileNameList, objectToDelete, true);
     }
-    this.multibars.deleteFiles.increment();
     this.multibars.total.increment();
   }
 
-  public async deleteFileeOrFolder(customFileNameList: any, objectToDelete: any) {
-    await Promise.all(customFileNameList.map(async (file: string) => {
-
+  public async deleteFileOrFolder(customFileNameList: any, objectToDelete: any, increment = false) {
+    for (const file of customFileNameList) {
+      if (increment) {
+        this.multibars.deleteFiles.increment();
+        this.multibar.update();
+      }
       if (file.includes(objectToDelete.prefixe)) {
 
         fs.unlink(file, (err: any) => {
           if (err) { throw err; }
           // if no error, file has been deleted successfully
-          //console.log('deleted file :' + file);
-          this.multibars.deleteFiles.update(null, { file: file });
-          this.multibar.update();
+          // console.log('deleted file :' + file);
         });
         rimraf(file, (err: any) => {
           if (err) { throw err; }
           // if no error, file has been deleted successfully
-          //console.log('deleted folder :' + file);
-          this.multibars.deleteFiles.update(null, { file: file });
-          this.multibar.update();
+          // console.log('deleted folder :' + file);
         });
 
       } else if (!file.match(/\.[0-9a-z]+$/i)) {
         const customFileNameList2 = glob.sync(file + '/*');
-        await this.deleteFileeOrFolder(customFileNameList2, objectToDelete);
+        await this.deleteFileOrFolder(customFileNameList2, objectToDelete);
       } else if (file.match(/\.field-meta\.xml+$/i)) {
         // Create a new file to migrate the lookup field
         const data = fs.readFileSync(file);
@@ -480,9 +478,7 @@ export default class ExecuteFilter extends Command {
                 fs.unlink(file, (err: any) => {
                   if (err) { throw err; }
                   // if no error, file has been deleted successfully
-                  //console.log('deleted file :' + file);
-                  this.multibars.deleteFiles.update(null, { file: file });
-                  this.multibar.update();
+                  // console.log('deleted file :' + file);
                 });
                 break;
               }
@@ -507,9 +503,7 @@ export default class ExecuteFilter extends Command {
                         fs.unlink(file, (err: any) => {
                           if (err) { throw err; }
                           // if no error, file has been deleted successfully
-                          //console.log('deleted file :' + file);
-                          this.multibars.deleteFiles.update(null, { file: file });
-                          this.multibar.update();
+                          // console.log('deleted file :' + file);
                         });
                       }
                     }
@@ -529,23 +523,16 @@ export default class ExecuteFilter extends Command {
                     fs.unlink(file, (err: any) => {
                       if (err) { throw err; }
                       // if no error, file has been deleted successfully
-                      //console.log('deleted file :' + file);
-                      this.multibars.deleteFiles.update(null, { file: file });
-                      this.multibar.update();
+                      // console.log('deleted file :' + file);
                     });
                   }
                 }
-
               }
             }
-
           }
-
         });
-
       }
-
-    }));
+    }
   }
 
 }
