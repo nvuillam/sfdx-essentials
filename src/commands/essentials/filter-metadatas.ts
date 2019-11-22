@@ -1,36 +1,39 @@
 import { Command, flags } from '@oclif/command';
-import { FILE } from 'dns';
+import * as fs from 'fs';
+import * as fse from 'fs-extra';
+import * as xml2js from 'xml2js';
+import * as util from 'util';
+import * as cliProgress from 'cli-progress';
 
 export default class ExecuteFilter extends Command {
   public static description = '';
 
   public static examples = [];
 
-  public static flags = {
+  public static flags: any = {
     // flag with a value (-n, --name=VALUE)
     packagexml: flags.string({ char: 'p', description: 'package.xml file path' }),
     inputfolder: flags.string({ char: 'i', description: 'Input folder (default: "." )' }),
-    outputfolder: flags.string({ char: 'o', description: 'Output folder (default: filteredMetadatas)' })
+    outputfolder: flags.string({ char: 'o', description: 'Output folder (default: filteredMetadatas)' }),
+    verbose: flags.boolean({ char: 'v', description: 'Verbose' })
   };
 
   public static args = [];
 
   // Input params properties
-  public packageXmlFile;
-  public inputFolder;
-  public outputFolder;
+  public packageXmlFile: string;
+  public inputFolder: string;
+  public outputFolder: string;
+  public verbose: boolean = false;
 
   // Internal properties
-  public fs = require('fs');
-  public fse = require('fs-extra');
-  public xml2js = require('xml2js');
-  public util = require('util');
-  public path = require('path');
   public metadataUtils = require('../../common/metadata-utils');
   public packageXmlMetadatasTypeLs = [];
   public sobjectCollectedInfo = {};
   public translatedLanguageList = [];
   public summaryResult = { metadataTypes: {}, objects: [], objectsTranslations: [] };
+  public multibar: any;
+  public multibars: any = {};
 
   // Runtime methods
   public async run() {
@@ -41,94 +44,140 @@ export default class ExecuteFilter extends Command {
     this.packageXmlFile = flags.packagexml;
     this.inputFolder = flags.inputfolder || '.';
     this.outputFolder = flags.outputfolder || 'filteredMetadatas';
+    if (flags.verbose) {
+      this.verbose = true;
+    }
     this.log(`Initialize filtering of ${this.inputFolder} ,using ${this.packageXmlFile} , into ${this.outputFolder}`);
+    if (!this.verbose) {
+      // @ts-ignore
+      this.multibar = new cliProgress.MultiBar({
+        clearOnComplete: false,
+        fps: 500,
+        format: '{name} [{bar}] {percentage}% | {value}/{total} | {file} '
+      }, cliProgress.Presets.shades_grey);
+      this.multibars.total = this.multibar.create(3, 0, { name: 'Total'.padEnd(30, ' '), file: 'Initialize target folder' });
+      this.multibars.filterMetadatasByType = this.multibar.create(1, 0, { name: 'Filter metadatas by type'.padEnd(30, ' '), file: 'N/A' });
+      this.multibars.copyImpactedObjects = this.multibar.create(1, 0, { name: 'Copy impacted objects'.padEnd(30, ' '), file: 'N/A' });
+    }
 
     // Read package.xml file
-    const parser = new this.xml2js.Parser();
-    const self = this;
-    this.fs.readFile(this.packageXmlFile, function(err, data) {
-      parser.parseString(data, function(err2, result) {
-        console.log('Parsed package.xml \n' + self.util.inspect(result, false, null));
+    const processPromise = new Promise((resolve, reject) => {
+      const parser = new xml2js.Parser();
+      fs.readFile(this.packageXmlFile, async (err, data) => {
+        parser.parseString(data, async (err2, result) => {
+          this.logIfVerbose('Parsed package.xml \n' + util.inspect(result, false, null));
 
-        // get metadata types in parse result
-        try { self.packageXmlMetadatasTypeLs = result.Package.types; } catch { throw new Error('Unable to parse packageXml file ' + self.packageXmlFile); }
+          // get metadata types in parse result
+          try { this.packageXmlMetadatasTypeLs = result.Package.types; } catch { throw new Error('Unable to parse packageXml file ' + this.packageXmlFile); }
 
-        // Create output folder/empty it if existing
-        if (self.fs.existsSync(self.outputFolder)) {
-          console.log('Empty target directory');
-          self.fse.emptyDirSync(self.outputFolder);
-        } else {
-          self.fs.mkdirSync(self.outputFolder);
-        }
+          // Create output folder/empty it if existing
+          if (fs.existsSync(this.outputFolder)) {
+            this.logIfVerbose('Empty target directory');
+            fse.emptyDirSync(this.outputFolder);
+          } else {
+            fs.mkdirSync(this.outputFolder);
+          }
 
-        // Copy package.xml file in output folder
-        self.fse.copySync(self.packageXmlFile, self.outputFolder + '/package.xml');
+          // Copy package.xml file in output folder
+          fse.copySync(this.packageXmlFile, this.outputFolder + '/package.xml');
 
-        // Process source folder filtering and copy files into target folder
-        self.filterMetadatasByType();
-        self.copyImpactedObjects();
-        self.displayResults();
+          if (!this.verbose) {
+            this.multibars.total.increment();
+            this.multibar.update();
+          }
+
+          // Process source folder filtering and copy files into target folder
+          await this.filterMetadatasByType();
+          await this.copyImpactedObjects();
+          resolve();
+        });
       });
-    });
 
+    });
+    await processPromise;
+    if (!this.verbose) {
+      this.multibars.total.update(null, { file: 'Completed' });
+      this.multibar.update();
+      this.multibar.stop();
+    }
+    this.displayResults();
   }
 
   // Filter metadatas by type
-  public filterMetadatasByType() {
-    const self = this;
-    this.packageXmlMetadatasTypeLs.forEach(function(metadataDefinition) {
+  public async filterMetadatasByType() {
+    if (!this.verbose) {
+      this.multibars.total.update(null, { file: 'Filter metadatas by type' });
+      this.multibars.filterMetadatasByType.setTotal(this.packageXmlMetadatasTypeLs.length);
+      this.multibar.update();
+    }
+    for (const metadataDefinition of this.packageXmlMetadatasTypeLs) {
+      if (!this.verbose) {
+        this.multibars.filterMetadatasByType.update(null, { file: metadataDefinition.name });
+        this.multibar.update();
+      }
       const metadataType = metadataDefinition.name;
       const members = metadataDefinition.members;
 
-      self.summaryResult.metadataTypes[metadataType] = { nbCopied: 0 };
+      this.summaryResult.metadataTypes[metadataType] = { nbCopied: 0 };
       // Get metadata description
-      const metadataDesc = self.getMetadataTypeDescription(metadataType);
+      const metadataDesc = this.getMetadataTypeDescription(metadataType);
       if (metadataDesc == null) {
-        return;
+        if (!this.verbose) {
+          this.multibars.filterMetadatasByType.increment();
+          this.multibar.update();
+        }
+        continue;
       }
       // Simply copy files
       if (metadataDesc.folder != null) {
-        self.copyMetadataFiles(metadataDesc, metadataType, members);
+        await this.copyMetadataFiles(metadataDesc, metadataType, members);
       }
 
       // Collect for .object & .objectTranslation filtering
       if (metadataDesc.sobjectRelated === true) {
-        self.collectObjectDescription(metadataType, members);
+        this.collectObjectDescription(metadataType, members);
       }
 
       // Collect for translation filtering
       if (metadataDesc.translationRelated === true) {
-        self.collectTranslationDescription(metadataType, members);
+        this.collectTranslationDescription(metadataType, members);
       }
-
-    });
+      if (!this.verbose) {
+        this.multibars.filterMetadatasByType.increment();
+        this.multibar.update();
+      }
+    };
+    if (!this.verbose) {
+      this.multibars.total.increment();
+      this.multibars.filterMetadatasByType.update(null, { file: 'Completed' });
+      this.multibar.update();
+    }
   }
 
-  public copyMetadataFiles(metadataDesc, metadataType, members) {
+  public async copyMetadataFiles(metadataDesc, metadataType, members) {
     // Browse folder for matching files and copy them into target folder
     const typeInputFolder = this.inputFolder + '/' + metadataDesc.folder;
-    console.log(`- processing ${metadataType}`);
-    if (this.fs.existsSync(typeInputFolder)) {
+    this.logIfVerbose(`- processing ${metadataType}`);
+    if (fs.existsSync(typeInputFolder)) {
       const typeOutputFolder = this.outputFolder + '/' + metadataDesc.folder;
       if (members != null && members[0] === '*') {
         // Wildcard: copy whole folder
-        this.fse.copySync(typeInputFolder, typeOutputFolder);
+        fse.copySync(typeInputFolder, typeOutputFolder);
       } else {
         // Create member folder in output folder
-        this.fs.mkdirSync(typeOutputFolder);
-        const self = this;
+        fs.mkdirSync(typeOutputFolder);
         // Iterate all metadata types members (ApexClass,ApexComponent,etc...)
-        members.forEach(function(member) {
+        members.forEach((member) => {
           // Iterate all possible extensions ( '' for same file/folder name, '.cls' for ApexClass, etc ...)
-          metadataDesc.nameSuffixList.forEach(function(nameSuffix) {
+          metadataDesc.nameSuffixList.forEach((nameSuffix) => {
             // If input file/folder exists, copy it in output folder
             const sourceFile = typeInputFolder + '/' + member + nameSuffix;
-            if (self.fs.existsSync(sourceFile)) {
+            if (fs.existsSync(sourceFile)) {
               const copyTargetFile = typeOutputFolder + '/' + member + nameSuffix;
-              self.fse.copySync(sourceFile, copyTargetFile);
+              fse.copySync(sourceFile, copyTargetFile);
               // Increment counter only when file is not meta-xml
               if (!sourceFile.endsWith('meta-xml')) {
-                self.summaryResult.metadataTypes[metadataType]['nbCopied']++;
+                this.summaryResult.metadataTypes[metadataType]['nbCopied']++;
               }
             }
           });
@@ -140,36 +189,34 @@ export default class ExecuteFilter extends Command {
 
   // Special case of SObjects: collect references to them in MetadataTypes
   public collectObjectDescription(metadataType, members) {
-    const self = this;
-    console.log(`- collecting ${metadataType}`);
+    this.logIfVerbose(`- collecting ${metadataType}`);
     if (members == null) {
-      console.log(`-- Warning: no ${metadataType} in package.xml`);
+      this.logIfVerbose(`-- Warning: no ${metadataType} in package.xml`);
       return;
     }
-    members.forEach(function(member) {
+    members.forEach((member) => {
       const sobjectName = member.split('.')[0];
-      const sobjectInfo = self.sobjectCollectedInfo[sobjectName] || {};
+      const sobjectInfo = this.sobjectCollectedInfo[sobjectName] || {};
       if (metadataType !== 'CustomObject' && member.split('.')[1] != null) {
         const sobjectInfoMetadataTypeList = sobjectInfo[metadataType] || [];
         sobjectInfoMetadataTypeList.push(member.split('.')[1]);
         sobjectInfo[metadataType] = sobjectInfoMetadataTypeList;
       }
-      self.sobjectCollectedInfo[sobjectName] = sobjectInfo;
+      this.sobjectCollectedInfo[sobjectName] = sobjectInfo;
     });
   }
 
   // Special case of SObjects: collect references to them in MetadataTypes
   public collectTranslationDescription(metadataType, members) {
-    const self = this;
-    console.log(`- collecting ${metadataType}`);
+    this.logIfVerbose(`- collecting ${metadataType}`);
     if (members == null) {
-      console.log(`-- Warning: no ${metadataType} in package.xml`);
+      this.logIfVerbose(`-- Warning: no ${metadataType} in package.xml`);
       return;
     }
-    members.forEach(function(member) {
-      self.translatedLanguageList.push(member);
+    members.forEach((member) => {
+      this.translatedLanguageList.push(member);
     });
-    console.log('- collected language list:' + self.translatedLanguageList.toString());
+    this.logIfVerbose('- collected language list:' + this.translatedLanguageList.toString());
   }
 
   // get Metadatype description
@@ -179,98 +226,121 @@ export default class ExecuteFilter extends Command {
   }
 
   // Copy objects based on information gathered with 'sobjectRelated' metadatas
-  public copyImpactedObjects() {
-    const self = this;
+  public async copyImpactedObjects() {
+    if (!this.verbose) {
+      this.multibars.total.update(null, { file: 'Copy impacted objects' });
+      this.multibar.update();
+      this.multibars.copyImpactedObjects.setTotal(Object.keys(this.sobjectCollectedInfo).length);
+    }
     // Create objects folder
-    this.fs.mkdirSync(self.outputFolder + '/objects/');
+    fs.mkdirSync(this.outputFolder + '/objects/');
     // Create objectTranslations folder if necessary
-    if (self.translatedLanguageList.length > 0) {
-      this.fs.mkdirSync(self.outputFolder + '/objectTranslations/');
+    if (this.translatedLanguageList.length > 0) {
+      fs.mkdirSync(this.outputFolder + '/objectTranslations/');
     }
 
     // Process all SObjects
-    Object.keys(this.sobjectCollectedInfo).forEach(function(objectName) {
-      console.log('- processing SObject ' + objectName);
-      const objectContentToKeep = self.sobjectCollectedInfo[objectName];
+    const objectPromises = [];
 
-      // Read .object file
-      const inputObjectFileName = self.inputFolder + '/objects/' + objectName + '.object';
-      const parser = new self.xml2js.Parser();
-      const data = self.fs.readFileSync(inputObjectFileName);
-      parser.parseString(data, function(err2, parsedObjectFile) {
-        // Filter .object file to keep only items referenced in package.xml ( and collected during filterMetadatasByType)
-        if (objectContentToKeep == null) {
-          console.log('-- no filtering for ' + objectName);
-        } else {
-          parsedObjectFile = self.filterSObjectFile(parsedObjectFile, objectName, objectContentToKeep);
+    Object.keys(this.sobjectCollectedInfo).forEach((objectName) => {
+      const objectPromise = new Promise((resolve, reject) => {
+        if (!this.verbose) {
+          this.multibars.copyImpactedObjects.update(null, { file: objectName });
+          this.multibar.update();
         }
+        this.logIfVerbose('- processing SObject ' + objectName);
+        const objectContentToKeep = this.sobjectCollectedInfo[objectName];
 
-        // Write output .object file
-        const builder = new self.xml2js.Builder();
-        const updatedObjectXml = builder.buildObject(parsedObjectFile);
-        const outputObjectFileName = self.outputFolder + '/objects/' + objectName + '.object';
-        self.fs.writeFileSync(outputObjectFileName, updatedObjectXml);
-      });
-      self.summaryResult.objects.push(objectName);
-
-      // Manage objectTranslations
-      if (self.translatedLanguageList.length > 0) {
-        console.log('- processing SObject translation for ' + objectName);
-        self.translatedLanguageList.forEach((translationCode) => {
-          const inputObjectTranslationFileName = self.inputFolder + '/objectTranslations/' + objectName + '-' + translationCode + '.objectTranslation';
-          // Check objectTranslation file exists for this language
-          if (!self.fs.existsSync(inputObjectTranslationFileName)) {
-            return;
+        // Read .object file
+        const inputObjectFileName = this.inputFolder + '/objects/' + objectName + '.object';
+        const parser = new xml2js.Parser();
+        const data = fs.readFileSync(inputObjectFileName);
+        parser.parseString(data, (err2, parsedObjectFile) => {
+          // Filter .object file to keep only items referenced in package.xml ( and collected during filterMetadatasByType)
+          if (objectContentToKeep == null) {
+            this.logIfVerbose('-- no filtering for ' + objectName);
+          } else {
+            parsedObjectFile = this.filterSObjectFile(parsedObjectFile, objectName, objectContentToKeep);
           }
-          // Read .objectTranslation file
-          const parserTr = new self.xml2js.Parser();
-          const dataTr = self.fs.readFileSync(inputObjectTranslationFileName);
-          parserTr.parseString(dataTr, function(err2, parsedObjectFileTr) {
-            // Filter .objectTranslation file to keep only items referenced in package.xml ( and collected during filterMetadatasByType)
-            if (objectContentToKeep == null) {
-              console.log('-- no filtering for ' + objectName);
-            } else {
-              parsedObjectFileTr = self.filterSObjectTranslationFile(parsedObjectFileTr, objectName, objectContentToKeep);
-            }
 
-            // Write output .objectTranslation file
-            const builderTrx = new self.xml2js.Builder();
-            const updatedObjectXmlTr = builderTrx.buildObject(parsedObjectFileTr);
-            const outputObjectFileNameTr = self.outputFolder + '/objectTranslations/' + objectName + '-' + translationCode + '.objectTranslation';
-            self.fs.writeFileSync(outputObjectFileNameTr, updatedObjectXmlTr);
-          });
-          self.summaryResult.objectsTranslations.push(objectName + '-' + translationCode);
+          // Write output .object file
+          const builder = new xml2js.Builder();
+          const updatedObjectXml = builder.buildObject(parsedObjectFile);
+          const outputObjectFileName = this.outputFolder + '/objects/' + objectName + '.object';
+          fs.writeFileSync(outputObjectFileName, updatedObjectXml);
         });
+        this.summaryResult.objects.push(objectName);
 
-      }
+        // Manage objectTranslations
+        if (this.translatedLanguageList.length > 0) {
+          this.logIfVerbose('- processing SObject translation for ' + objectName);
+          this.translatedLanguageList.forEach((translationCode) => {
+            const inputObjectTranslationFileName = this.inputFolder + '/objectTranslations/' + objectName + '-' + translationCode + '.objectTranslation';
+            // Check objectTranslation file exists for this language
+            if (!fs.existsSync(inputObjectTranslationFileName)) {
+              return;
+            }
+            // Read .objectTranslation file
+            const parserTr = new xml2js.Parser();
+            const dataTr = fs.readFileSync(inputObjectTranslationFileName);
+            parserTr.parseString(dataTr, (err2, parsedObjectFileTr) => {
+              // Filter .objectTranslation file to keep only items referenced in package.xml ( and collected during filterMetadatasByType)
+              if (objectContentToKeep == null) {
+                this.logIfVerbose('-- no filtering for ' + objectName);
+              } else {
+                parsedObjectFileTr = this.filterSObjectTranslationFile(parsedObjectFileTr, objectName, objectContentToKeep);
+              }
 
+              // Write output .objectTranslation file
+              const builderTrx = new xml2js.Builder();
+              const updatedObjectXmlTr = builderTrx.buildObject(parsedObjectFileTr);
+              const outputObjectFileNameTr = this.outputFolder + '/objectTranslations/' + objectName + '-' + translationCode + '.objectTranslation';
+              fs.writeFileSync(outputObjectFileNameTr, updatedObjectXmlTr);
+            });
+            this.summaryResult.objectsTranslations.push(objectName + '-' + translationCode);
+          });
+
+        }
+        if (!this.verbose) {
+          this.multibars.copyImpactedObjects.increment();
+          this.multibar.update();
+        }
+        resolve();
+      });
+      objectPromises.push(objectPromise);
     });
-    self.summaryResult.objects.sort();
+    await Promise.all(objectPromises);
+    if (!this.verbose) {
+      this.multibars.total.increment();
+      this.multibars.copyImpactedObjects.update(null, { file: 'Completed' });
+      this.multibar.update();
+    }
+    this.summaryResult.objects.sort();
   }
 
   // Filter output XML of .object file
   public filterSObjectFile(parsedObjectFile, objectName, objectContentToKeep) {
     const objectFilteringProperties = this.metadataUtils.describeObjectProperties();
-    const self = this;
-    objectFilteringProperties.forEach(function(objectFilterProp) {
+    objectFilteringProperties.forEach((objectFilterProp) => {
       // Filter fields
       const objectXmlPropName = objectFilterProp['objectXmlPropName'];
       const packageXmlPropName = objectFilterProp['packageXmlPropName'];
       const nameProperty = objectFilterProp['nameProperty'];
       if (parsedObjectFile['CustomObject'][objectXmlPropName] != null) {
 
-        const compareList = objectContentToKeep[packageXmlPropName] || [];
+        const compareList: Array<string> = objectContentToKeep[packageXmlPropName] || [];
         if (parsedObjectFile['CustomObject'][objectXmlPropName] == null) {
-          console.warn('/!\ can not filter ' + objectXmlPropName + ' : not found');
+          this.logIfVerbose('/!\ WARNING: can not filter ' + objectXmlPropName + ' : not found');
         } else {
           let pos = 0;
-          parsedObjectFile['CustomObject'][objectXmlPropName].forEach(function(itemDscrptn) {
+          parsedObjectFile['CustomObject'][objectXmlPropName].forEach((itemDscrptn) => {
             const itemName = itemDscrptn[nameProperty];
-            if (!self.arrayIncludes(compareList, itemName)) {
-              console.log(`---- removed ${packageXmlPropName} ` + itemDscrptn[nameProperty]);
+            if (!compareList.includes(itemName)) {
+              console.error(itemName + ' in ' + compareList);
+              this.logIfVerbose(`---- removed ${packageXmlPropName} ` + itemDscrptn[nameProperty]);
               delete parsedObjectFile['CustomObject'][objectXmlPropName][pos];
             } else {
-              console.log(`-- kept ${packageXmlPropName} ` + itemDscrptn[nameProperty]);
+              this.logIfVerbose(`-- kept ${packageXmlPropName} ` + itemDscrptn[nameProperty]);
             }
             pos++;
           });
@@ -284,26 +354,25 @@ export default class ExecuteFilter extends Command {
   // Filter output XML of .object file
   public filterSObjectTranslationFile(parsedObjectFile, objectName, objectContentToKeep) {
     const objectFilteringProperties = this.metadataUtils.describeObjectProperties();
-    const self = this;
-    objectFilteringProperties.forEach(function(objectFilterProp) {
+    objectFilteringProperties.forEach((objectFilterProp) => {
       // Filter fields,layouts,businessProcesses, listView,WebLink
       const objectXmlPropName = objectFilterProp['objectXmlPropName'];
       const packageXmlPropName = objectFilterProp['packageXmlPropName'];
       const nameProperty = objectFilterProp['translationNameProperty'];
       if (parsedObjectFile['CustomObjectTranslation'][objectXmlPropName] != null) {
 
-        const compareList = objectContentToKeep[packageXmlPropName] || [];
+        const compareList: Array<string> = objectContentToKeep[packageXmlPropName] || [];
         if (parsedObjectFile['CustomObjectTranslation'][objectXmlPropName] == null) {
-          console.warn('/!\ can not filter translation ' + objectXmlPropName + ' : not found');
+          this.logIfVerbose('/!\ can not filter translation ' + objectXmlPropName + ' : not found');
         } else {
           let pos = 0;
-          parsedObjectFile['CustomObjectTranslation'][objectXmlPropName].forEach(function(itemDscrptn) {
+          parsedObjectFile['CustomObjectTranslation'][objectXmlPropName].forEach((itemDscrptn) => {
             const itemName = itemDscrptn[nameProperty];
-            if (!self.arrayIncludes(compareList, itemName)) {
-              console.log(`---- removed translation ${packageXmlPropName} ` + itemDscrptn[nameProperty]);
+            if (!compareList.includes(itemName)) {
+              this.logIfVerbose(`---- removed translation ${packageXmlPropName} ` + itemDscrptn[nameProperty]);
               delete parsedObjectFile['CustomObjectTranslation'][objectXmlPropName][pos];
             } else {
-              console.log(`-- kept translation ${packageXmlPropName} ` + itemDscrptn[nameProperty]);
+              this.logIfVerbose(`-- kept translation ${packageXmlPropName} ` + itemDscrptn[nameProperty]);
             }
             pos++;
           });
@@ -314,19 +383,15 @@ export default class ExecuteFilter extends Command {
     return parsedObjectFile;
   }
 
-  public arrayIncludes(zeArray, zeItem) {
-    let result = false;
-    zeArray.forEach(function(elt) {
-      if (elt === zeItem) {
-        result = true;
-      }
-    });
-    return result;
-  }
-
   // Display results as JSON
   public displayResults() {
-    console.log(JSON.stringify(this.summaryResult));
+    console.log('\n' + JSON.stringify(this.summaryResult));
+  }
+
+  public logIfVerbose(content: string) {
+    if (this.verbose) {
+      console.log(content);
+    }
   }
 
 }
