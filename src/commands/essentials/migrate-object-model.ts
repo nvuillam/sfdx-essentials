@@ -14,7 +14,8 @@ export default class ExecuteFilter extends Command {
     // flag with a value (-n, --name=VALUE)
     configFile: flags.string({ char: 'c', description: 'JSON config file' }),
     inputFolder: flags.string({ char: 'i', description: 'Input folder (default: "." )' }),
-    fetchExpressionList: flags.string({ char: 'f', description: 'Fetch expression list. Let default if you dont know. ex: /aura/**/*.js,./aura/**/*.cmp,./classes/*.cls,./objects/*/fields/*.xml,./objects/*/recordTypes/*.xml,./triggers/*.trigger,./permissionsets/*.xml,./profiles/*.xml,./staticresources/*.json' })
+    fetchExpressionList: flags.string({ char: 'f', description: 'Fetch expression list. Let default if you dont know. ex: /aura/**/*.js,./aura/**/*.cmp,./classes/*.cls,./objects/*/fields/*.xml,./objects/*/recordTypes/*.xml,./triggers/*.trigger,./permissionsets/*.xml,./profiles/*.xml,./staticresources/*.json' }),
+    verbose: flags.string({ char: 'v', description: 'Verbose' })
   };
 
   public static args = [];
@@ -33,6 +34,7 @@ export default class ExecuteFilter extends Command {
     './profiles/*.xml',
     './staticresources/*.json'
   ];
+  public verbose: boolean = false;
 
   // Internal props
   public configData: any;
@@ -48,6 +50,9 @@ export default class ExecuteFilter extends Command {
 
     this.inputFolder = flags.inputFolder || '.';
     this.configFile = flags.configFile;
+    if (flags.verbose) {
+      this.verbose = true;
+    }
     if (flags.fetchExpressionList) {
       this.fetchExpressionList = flags.fetchExpressionList.split(',');
     }
