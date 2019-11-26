@@ -1,21 +1,25 @@
 import { Command, flags } from '@oclif/command';
 import * as glob from 'glob';
 import * as fs from 'fs';
+import * as fsExtra from 'fs-extra';
 import * as rimraf from 'rimraf';
 import * as xml2js from 'xml2js';
 import * as cliProgress from 'cli-progress';
+import EssentialsUtils = require('../../common/essentials-utils');
 
 export default class ExecuteFilter extends Command {
   public static description = '';
 
   public static examples = [];
 
-  public static flags = {
+  public static flags: any = {
     // flag with a value (-n, --name=VALUE)
     configFile: flags.string({ char: 'c', description: 'JSON config file' }),
     inputFolder: flags.string({ char: 'i', description: 'Input folder (default: "." )' }),
     fetchExpressionList: flags.string({ char: 'f', description: 'Fetch expression list. Let default if you dont know. ex: /aura/**/*.js,./aura/**/*.cmp,./classes/*.cls,./objects/*/fields/*.xml,./objects/*/recordTypes/*.xml,./triggers/*.trigger,./permissionsets/*.xml,./profiles/*.xml,./staticresources/*.json' }),
-    verbose: flags.string({ char: 'v', description: 'Verbose' })
+    deleteFiles: flags.string({ char: 'd', description: 'Delete files with deprecated references', default: 'true' }),
+    copySfdxProjectFolder: flags.string({ char: 's', description: 'Copy sfdx project files after process', default: 'true' }),
+    verbose: flags.boolean({ char: 'v', description: 'Verbose', default: false })
   };
 
   public static args = [];
@@ -34,6 +38,8 @@ export default class ExecuteFilter extends Command {
     './profiles/*.xml',
     './staticresources/*.json'
   ];
+  public deleteFiles: boolean = true;
+  public copySfdxProjectFolder: boolean = true;
   public verbose: boolean = false;
 
   // Internal props
@@ -44,17 +50,20 @@ export default class ExecuteFilter extends Command {
   // Runtime methods
   public async run() {
 
-    console.time('migrate-object-model');
+    const elapseStart = Date.now();
     // tslint:disable-next-line:no-shadowed-variable
     const { args, flags } = this.parse(ExecuteFilter);
 
     this.inputFolder = flags.inputFolder || '.';
     this.configFile = flags.configFile;
-    if (flags.verbose) {
-      this.verbose = true;
-    }
+    this.deleteFiles = (flags.deleteFiles === 'true');
+    this.copySfdxProjectFolder = (flags.copySfdxProjectFolder === 'true');
+    this.verbose = flags.verbose;
+
     if (flags.fetchExpressionList) {
       this.fetchExpressionList = flags.fetchExpressionList.split(',');
+    } else if (flags.fetchExpressionList === '') {
+      this.fetchExpressionList = [];
     }
 
     // Read config file and store it in class variable
@@ -69,13 +78,22 @@ export default class ExecuteFilter extends Command {
       fps: 500,
       format: '{name} [{bar}] {percentage}% | {value}/{total} | {file} '
     }, cliProgress.Presets.shades_grey);
-    this.multibars.total = this.multibar.create(this.fetchExpressionList.length + 1, 0, { name: 'Total'.padEnd(30, ' '), file: 'N/A' });
+    this.multibars.total = this.multibar.create(this.fetchExpressionList.length, 0, { name: 'Total'.padEnd(30, ' '), file: 'N/A' });
+    // Expression list progress bars
     this.fetchExpressionList.forEach((fetchExpression: string) => {
       const customFileNameList = glob.sync(this.inputFolder + '/' + fetchExpression);
       this.multibars[fetchExpression] = this.multibar.create(customFileNameList.length, 0, { name: fetchExpression.padEnd(30, ' '), file: 'N/A' });
     });
-    this.multibars.deleteFiles = this.multibar.create(1, 0, { name: 'Delete files & folders'.padEnd(30, ' '), file: 'N/A' });
-    this.multibar.update();
+    // Delete files progress bar
+    if (this.deleteFiles && this.configData.objectToDelete) {
+      this.multibars.deleteFiles = this.multibar.create(1, 0, { name: 'Delete files & folders'.padEnd(30, ' '), file: 'N/A' });
+      this.multibars.total.setTotal(this.multibars.total.getTotal() + 1);
+    }
+    // Copy sfdx folder progress bar
+    if (this.copySfdxProjectFolder && this.configData.sfdxProjectFolder) {
+      this.multibars.sfdxProjectFolder = this.multibar.create(1, 0, { name: 'Copy SFDX Project'.padEnd(30, ' '), file: 'N/A' });
+      this.multibars.total.setTotal(this.multibars.total.getTotal() + 1);
+    }
 
     // Iterate on each expression to browse files
     for (const fetchExpression of this.fetchExpressionList) {
@@ -102,16 +120,26 @@ export default class ExecuteFilter extends Command {
         this.multibar.update();
       }
       // progress bar update
-      const elapsedTime = Math.round((Date.now() - fetchExprStartTime) / 1000);
-      this.multibars[fetchExpression].update(null, { file: 'Completed in ' + elapsedTime + 's' });
+      // @ts-ignore
+      this.multibars[fetchExpression].update(null, { file: 'Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - fetchExprStartTime) / 1000)) });
       this.multibars.total.increment();
       this.multibar.update();
     }
-    await this.deleteOldDataModelReferency();
-    this.multibars.total.stop();
-    this.multibar.stop();
 
-    console.timeEnd('migrate-object-model');
+    // Delete Old data model content
+    if (this.deleteFiles) {
+      await this.deleteOldDataModelReferency();
+    }
+
+    // If defined, copy manually updated sfdx project ( including new object model )
+    if (this.copySfdxProjectFolder) {
+      await this.copySfdxProjectManualItems();
+    }
+    // @ts-ignore
+    this.multibars.total.update(null, { file: 'Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - elapseStart) / 1000)) });
+    this.multibars.total.stop();
+    this.multibar.update();
+    this.multibar.stop();
   }
 
   // Process component file
@@ -236,9 +264,10 @@ export default class ExecuteFilter extends Command {
                 const updatedObjectXml = builder.buildObject(fileXmlContent);
                 fs.writeFileSync(xmlFile, updatedObjectXml);
               } catch (e) {
-                console.error(e.message);
-                console.error(xmlFile);
-                console.error(fileXmlContent);
+                // Commented : error must have been manually managed in sfdxProjectFiles
+                /*  console.error(e.message);
+                  console.error(xmlFile);
+                  console.error(fileXmlContent); */
               }
               break;
             }
@@ -439,14 +468,25 @@ export default class ExecuteFilter extends Command {
     return arrayFileLines;
   }
 
+  // Delete referencies to old data model
   public async deleteOldDataModelReferency() {
     const objectToDelete = this.configData.objectToDelete;
-    const customFileNameList = glob.sync('./*/*');
+
     if (objectToDelete) {
+      const elapseStart = Date.now();
+
+      const customFileNameList = glob.sync('./*/*');
       this.multibars.deleteFiles.setTotal(customFileNameList.length);
+      // @ts-ignore
+      const interval = EssentialsUtils.multibarStartProgress(this.multibars, 'deleteFiles', this.multibar, 'Deleting files');
       await this.deleteFileOrFolder(customFileNameList, objectToDelete, true);
+      // @ts-ignore
+      EssentialsUtils.multibarStopProgress(interval);
+      // @ts-ignore
+      this.multibars.deleteFiles.update(null, { file: 'Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - elapseStart) / 1000)) });
+      this.multibars.total.increment();
     }
-    this.multibars.total.increment();
+
   }
 
   public async deleteFileOrFolder(customFileNameList: any, objectToDelete: any, increment = false) {
@@ -457,7 +497,7 @@ export default class ExecuteFilter extends Command {
       }
       if (file.includes(objectToDelete.prefixe)) {
 
-        fs.unlink(file, (err: any) => {
+        fsExtra.remove(file, (err: any) => {
           if (err) { throw err; }
           // if no error, file has been deleted successfully
           // console.log('deleted file :' + file);
@@ -480,12 +520,14 @@ export default class ExecuteFilter extends Command {
             for (let i = 0; i < Object.keys(fileXmlContent).length; i++) {
               const eltKey = Object.keys(fileXmlContent)[i];
               if (fileXmlContent[eltKey].referenceTo && fileXmlContent[eltKey].referenceTo[0] && fileXmlContent[eltKey].referenceTo[0].includes(objectToDelete.prefixe)) {
-                fs.unlink(file, (err: any) => {
-                  if (err) { throw err; }
-                  // if no error, file has been deleted successfully
-                  // console.log('deleted file :' + file);
-                });
-                break;
+                if (fs.existsSync(file)) {
+                  fsExtra.remove(file, (err: any) => {
+                    if (err) { throw err; }
+                    // if no error, file has been deleted successfully
+                    // console.log('deleted file :' + file);
+                  });
+                  break;
+                }
               }
 
             }
@@ -505,11 +547,13 @@ export default class ExecuteFilter extends Command {
                   if (layoutSections['layoutColumns'][j]['layoutItems']) {
                     for (let k = 0; k < layoutSections['layoutColumns'][j]['layoutItems'].length; k++) {
                       if (layoutSections['layoutColumns'][j]['layoutItems'][k]['field'] && (layoutSections['layoutColumns'][j]['layoutItems'][k]['field'][0].includes(objectToDelete.prefixe) || layoutSections['layoutColumns'][j]['layoutItems'][k]['field'][0].includes('FinancialAccount__c'))) {
-                        fs.unlink(file, (err: any) => {
-                          if (err) { throw err; }
-                          // if no error, file has been deleted successfully
-                          // console.log('deleted file :' + file);
-                        });
+                        if (fs.existsSync(file)) {
+                          fsExtra.remove(file, (err: any) => {
+                            if (err) { throw err; }
+                            // if no error, file has been deleted successfully
+                            // console.log('deleted file :' + file);
+                          });
+                        }
                       }
                     }
 
@@ -525,11 +569,13 @@ export default class ExecuteFilter extends Command {
               if (platformActionList['platformActionListItems']) {
                 for (let k = 0; k < platformActionList['platformActionListItems'].length; k++) {
                   if (platformActionList['platformActionListItems'][k]['actionName'] && platformActionList['platformActionListItems'][k]['actionName'][0].includes(objectToDelete.prefixe)) {
-                    fs.unlink(file, (err: any) => {
-                      if (err) { throw err; }
-                      // if no error, file has been deleted successfully
-                      // console.log('deleted file :' + file);
-                    });
+                    if (fs.existsSync(file)) {
+                      fsExtra.remove(file, (err: any) => {
+                        if (err) { throw err; }
+                        // if no error, file has been deleted successfully
+                        // console.log('deleted file :' + file);
+                      });
+                    }
                   }
                 }
               }
@@ -537,6 +583,24 @@ export default class ExecuteFilter extends Command {
           }
         });
       }
+    }
+  }
+
+  // Copy Sfdx project items
+  public async copySfdxProjectManualItems() {
+    const sfdxProjectFolder = this.configData.sfdxProjectFolder;
+    if (sfdxProjectFolder) {
+      const elapseStart = Date.now();
+      // @ts-ignore
+      const interval = EssentialsUtils.multibarStartProgress(this.multibars, 'sfdxProjectFolder', this.multibar, 'Copying files');
+      await fsExtra.copy(this.configData.sfdxProjectFolder, this.inputFolder);
+      // @ts-ignore
+      EssentialsUtils.multibarStopProgress(interval);
+      this.multibars.sfdxProjectFolder.increment();
+      // @ts-ignore
+      this.multibars.sfdxProjectFolder.update(null, { file: 'Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - elapseStart) / 1000)) });
+      this.multibars.total.increment();
+      this.multibar.update();
     }
   }
 

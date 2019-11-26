@@ -4,6 +4,8 @@ import * as fse from 'fs-extra';
 import * as xml2js from 'xml2js';
 import * as util from 'util';
 import * as cliProgress from 'cli-progress';
+import EssentialsUtils = require('../../common/essentials-utils');
+import metadataUtils = require('../../common/metadata-utils');
 
 export default class ExecuteFilter extends Command {
   public static description = '';
@@ -27,7 +29,6 @@ export default class ExecuteFilter extends Command {
   public verbose: boolean = false;
 
   // Internal properties
-  public metadataUtils = require('../../common/metadata-utils');
   public packageXmlMetadatasTypeLs = [];
   public sobjectCollectedInfo = {};
   public translatedLanguageList = [];
@@ -37,6 +38,7 @@ export default class ExecuteFilter extends Command {
 
   // Runtime methods
   public async run() {
+    const elapseStart = Date.now();
     // tslint:disable-next-line:no-shadowed-variable
     const { args, flags } = this.parse(ExecuteFilter);
 
@@ -55,12 +57,15 @@ export default class ExecuteFilter extends Command {
         fps: 500,
         format: '{name} [{bar}] {percentage}% | {value}/{total} | {file} '
       }, cliProgress.Presets.shades_grey);
-      this.multibars.total = this.multibar.create(3, 0, { name: 'Total'.padEnd(30, ' '), file: 'Initialize target folder' });
+      this.multibars.total = this.multibar.create(3, 0, { name: 'Total'.padEnd(30, ' '), file: 'N/A' });
+      this.multibars.initialize = this.multibar.create(1, 0, { name: 'Initialize'.padEnd(30, ' '), file: 'N/A' });
       this.multibars.filterMetadatasByType = this.multibar.create(1, 0, { name: 'Filter metadatas by type'.padEnd(30, ' '), file: 'N/A' });
       this.multibars.copyImpactedObjects = this.multibar.create(1, 0, { name: 'Copy impacted objects'.padEnd(30, ' '), file: 'N/A' });
     }
 
     // Read package.xml file
+    // @ts-ignore
+    const interval = EssentialsUtils.multibarStartProgress(this.multibars, 'initialize', this.multibar, 'Initializing');
     const processPromise = new Promise((resolve, reject) => {
       const parser = new xml2js.Parser();
       fs.readFile(this.packageXmlFile, async (err, data) => {
@@ -82,6 +87,8 @@ export default class ExecuteFilter extends Command {
           fse.copySync(this.packageXmlFile, this.outputFolder + '/package.xml');
 
           if (!this.verbose) {
+            // @ts-ignore
+            EssentialsUtils.multibarStopProgress(interval);
             this.multibars.total.increment();
             this.multibar.update();
           }
@@ -96,7 +103,8 @@ export default class ExecuteFilter extends Command {
     });
     await processPromise;
     if (!this.verbose) {
-      this.multibars.total.update(null, { file: 'Completed' });
+      // @ts-ignore
+      this.multibars.total.update(null, { file: 'Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - elapseStart) / 1000)) });
       this.multibar.update();
       this.multibar.stop();
     }
@@ -105,6 +113,7 @@ export default class ExecuteFilter extends Command {
 
   // Filter metadatas by type
   public async filterMetadatasByType() {
+    const elapseStart = Date.now();
     if (!this.verbose) {
       this.multibars.total.update(null, { file: 'Filter metadatas by type' });
       this.multibars.filterMetadatasByType.setTotal(this.packageXmlMetadatasTypeLs.length);
@@ -146,10 +155,11 @@ export default class ExecuteFilter extends Command {
         this.multibars.filterMetadatasByType.increment();
         this.multibar.update();
       }
-    };
+    }
     if (!this.verbose) {
       this.multibars.total.increment();
-      this.multibars.filterMetadatasByType.update(null, { file: 'Completed' });
+      // @ts-ignore
+      this.multibars.filterMetadatasByType.update(null, { file: 'Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - elapseStart) / 1000)) });
       this.multibar.update();
     }
   }
@@ -221,12 +231,14 @@ export default class ExecuteFilter extends Command {
 
   // get Metadatype description
   public getMetadataTypeDescription(mdType) {
-    const desc = this.metadataUtils.describeMetadataTypes()[mdType];
+    // @ts-ignore
+    const desc = metadataUtils.describeMetadataTypes()[mdType];
     return desc;
   }
 
   // Copy objects based on information gathered with 'sobjectRelated' metadatas
   public async copyImpactedObjects() {
+    const elapseStart = Date.now();
     if (!this.verbose) {
       this.multibars.total.update(null, { file: 'Copy impacted objects' });
       this.multibar.update();
@@ -312,7 +324,8 @@ export default class ExecuteFilter extends Command {
     await Promise.all(objectPromises);
     if (!this.verbose) {
       this.multibars.total.increment();
-      this.multibars.copyImpactedObjects.update(null, { file: 'Completed' });
+      // @ts-ignore
+      this.multibars.copyImpactedObjects.update(null, { file: 'Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - elapseStart) / 1000)) });
       this.multibar.update();
     }
     this.summaryResult.objects.sort();
@@ -320,7 +333,8 @@ export default class ExecuteFilter extends Command {
 
   // Filter output XML of .object file
   public filterSObjectFile(parsedObjectFile, objectName, objectContentToKeep) {
-    const objectFilteringProperties = this.metadataUtils.describeObjectProperties();
+    // @ts-ignore
+    const objectFilteringProperties = metadataUtils.describeObjectProperties();
     objectFilteringProperties.forEach((objectFilterProp) => {
       // Filter fields
       const objectXmlPropName = objectFilterProp['objectXmlPropName'];
@@ -328,7 +342,7 @@ export default class ExecuteFilter extends Command {
       const nameProperty = objectFilterProp['nameProperty'];
       if (parsedObjectFile['CustomObject'][objectXmlPropName] != null) {
 
-        const compareList: Array<string> = objectContentToKeep[packageXmlPropName] || [];
+        const compareList: string[] = objectContentToKeep[packageXmlPropName] || [];
         if (parsedObjectFile['CustomObject'][objectXmlPropName] == null) {
           this.logIfVerbose('/!\ WARNING: can not filter ' + objectXmlPropName + ' : not found');
         } else {
@@ -353,7 +367,8 @@ export default class ExecuteFilter extends Command {
 
   // Filter output XML of .object file
   public filterSObjectTranslationFile(parsedObjectFile, objectName, objectContentToKeep) {
-    const objectFilteringProperties = this.metadataUtils.describeObjectProperties();
+    // @ts-ignore
+    const objectFilteringProperties = metadataUtils.describeObjectProperties();
     objectFilteringProperties.forEach((objectFilterProp) => {
       // Filter fields,layouts,businessProcesses, listView,WebLink
       const objectXmlPropName = objectFilterProp['objectXmlPropName'];
@@ -361,7 +376,7 @@ export default class ExecuteFilter extends Command {
       const nameProperty = objectFilterProp['translationNameProperty'];
       if (parsedObjectFile['CustomObjectTranslation'][objectXmlPropName] != null) {
 
-        const compareList: Array<string> = objectContentToKeep[packageXmlPropName] || [];
+        const compareList: string[] = objectContentToKeep[packageXmlPropName] || [];
         if (parsedObjectFile['CustomObjectTranslation'][objectXmlPropName] == null) {
           this.logIfVerbose('/!\ can not filter translation ' + objectXmlPropName + ' : not found');
         } else {

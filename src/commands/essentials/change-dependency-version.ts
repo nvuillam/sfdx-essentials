@@ -3,6 +3,7 @@ import * as glob from 'glob';
 import * as fs from 'fs';
 import * as xml2js from 'xml2js';
 import * as cliProgress from 'cli-progress';
+import EssentialsUtils = require('../../common/essentials-utils');
 
 export default class ExecuteFilter extends Command {
   public static description = `
@@ -34,6 +35,8 @@ export default class ExecuteFilter extends Command {
 
   // Runtime methods
   public async run() {
+    const elapseStart = Date.now();
+
     // tslint:disable-next-line:no-shadowed-variable
     const { args, flags } = this.parse(ExecuteFilter);
 
@@ -114,7 +117,8 @@ export default class ExecuteFilter extends Command {
     }
     await Promise.all(promises); // Wait all files to be processed
     if (!this.verbose) {
-      this.progressBar.update(null, { file: 'Completed' });
+      // @ts-ignore
+      this.progressBar.update(null, { file: 'Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - elapseStart) / 1000)) });
       this.progressBar.stop();
     }
     console.log('Updated ' + updatedNb + ' files');
