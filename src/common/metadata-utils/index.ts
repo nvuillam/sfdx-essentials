@@ -15,18 +15,18 @@ export class MetadataUtils {
       ApprovalProcess: { folder: 'approvalProcesses', nameSuffixList: ['.approvalProcess'], sfdxNameSuffixList: ['.approvalProcess-meta.xml'] },
       AuraDefinitionBundle: { folder: 'aura', nameSuffixList: [''], sfdxNameSuffixList: [''] },
       LightningComponentBundle: { folder: 'lwc', nameSuffixList: [''], sfdxNameSuffixList: [''] },
-      ContentAsset: { folder: 'contentassets', nameSuffixList: ['.asset', '.asset-meta.xml'] , sfdxNameSuffixList: ['.asset', '.asset-meta.xml']},
+      ContentAsset: { folder: 'contentassets', nameSuffixList: ['.asset', '.asset-meta.xml'], sfdxNameSuffixList: ['.asset', '.asset-meta.xml'] },
       CustomApplication: { folder: 'applications', nameSuffixList: ['.app'], sfdxNameSuffixList: ['.app-meta.xml'] },
-      CustomLabel: { folder: 'labels', nameSuffixList: [''] , sfdxNameSuffixList: ['.labels-meta.xml']},
+      CustomLabel: { folder: 'labels', nameSuffixList: ['.labels'], sfdxNameSuffixList: ['.labels-meta.xml'] },
       CustomMetadata: { folder: 'customMetadata', nameSuffixList: ['.md'], sfdxNameSuffixList: ['.md-meta.xml'] },
       CustomSite: { folder: 'sites', nameSuffixList: ['.site'], sfdxNameSuffixList: ['.site-meta.xml'] },
-//      'CustomObjectTranslation': { folder: 'objectTranslations', nameSuffixList: ['.objectTranslation'] }, we use Translations to define the list of objectTranslations to filter & copy
+      //      'CustomObjectTranslation': { folder: 'objectTranslations', nameSuffixList: ['.objectTranslation'] }, we use Translations to define the list of objectTranslations to filter & copy
       CustomTab: { folder: 'tabs', nameSuffixList: ['.tab'], sfdxNameSuffixList: ['.tab-meta.xml'] },
       Document: { folder: 'documents', nameSuffixList: ['', '-meta.xml'], sfdxNameSuffixList: ['.documentFolder-meta.xml'] },
       EmailTemplate: { folder: 'email', nameSuffixList: ['.email', '.email-meta.xml'], sfdxNameSuffixList: [] },
       EscalationRules: { folder: 'escalationRules', nameSuffixList: ['.escalationRules'], sfdxNameSuffixList: ['.escalationRules-meta.xml'] },
       FlexiPage: { folder: 'flexipages', nameSuffixList: ['.flexipage'], sfdxNameSuffixList: ['.flexipage-meta.xml'] },
-      Flow: { folder: 'flows', nameSuffixList: ['.flow']},
+      Flow: { folder: 'flows', nameSuffixList: ['.flow'] },
       GlobalValueSet: { folder: 'globalValueSets', nameSuffixList: ['.globalValueSet'], sfdxNameSuffixList: ['.globalValueSet-meta.xml'] },
       GlobalValueSetTranslation: { folder: 'globalValueSetTranslations', nameSuffixList: ['.globalValueSetTranslation'], sfdxNameSuffixList: ['.globalValueSetTranslation-meta.xml'] },
       HomePageLayout: { folder: 'homePageLayouts', nameSuffixList: ['.homePageLayout'], sfdxNameSuffixList: ['.homePageLayout-meta.xml'] },
@@ -34,7 +34,7 @@ export class MetadataUtils {
       NamedCredential: { folder: 'namedCredentials', nameSuffixList: ['.namedCredential'], sfdxNameSuffixList: ['.namedCredential-meta.xml'] },
       Network: { folder: 'networks', nameSuffixList: ['.network'], sfdxNameSuffixList: ['.network-meta.xml'] },
       PermissionSet: { folder: 'permissionsets', nameSuffixList: ['.permissionset'], sfdxNameSuffixList: ['.permissionset-meta.xml'] },
-      PlatformCachePartition : { folder: 'cachePartitions', nameSuffixList: ['.cachePartition'], sfdxNameSuffixList: ['.cachePartition-meta.xml'] },
+      PlatformCachePartition: { folder: 'cachePartitions', nameSuffixList: ['.cachePartition'], sfdxNameSuffixList: ['.cachePartition-meta.xml'] },
       Profile: { folder: 'profiles', nameSuffixList: ['.profile'], sfdxNameSuffixList: ['.profile-meta.xml'] },
       Queue: { folder: 'queues', nameSuffixList: ['.queue'], sfdxNameSuffixList: ['.queue-meta.xml'] },
       QuickAction: { folder: 'quickActions', nameSuffixList: ['.quickAction'], sfdxNameSuffixList: ['.quickAction-meta.xml'] },
@@ -45,7 +45,7 @@ export class MetadataUtils {
       SiteDotCom: { folder: 'siteDotComSites', nameSuffixList: ['.site', '.site-meta.xml'], sfdxNameSuffixList: ['.site', '.site-meta.xml'] },
       StandardValueSet: { folder: 'standardValueSets', nameSuffixList: ['.standardValueSet'], sfdxNameSuffixList: ['.standardValueSet-meta.xml'] },
       StandardValueSetTranslation: { folder: 'standardValueSetTranslations', nameSuffixList: ['.standardValueSetTranslation'], sfdxNameSuffixList: ['.standardValueSetTranslation-meta.xml'] },
-      StaticResource: { folder: 'staticresources', nameSuffixList: ['.resource', '.resource-meta.xml'] , sfdxNameSuffixList: ['.resource-meta.xml', '.json', '.txt', '.bin', '.js', '.mp3', '.gif']},
+      StaticResource: { folder: 'staticresources', nameSuffixList: ['.resource', '.resource-meta.xml'], sfdxNameSuffixList: ['.resource-meta.xml', '.json', '.txt', '.bin', '.js', '.mp3', '.gif'] },
       //      'Translations': { folder: 'translations', nameSuffixList: ['.translation'] }, processed apart, as they need to be filtered
       Workflow: { folder: 'workflows', nameSuffixList: ['.workflow'], sfdxNameSuffixList: ['.workflow-meta.xml'] },
 
@@ -71,24 +71,42 @@ export class MetadataUtils {
   public static describeObjectProperties() {
 
     const objectFilteringProperties = [
-      { objectXmlPropName: 'businessProcesses', packageXmlPropName: 'BusinessProcess', nameProperty: 'fullName', translationNameProperty: 'name',
-        sfdxNameSuffixList: ['.businessProcess-meta.xml'] },
-      { objectXmlPropName: 'compactLayouts', packageXmlPropName: 'CompactLayout', nameProperty: 'fullName', translationNameProperty: 'layout',
-        sfdxNameSuffixList: ['.compactLayout-meta.xml'] },
-      { objectXmlPropName: 'fields', packageXmlPropName: 'CustomField', nameProperty: 'fullName', translationNameProperty: 'name',
-        sfdxNameSuffixList: ['.field-meta.xml'] },
-      { objectXmlPropName: 'listViews', packageXmlPropName: 'ListView', nameProperty: 'fullName', translationNameProperty: 'name',
-        sfdxNameSuffixList: ['.listView-meta.xml'] },
-      { objectXmlPropName: 'layouts', packageXmlPropName: 'Layout', nameProperty: 'fullName', translationNameProperty: 'layout',
-        sfdxNameSuffixList: ['.layout-meta.xml'] },
-      { objectXmlPropName: 'recordTypes', packageXmlPropName: 'RecordType', nameProperty: 'fullName', translationNameProperty: 'name',
-        sfdxNameSuffixList: ['.recordType-meta.xml'] },
-      { objectXmlPropName: 'webLinks', packageXmlPropName: 'WebLink', nameProperty: 'fullName', translationNameProperty: 'name',
-        sfdxNameSuffixList: ['.webLink-meta.xml'] },
-      { objectXmlPropName: 'validationRules', packageXmlPropName: 'ValidationRule', nameProperty: 'fullName', translationNameProperty: 'name',
-        sfdxNameSuffixList: ['.validationRule-meta.xml'] },
-      { objectXmlPropName: 'fieldSets', packageXmlPropName: 'FieldSet', nameProperty: 'fullName', translationNameProperty: 'name',
-        sfdxNameSuffixList: ['.fieldSet-meta.xml'] }
+      {
+        objectXmlPropName: 'businessProcesses', packageXmlPropName: 'BusinessProcess', nameProperty: 'fullName', translationNameProperty: 'name',
+        sfdxNameSuffixList: ['.businessProcess-meta.xml']
+      },
+      {
+        objectXmlPropName: 'compactLayouts', packageXmlPropName: 'CompactLayout', nameProperty: 'fullName', translationNameProperty: 'layout',
+        sfdxNameSuffixList: ['.compactLayout-meta.xml']
+      },
+      {
+        objectXmlPropName: 'fields', packageXmlPropName: 'CustomField', nameProperty: 'fullName', translationNameProperty: 'name',
+        sfdxNameSuffixList: ['.field-meta.xml']
+      },
+      {
+        objectXmlPropName: 'listViews', packageXmlPropName: 'ListView', nameProperty: 'fullName', translationNameProperty: 'name',
+        sfdxNameSuffixList: ['.listView-meta.xml']
+      },
+      {
+        objectXmlPropName: 'layouts', packageXmlPropName: 'Layout', nameProperty: 'fullName', translationNameProperty: 'layout',
+        sfdxNameSuffixList: ['.layout-meta.xml']
+      },
+      {
+        objectXmlPropName: 'recordTypes', packageXmlPropName: 'RecordType', nameProperty: 'fullName', translationNameProperty: 'name',
+        sfdxNameSuffixList: ['.recordType-meta.xml']
+      },
+      {
+        objectXmlPropName: 'webLinks', packageXmlPropName: 'WebLink', nameProperty: 'fullName', translationNameProperty: 'name',
+        sfdxNameSuffixList: ['.webLink-meta.xml']
+      },
+      {
+        objectXmlPropName: 'validationRules', packageXmlPropName: 'ValidationRule', nameProperty: 'fullName', translationNameProperty: 'name',
+        sfdxNameSuffixList: ['.validationRule-meta.xml']
+      },
+      {
+        objectXmlPropName: 'fieldSets', packageXmlPropName: 'FieldSet', nameProperty: 'fullName', translationNameProperty: 'name',
+        sfdxNameSuffixList: ['.fieldSet-meta.xml']
+      }
     ];
     return objectFilteringProperties;
   }
