@@ -232,6 +232,47 @@ export default class ExecuteFilter extends Command {
     this.logIfVerbose('- collected language list:' + this.translatedLanguageList.toString());
   }
 
+  //special case for custom labels
+  collectAndFilterCustomLabels(metadataDesc, metadataType, members) {
+    console.log(`- processing custom labels:`);
+    var self = this;
+    var typeInputFolder = self.inputFolder + '/' + metadataDesc.folder;
+    if (self.fs.existsSync(typeInputFolder)) {
+      var typeOutputFolder = self.outputFolder + '/' + metadataDesc.folder;
+      var allLabels = typeInputFolder + '/CustomLabels.labels';
+      var copyTargetFile = typeOutputFolder + '/CustomLabels.labels';
+      self.fse.copySync(allLabels, copyTargetFile);
+      var parser = new self.xml2js.Parser();
+      var data = self.fs.readFileSync(copyTargetFile);
+      parser.parseString(data, function (err2, parsedObjectFile) {
+
+        if (members != null && members[0] === '*') {
+          console.log('-- including all labels ');
+        } else {
+          var pos = 0;
+          parsedObjectFile['CustomLabels']['labels'].forEach(function (itemDscrptn) {
+            var itemName = itemDscrptn['fullName'];
+
+            if (!self.arrayIncludes(members, itemName)) {
+              console.log(`---- removed ${itemName} `);
+              delete parsedObjectFile['CustomLabels']['labels'][pos];
+            }
+            else {
+              console.log(`-- kept ${itemName} `);
+            }
+            pos++
+          });
+        }
+
+        // Write output .labels file
+        var builder = new self.xml2js.Builder();
+        var updatedObjectXml = builder.buildObject(parsedObjectFile);
+        var outputObjectFileName = typeOutputFolder + '/CustomLabels.labels';
+        self.fs.writeFileSync(outputObjectFileName, updatedObjectXml);
+      });
+    }
+  }
+
   // get Metadatype description
   public getMetadataTypeDescription(mdType) {
     // @ts-ignore

@@ -4,6 +4,7 @@ Salesforce DX Essentials
 [![Version](https://img.shields.io/npm/v/sfdx-essentials.svg)](https://npmjs.org/package/sfdx-essentials)
 [![Downloads/week](https://img.shields.io/npm/dw/sfdx-essentials.svg)](https://npmjs.org/package/sfdx-essentials) 
 [![License](https://img.shields.io/npm/l/sfdx-essentials.svg)](https://github.com/nvuillam/sfdx-essentials/blob/master/package.json) 
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
 # PLUGIN
 
@@ -46,6 +47,13 @@ Its seems that sfdx plugins:update and sfdx update does not always work, in that
     sfdx plugins:uninstall sfdx-essentials
     sfdx plugins:install sfdx-essentials
 ```
+
+# CONTRIBUTE
+
+- Fork the repo and clone it on your computer
+- run $ sfdx plugins:link
+- Now your calls to sfdx essentials are performed on your local sources 
+- Once your code is ready and documented, please make a pull request :)
 
 # COMMANDS
 
