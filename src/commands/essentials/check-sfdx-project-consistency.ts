@@ -76,12 +76,12 @@ export default class ExecuteCheckProjectConsistency extends Command {
   public appendPackageXmlFilesContent() {
     const self = this;
     // loop on packageXml files
-    this.packageXmlFileList.forEach(function (packageXmlFile) {
+    this.packageXmlFileList.forEach(function(packageXmlFile) {
       const parser = new self.xml2js.Parser();
       // read file content
       const data = self.fs.readFileSync(packageXmlFile);
       // parse xml content
-      parser.parseString(data, function (err2, result) {
+      parser.parseString(data, function(err2, result) {
         if (self.chattyLogs) {
           console.log(`Parsed ${packageXmlFile} :\n` + self.util.inspect(result, false, null));
         }
@@ -89,7 +89,7 @@ export default class ExecuteCheckProjectConsistency extends Command {
         // get metadata types in parse result
         try { packageXmlMetadatasTypeLs = result.Package.types; } catch { throw new Error('Unable to parse package Xml file ' + packageXmlFile); }
         // Add metadata members in concatenation list of items
-        packageXmlMetadatasTypeLs.forEach(function (typePkg) {
+        packageXmlMetadatasTypeLs.forEach(function(typePkg) {
           const nameKey = typePkg.name[0];
           if (self.allPackageXmlFilesTypes[nameKey] != null && typePkg.members != null) {
             self.allPackageXmlFilesTypes[nameKey] = self.allPackageXmlFilesTypes[nameKey].concat(typePkg.members);

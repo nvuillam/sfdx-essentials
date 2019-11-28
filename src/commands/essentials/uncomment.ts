@@ -1,4 +1,4 @@
-import  Command, {flags}  from '@oclif/command';
+import Command, { flags } from '@oclif/command';
 import * as fs from 'fs';
 import * as glob from 'glob';
 import * as cliProgress from 'cli-progress';

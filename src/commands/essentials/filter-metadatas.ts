@@ -249,13 +249,13 @@ export default class ExecuteFilterMetadatas extends Command {
       fse.copySync(allLabels, copyTargetFile);
       const parser = new xml2js.Parser();
       const data = fs.readFileSync(copyTargetFile);
-      parser.parseString(data, function (err2, parsedObjectFile) {
+      parser.parseString(data, (err2, parsedObjectFile) => {
 
         if (members != null && members[0] === '*') {
           this.logIfVerbose('-- including all labels ');
         } else {
           let pos = 0;
-          parsedObjectFile['CustomLabels']['labels'].forEach(function (itemDscrptn) {
+          parsedObjectFile['CustomLabels']['labels'].forEach((itemDscrptn) => {
             let itemName = itemDscrptn['fullName'];
             if (Array.isArray(itemName)) {
               itemName = itemName[0];
