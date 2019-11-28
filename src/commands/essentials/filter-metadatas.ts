@@ -88,7 +88,10 @@ export default class ExecuteFilter extends Command {
 
           if (!this.verbose) {
             // @ts-ignore
+            this.multibars.initialize.update(null, { file: 'Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - elapseStart) / 1000)) });
+            // @ts-ignore
             EssentialsUtils.multibarStopProgress(interval);
+            this.multibars.initialize.increment();
             this.multibars.total.increment();
             this.multibar.update();
           }
@@ -265,6 +268,14 @@ export default class ExecuteFilter extends Command {
 
         // Read .object file
         const inputObjectFileName = this.inputFolder + '/objects/' + objectName + '.object';
+        if (!fs.existsSync(inputObjectFileName)) {
+          if (!this.verbose) {
+            this.multibars.copyImpactedObjects.increment();
+            this.multibar.update();
+          }
+          resolve();
+          return;
+        }
         const parser = new xml2js.Parser();
         const data = fs.readFileSync(inputObjectFileName);
         parser.parseString(data, (err2, parsedObjectFile) => {
@@ -349,8 +360,7 @@ export default class ExecuteFilter extends Command {
           let pos = 0;
           parsedObjectFile['CustomObject'][objectXmlPropName].forEach((itemDscrptn) => {
             const itemName = itemDscrptn[nameProperty];
-            if (!compareList.includes(itemName)) {
-              console.error(itemName + ' in ' + compareList);
+            if (itemName.filter((element: string) => compareList.includes(element)).length === 0) {
               this.logIfVerbose(`---- removed ${packageXmlPropName} ` + itemDscrptn[nameProperty]);
               delete parsedObjectFile['CustomObject'][objectXmlPropName][pos];
             } else {
@@ -383,7 +393,7 @@ export default class ExecuteFilter extends Command {
           let pos = 0;
           parsedObjectFile['CustomObjectTranslation'][objectXmlPropName].forEach((itemDscrptn) => {
             const itemName = itemDscrptn[nameProperty];
-            if (!compareList.includes(itemName)) {
+            if (itemName.filter((element: string) => compareList.includes(element)).length === 0) {
               this.logIfVerbose(`---- removed translation ${packageXmlPropName} ` + itemDscrptn[nameProperty]);
               delete parsedObjectFile['CustomObjectTranslation'][objectXmlPropName][pos];
             } else {

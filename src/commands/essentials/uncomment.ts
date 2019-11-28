@@ -1,31 +1,34 @@
 import { Command, flags } from '@oclif/command';
-import { FILE } from 'dns';
+import * as fs from 'fs';
+import * as glob from 'glob';
+import * as cliProgress from 'cli-progress';
+import EssentialsUtils = require('../../common/essentials-utils');
 
 export default class ExecuteFilter extends Command {
   public static description = '';
 
   public static examples = [];
 
-  public static flags = {
+  public static flags: any = {
     folder: flags.string({ char: 'f', description: 'SFDX project folder containing files' }),
-    uncommentKey: flags.string({ char: 'k', description: 'Uncomment key (default: SFDX_ESSENTIALS_UNCOMMENT)' })
-    // flag with a value (-n, --name=VALUE)
+    uncommentKey: flags.string({ char: 'k', description: 'Uncomment key (default: SFDX_ESSENTIALS_UNCOMMENT)' }),
+    verbose: flags.boolean({ char: 'v', description: 'Verbose' })
   };
 
   public static args = [];
 
-  // global variables
+  // Input param properties
   public folder = '.';
   public uncommentKey = 'SFDX_ESSENTIALS_UNCOMMENT';
-  public totalUncomments = 0;
+  public verbose: boolean = false;
 
   // Internal properties
-  public fs = require('fs');
-  public glob = require('glob');
-  public cint = require('cint');
+  public totalUncomments = 0;
+  public progressBar: any;
 
   // Runtime methods
   public async run() {
+    const elapseStart = Date.now();
 
     // args
     // tslint:disable-next-line:no-shadowed-variable
@@ -33,39 +36,60 @@ export default class ExecuteFilter extends Command {
 
     this.folder = flags.folder || '.';
     this.uncommentKey = flags.uncommentKey || 'SFDX_ESSENTIALS_UNCOMMENT';
+    if (flags.verbose) {
+      this.verbose = true;
+    }
 
     console.log('Starting sfdx essentials:uncomment with uncomment key "' + this.uncommentKey + '"');
 
     // List apex classes
     const fetchClassesExpression = this.folder + '/classes/*.cls';
-    console.log('Fetching classes with expression : ' + fetchClassesExpression);
-    const customApexClassFileNameList = this.glob.sync(fetchClassesExpression);
+    const customApexClassFileNameList = glob.sync(fetchClassesExpression);
+
+    // List aura items
+    const fetchAuraExpression = this.folder + '/aura/**/*.js';
+    const customAuraFileNameList = glob.sync(fetchAuraExpression);
+
+    // Progress bar
+    if (!this.verbose) {
+      // @ts-ignore
+      this.progressBar = new cliProgress.SingleBar({
+        format: '{name} [{bar}] {percentage}% | {value}/{total} | {file} ',
+        stopOnComplete: true
+      });
+      this.progressBar.start(customApexClassFileNameList.length + customAuraFileNameList.length, 0, { name: 'Progress', file: 'N/A' });
+    }
 
     // Replace commented lines in each class
     customApexClassFileNameList.forEach((customApexClassFileName) => {
       this.processFile(customApexClassFileName);
+      this.progressBar.increment();
     });
-    console.log('Completed uncomment in : ' + fetchClassesExpression);
-
-    // List aura items
-    const fetchAuraExpression = this.folder + '/aura/**/*.js';
-    console.log('Fetching aura with expression : ' + fetchAuraExpression);
-    const customAuraFileNameList = this.glob.sync(fetchAuraExpression);
 
     // Replace commented lines in each aura item
     customAuraFileNameList.forEach((customAuraFileName) => {
       this.processFile(customAuraFileName);
+      this.progressBar.increment();
     });
-    console.log('Completed uncomment in : ' + fetchAuraExpression);
+
+    if (!this.verbose) {
+      // @ts-ignore
+      this.progressBar.update(null, { file: 'Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - elapseStart) / 1000)) });
+      this.progressBar.stop();
+    }
+
+    console.log('Total uncomments: ' + this.totalUncomments);
 
   }
 
   // Process component file
   public processFile(fileName) {
     // Read file
-    const fileContent = this.fs.readFileSync(fileName);
+    const fileContent = fs.readFileSync(fileName);
     if (fileContent == null) {
-      console.log('Warning: empty file -> ' + fileName);
+      if (this.verbose) {
+        console.log('Warning: empty file -> ' + fileName);
+      }
       return;
     }
     const arrayFileLines = fileContent.toString().split('\n');
@@ -77,17 +101,23 @@ export default class ExecuteFilter extends Command {
       // Uncomment if SFDX_ESSENTIALS_UNCOMMENT is contained in a commented line (can be overriden sending uncommentKey argument)
       if (line.includes(this.uncommentKey)) {
         line = line.replace('//', '').replace(this.uncommentKey, '// ' + this.uncommentKey + ' uncommented by sfdx essentials:uncomment (https://github.com/nvuillam/sfdx-essentials)');
-        console.log('- uncommented: ' + line);
+        if (this.verbose) {
+          console.log('- uncommented: ' + line);
+        }
+        this.totalUncomments++;
         updated = true;
       }
       updatedFileContent += line + '\n';
     });
     // Update file if content has been updated
     if (updated) {
-      this.fs.writeFileSync(fileName, updatedFileContent);
-      console.log('Updated ' + fileName); // + ' with content :\n' + updatedFileContent)
+      fs.writeFileSync(fileName, updatedFileContent);
+      if (this.verbose) {
+        console.log('Updated ' + fileName); // + ' with content :\n' + updatedFileContent)
+      } else {
+        this.progressBar.update(null, { file: fileName });
+      }
     }
-
   }
 
 }
