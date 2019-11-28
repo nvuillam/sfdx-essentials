@@ -7,17 +7,17 @@ import * as cliProgress from 'cli-progress';
 import EssentialsUtils = require('../../common/essentials-utils');
 import metadataUtils = require('../../common/metadata-utils');
 
-export default class ExecuteFilter extends Command {
+export default class ExecuteFilterMetadatas extends Command {
   public static description = '';
 
   public static examples = [];
 
-  public static flags: any = {
+  public static flags = {
     // flag with a value (-n, --name=VALUE)
     packagexml: flags.string({ char: 'p', description: 'package.xml file path' }),
     inputfolder: flags.string({ char: 'i', description: 'Input folder (default: "." )' }),
     outputfolder: flags.string({ char: 'o', description: 'Output folder (default: filteredMetadatas)' }),
-    verbose: flags.boolean({ char: 'v', description: 'Verbose' })
+    verbose: flags.boolean({ char: 'v', description: 'Verbose' }) as unknown as flags.IOptionFlag<boolean>
   };
 
   public static args = [];
@@ -40,7 +40,7 @@ export default class ExecuteFilter extends Command {
   public async run() {
     const elapseStart = Date.now();
     // tslint:disable-next-line:no-shadowed-variable
-    const { args, flags } = this.parse(ExecuteFilter);
+    const { args, flags } = this.parse(ExecuteFilterMetadatas);
 
     // Get input arguments or default values
     this.packageXmlFile = flags.packagexml;
@@ -249,13 +249,13 @@ export default class ExecuteFilter extends Command {
       fse.copySync(allLabels, copyTargetFile);
       const parser = new xml2js.Parser();
       const data = fs.readFileSync(copyTargetFile);
-      parser.parseString(data, function(err2, parsedObjectFile) {
+      parser.parseString(data, function (err2, parsedObjectFile) {
 
         if (members != null && members[0] === '*') {
           this.logIfVerbose('-- including all labels ');
         } else {
           let pos = 0;
-          parsedObjectFile['CustomLabels']['labels'].forEach(function(itemDscrptn) {
+          parsedObjectFile['CustomLabels']['labels'].forEach(function (itemDscrptn) {
             let itemName = itemDscrptn['fullName'];
             if (Array.isArray(itemName)) {
               itemName = itemName[0];

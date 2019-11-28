@@ -5,20 +5,20 @@ import * as xml2js from 'xml2js';
 import * as cliProgress from 'cli-progress';
 import EssentialsUtils = require('../../common/essentials-utils');
 
-export default class ExecuteFilter extends Command {
+export default class ExecuteChangeDependencyVersion extends Command {
   public static description = `
    `;
 
   public static examples = [
   ];
 
-  public static flags: any = {
+  public static flags = {
     // flag with a value (-n, --name=VALUE)
     namespace: flags.string({ char: 'n', description: 'Namespace of the managed package' }),
     majorversion: flags.string({ char: 'j', description: 'Major version' }),
     minorversion: flags.string({ char: 'm', description: 'Minor version' }),
     folder: flags.string({ char: 'f', description: 'SFDX project folder containing files' }),
-    verbose: flags.boolean({ char: 'v', description: 'Verbose' })
+    verbose: flags.boolean({ char: 'v', description: 'Verbose' }) as unknown as flags.IOptionFlag<boolean>
   };
 
   public static args = [];
@@ -38,7 +38,7 @@ export default class ExecuteFilter extends Command {
     const elapseStart = Date.now();
 
     // tslint:disable-next-line:no-shadowed-variable
-    const { args, flags } = this.parse(ExecuteFilter);
+    const { args, flags } = this.parse(ExecuteChangeDependencyVersion);
 
     // Get input arguments or default values
     this.namespace = flags.namespace;

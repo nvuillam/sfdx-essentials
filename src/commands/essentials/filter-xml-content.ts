@@ -1,6 +1,6 @@
 import { Command, flags } from '@oclif/command';
 
-export default class ExecuteFilter extends Command {
+export default class ExecuteFilterXmlContent extends Command {
   public static description = '';
 
   public static examples = [];
@@ -9,7 +9,7 @@ export default class ExecuteFilter extends Command {
     // flag with a value (-n, --name=VALUE)
     configFile: flags.string({ char: 'c', description: 'Config JSON file path' }),
     inputfolder: flags.string({ char: 'i', description: 'Input folder (default: "." )' }),
-    outputfolder: flags.string({ char: 'o', description: 'Output folder (default: parentFolder + _xml_content_filtered)' })
+    outputfolder: flags.string({ char: 'o', description: 'Output folder (default: parentFolder + _xml_content_filtered)' }),
   };
 
   public static args = [];
@@ -32,7 +32,7 @@ export default class ExecuteFilter extends Command {
   // Runtime methods
   public async run() {
     // tslint:disable-next-line:no-shadowed-variable
-    const { args, flags } = this.parse(ExecuteFilter);
+    const { args, flags } = this.parse(ExecuteFilterXmlContent);
 
     // Get input arguments or default values
     this.configFile = flags.configFile || './filter-config.json';
@@ -60,10 +60,10 @@ export default class ExecuteFilter extends Command {
 
     // Browse filters
     const self = this;
-    filterConfig.filters.forEach(function(filter) {
+    filterConfig.filters.forEach(function (filter) {
       console.log(filter.name + ' (' + filter.description + ')');
       // Browse filter folders
-      filter.folders.forEach(function(filterFolder) {
+      filter.folders.forEach(function (filterFolder) {
 
         // Browse folder files
         const folderFiles = self.fs.readdirSync(self.outputFolder + '/' + filterFolder);
@@ -98,7 +98,7 @@ export default class ExecuteFilter extends Command {
     const self = this;
     const xmlHasChanged = false;
     const data = this.fs.readFileSync(file);
-    parser.parseString(data, function(err2, fileXmlContent) {
+    parser.parseString(data, function (err2, fileXmlContent) {
       console.log('Parsed XML \n' + self.util.inspect(fileXmlContent, false, null));
       Object.keys(fileXmlContent).forEach((eltKey) => {
         fileXmlContent[eltKey] = self.filterElement(fileXmlContent[eltKey], filter, file);

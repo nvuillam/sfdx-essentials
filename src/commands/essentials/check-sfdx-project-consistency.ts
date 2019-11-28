@@ -1,19 +1,20 @@
 import { Command, flags } from '@oclif/command';
 import { FILE } from 'dns';
 
-export default class ExecuteFilter extends Command {
+export default class ExecuteCheckProjectConsistency extends Command {
   public static description = '';
 
   public static examples = [];
 
   public static args = [];
 
-  public flags: any = {
+  // @ts-ignore
+  public static flags = {
     // flag with a value (-n, --name=VALUE)
     packageXmlList: flags.string({ char: 'p', description: 'List of package.xml files path' }),
     inputfolder: flags.string({ char: 'i', description: 'SFDX Project folder (default: "." )' }),
-    chatty: flags.boolean({ char: 'c', description: 'Chatty logs' }),
-    jsonLogging: flags.boolean({ char: 'j', description: 'JSON logs' })
+    chatty: flags.boolean({ char: 'c', description: 'Chatty logs' }) as unknown as flags.IOptionFlag<boolean>,
+    jsonLogging: flags.boolean({ char: 'j', description: 'JSON logs' }) as unknown as flags.IOptionFlag<boolean>
   };
 
   // Input params properties
@@ -42,7 +43,7 @@ export default class ExecuteFilter extends Command {
   // Runtime methods
   public async run() {
     // tslint:disable-next-line:no-shadowed-variable
-    const { args, flags } = this.parse(ExecuteFilter);
+    const { args, flags } = this.parse(ExecuteCheckProjectConsistency);
 
     // Get input arguments or default values
     this.packageXmlFileList = flags.packageXmlList.split(',');
@@ -75,12 +76,12 @@ export default class ExecuteFilter extends Command {
   public appendPackageXmlFilesContent() {
     const self = this;
     // loop on packageXml files
-    this.packageXmlFileList.forEach(function(packageXmlFile) {
+    this.packageXmlFileList.forEach(function (packageXmlFile) {
       const parser = new self.xml2js.Parser();
       // read file content
       const data = self.fs.readFileSync(packageXmlFile);
       // parse xml content
-      parser.parseString(data, function(err2, result) {
+      parser.parseString(data, function (err2, result) {
         if (self.chattyLogs) {
           console.log(`Parsed ${packageXmlFile} :\n` + self.util.inspect(result, false, null));
         }
@@ -88,7 +89,7 @@ export default class ExecuteFilter extends Command {
         // get metadata types in parse result
         try { packageXmlMetadatasTypeLs = result.Package.types; } catch { throw new Error('Unable to parse package Xml file ' + packageXmlFile); }
         // Add metadata members in concatenation list of items
-        packageXmlMetadatasTypeLs.forEach(function(typePkg) {
+        packageXmlMetadatasTypeLs.forEach(function (typePkg) {
           const nameKey = typePkg.name[0];
           if (self.allPackageXmlFilesTypes[nameKey] != null && typePkg.members != null) {
             self.allPackageXmlFilesTypes[nameKey] = self.allPackageXmlFilesTypes[nameKey].concat(typePkg.members);

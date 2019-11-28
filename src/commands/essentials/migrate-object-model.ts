@@ -7,19 +7,19 @@ import * as xml2js from 'xml2js';
 import * as cliProgress from 'cli-progress';
 import EssentialsUtils = require('../../common/essentials-utils');
 
-export default class ExecuteFilter extends Command {
+export default class ExecuteMigrateObjectModel extends Command {
   public static description = '';
 
   public static examples = [];
 
-  public static flags: any = {
+  public static flags = {
     // flag with a value (-n, --name=VALUE)
     configFile: flags.string({ char: 'c', description: 'JSON config file' }),
     inputFolder: flags.string({ char: 'i', description: 'Input folder (default: "." )' }),
     fetchExpressionList: flags.string({ char: 'f', description: 'Fetch expression list. Let default if you dont know. ex: /aura/**/*.js,./aura/**/*.cmp,./classes/*.cls,./objects/*/fields/*.xml,./objects/*/recordTypes/*.xml,./triggers/*.trigger,./permissionsets/*.xml,./profiles/*.xml,./staticresources/*.json' }),
     deleteFiles: flags.string({ char: 'd', description: 'Delete files with deprecated references', default: 'true' }),
     copySfdxProjectFolder: flags.string({ char: 's', description: 'Copy sfdx project files after process', default: 'true' }),
-    verbose: flags.boolean({ char: 'v', description: 'Verbose', default: false })
+    verbose: flags.boolean({ char: 'v', description: 'Verbose', default: false }) as unknown as flags.IOptionFlag<boolean>
   };
 
   public static args = [];
@@ -52,7 +52,7 @@ export default class ExecuteFilter extends Command {
 
     const elapseStart = Date.now();
     // tslint:disable-next-line:no-shadowed-variable
-    const { args, flags } = this.parse(ExecuteFilter);
+    const { args, flags } = this.parse(ExecuteMigrateObjectModel);
 
     this.inputFolder = flags.inputFolder || '.';
     this.configFile = flags.configFile;

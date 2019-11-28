@@ -1,7 +1,7 @@
 import { Command, flags } from '@oclif/command';
 import { FILE } from 'dns';
 
-export default class ExecuteFilter extends Command {
+export default class ExecuteFixLightningAttrNames extends Command {
   public static description = '';
 
   public static examples = [];
@@ -31,7 +31,7 @@ export default class ExecuteFilter extends Command {
   public async run() {
 
     // tslint:disable-next-line:no-shadowed-variable
-    const { args, flags } = this.parse(ExecuteFilter);
+    const { args, flags } = this.parse(ExecuteFixLightningAttrNames);
 
     this.folder = flags.folder || '.';
 

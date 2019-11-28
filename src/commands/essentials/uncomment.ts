@@ -1,18 +1,18 @@
-import { Command, flags } from '@oclif/command';
+import  Command, {flags}  from '@oclif/command';
 import * as fs from 'fs';
 import * as glob from 'glob';
 import * as cliProgress from 'cli-progress';
 import EssentialsUtils = require('../../common/essentials-utils');
 
-export default class ExecuteFilter extends Command {
+export default class ExecuteUncomment extends Command {
   public static description = '';
 
   public static examples = [];
 
-  public static flags: any = {
+  public static flags = {
     folder: flags.string({ char: 'f', description: 'SFDX project folder containing files' }),
     uncommentKey: flags.string({ char: 'k', description: 'Uncomment key (default: SFDX_ESSENTIALS_UNCOMMENT)' }),
-    verbose: flags.boolean({ char: 'v', description: 'Verbose' })
+    verbose: flags.boolean({ char: 'v', description: 'Verbose' }) as unknown as flags.IOptionFlag<boolean>
   };
 
   public static args = [];
@@ -32,7 +32,7 @@ export default class ExecuteFilter extends Command {
 
     // args
     // tslint:disable-next-line:no-shadowed-variable
-    const { args, flags } = this.parse(ExecuteFilter);
+    const { args, flags } = this.parse(ExecuteUncomment);
 
     this.folder = flags.folder || '.';
     this.uncommentKey = flags.uncommentKey || 'SFDX_ESSENTIALS_UNCOMMENT';
