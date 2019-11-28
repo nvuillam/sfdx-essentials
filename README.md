@@ -14,6 +14,11 @@ Sometimes ... Salesforce R&D team shows some understanding, but sometimes ... no
 
 So after the third plugin I needed to create during a few weeks (not for fun, but to allow our managed package to survive!) , I decided to join them on a single plugin: **SFDX Essentials** , and to publish it as open source , by solidarity with fellow victims of savage platform upgrades :)
 
+Contributions are welcome, please run **npm run lint:fix** before making a new PR
+
+A revamping of the plugin sources to be more typescript oriented has been performed for version 1.0.0.
+Please create an issue if you have any problem
+
 Command list
 
 | Command | Description |
