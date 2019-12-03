@@ -50,13 +50,14 @@ export default class ExecuteFilterMetadatas extends Command {
       this.verbose = true;
     }
     this.log(`Initialize filtering of ${this.inputFolder} ,using ${this.packageXmlFile} , into ${this.outputFolder}`);
-    if (!this.verbose) {
-      // @ts-ignore
-      this.multibar = new cliProgress.MultiBar({
-        clearOnComplete: false,
-        fps: 500,
-        format: '{name} [{bar}] {percentage}% | {value}/{total} | {file} '
-      }, cliProgress.Presets.shades_grey);
+
+    // @ts-ignore
+    this.multibar = new cliProgress.MultiBar({
+      clearOnComplete: false,
+      fps: 500,
+      format: '{name} [{bar}] {percentage}% | {value}/{total} | {file} '
+    }, cliProgress.Presets.shades_grey);
+    if (this.multibar.terminal.isTTY()) {
       this.multibars.total = this.multibar.create(3, 0, { name: 'Total'.padEnd(30, ' '), file: 'N/A' });
       this.multibars.initialize = this.multibar.create(1, 0, { name: 'Initialize'.padEnd(30, ' '), file: 'N/A' });
       this.multibars.filterMetadatasByType = this.multibar.create(1, 0, { name: 'Filter metadatas by type'.padEnd(30, ' '), file: 'N/A' });
@@ -64,8 +65,11 @@ export default class ExecuteFilterMetadatas extends Command {
     }
 
     // Read package.xml file
-    // @ts-ignore
-    const interval = EssentialsUtils.multibarStartProgress(this.multibars, 'initialize', this.multibar, 'Initializing');
+    let interval: any;
+    if (this.multibar.terminal.isTTY()) {
+      // @ts-ignore
+      interval = EssentialsUtils.multibarStartProgress(this.multibars, 'initialize', this.multibar, 'Initializing');
+    }
     const processPromise = new Promise((resolve, reject) => {
       const parser = new xml2js.Parser();
       fs.readFile(this.packageXmlFile, async (err, data) => {
@@ -86,7 +90,7 @@ export default class ExecuteFilterMetadatas extends Command {
           // Copy package.xml file in output folder
           fse.copySync(this.packageXmlFile, this.outputFolder + '/package.xml');
 
-          if (!this.verbose) {
+          if (!this.verbose && this.multibar.terminal.isTTY()) {
             // @ts-ignore
             this.multibars.initialize.update(null, { file: 'Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - elapseStart) / 1000)) });
             // @ts-ignore
@@ -105,7 +109,7 @@ export default class ExecuteFilterMetadatas extends Command {
 
     });
     await processPromise;
-    if (!this.verbose) {
+    if (!this.verbose && this.multibar.terminal.isTTY()) {
       // @ts-ignore
       this.multibars.total.update(null, { file: 'Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - elapseStart) / 1000)) });
       this.multibar.update();
@@ -117,13 +121,13 @@ export default class ExecuteFilterMetadatas extends Command {
   // Filter metadatas by type
   public async filterMetadatasByType() {
     const elapseStart = Date.now();
-    if (!this.verbose) {
+    if (!this.verbose && this.multibar.terminal.isTTY()) {
       this.multibars.total.update(null, { file: 'Filter metadatas by type' });
       this.multibars.filterMetadatasByType.setTotal(this.packageXmlMetadatasTypeLs.length);
       this.multibar.update();
     }
     for (const metadataDefinition of this.packageXmlMetadatasTypeLs) {
-      if (!this.verbose) {
+      if (!this.verbose && this.multibar.terminal.isTTY()) {
         this.multibars.filterMetadatasByType.update(null, { file: metadataDefinition.name });
         this.multibar.update();
       }
@@ -134,7 +138,7 @@ export default class ExecuteFilterMetadatas extends Command {
       // Get metadata description
       const metadataDesc = this.getMetadataTypeDescription(metadataType);
       if (metadataDesc == null) {
-        if (!this.verbose) {
+        if (!this.verbose && this.multibar.terminal.isTTY()) {
           this.multibars.filterMetadatasByType.increment();
           this.multibar.update();
         }
@@ -160,12 +164,12 @@ export default class ExecuteFilterMetadatas extends Command {
         this.collectAndFilterCustomLabels(metadataDesc, metadataType, members);
       }
 
-      if (!this.verbose) {
+      if (!this.verbose && this.multibar.terminal.isTTY()) {
         this.multibars.filterMetadatasByType.increment();
         this.multibar.update();
       }
     }
-    if (!this.verbose) {
+    if (!this.verbose && this.multibar.terminal.isTTY()) {
       this.multibars.total.increment();
       // @ts-ignore
       this.multibars.filterMetadatasByType.update(null, { file: 'Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - elapseStart) / 1000)) });
@@ -289,7 +293,7 @@ export default class ExecuteFilterMetadatas extends Command {
   // Copy objects based on information gathered with 'sobjectRelated' metadatas
   public async copyImpactedObjects() {
     const elapseStart = Date.now();
-    if (!this.verbose) {
+    if (!this.verbose && this.multibar.terminal.isTTY()) {
       this.multibars.total.update(null, { file: 'Copy impacted objects' });
       this.multibar.update();
       this.multibars.copyImpactedObjects.setTotal(Object.keys(this.sobjectCollectedInfo).length);
@@ -306,7 +310,7 @@ export default class ExecuteFilterMetadatas extends Command {
 
     Object.keys(this.sobjectCollectedInfo).forEach((objectName) => {
       const objectPromise = new Promise((resolve, reject) => {
-        if (!this.verbose) {
+        if (!this.verbose && this.multibar.terminal.isTTY()) {
           this.multibars.copyImpactedObjects.update(null, { file: objectName });
           this.multibar.update();
         }
@@ -316,7 +320,7 @@ export default class ExecuteFilterMetadatas extends Command {
         // Read .object file
         const inputObjectFileName = this.inputFolder + '/objects/' + objectName + '.object';
         if (!fs.existsSync(inputObjectFileName)) {
-          if (!this.verbose) {
+          if (!this.verbose && this.multibar.terminal.isTTY()) {
             this.multibars.copyImpactedObjects.increment();
             this.multibar.update();
           }
@@ -371,7 +375,7 @@ export default class ExecuteFilterMetadatas extends Command {
           });
 
         }
-        if (!this.verbose) {
+        if (!this.verbose && this.multibar.terminal.isTTY()) {
           this.multibars.copyImpactedObjects.increment();
           this.multibar.update();
         }
@@ -380,7 +384,7 @@ export default class ExecuteFilterMetadatas extends Command {
       objectPromises.push(objectPromise);
     });
     await Promise.all(objectPromises);
-    if (!this.verbose) {
+    if (!this.verbose && this.multibar.terminal.isTTY()) {
       this.multibars.total.increment();
       // @ts-ignore
       this.multibars.copyImpactedObjects.update(null, { file: 'Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - elapseStart) / 1000)) });

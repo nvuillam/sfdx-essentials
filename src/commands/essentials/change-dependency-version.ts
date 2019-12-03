@@ -54,12 +54,12 @@ export default class ExecuteChangeDependencyVersion extends Command {
     const fileList = glob.sync('**/*.xml');
 
     // Progress bar
-    if (!this.verbose) {
-      // @ts-ignore
-      this.progressBar = new cliProgress.SingleBar({
-        format: '{name} [{bar}] {percentage}% | {value}/{total} | {file} ',
-        stopOnComplete: true
-      });
+    // @ts-ignore
+    this.progressBar = new cliProgress.SingleBar({
+      format: '{name} [{bar}] {percentage}% | {value}/{total} | {file} ',
+      stopOnComplete: true
+    });
+    if (this.progressBar.terminal.isTTY()) {
       this.progressBar.start(fileList.length, 0, { name: 'Progress', file: 'N/A' });
     }
 
@@ -78,7 +78,7 @@ export default class ExecuteChangeDependencyVersion extends Command {
             const objDescription = parsedXmlFile[typeX];
             const packageVersions = objDescription.packageVersions;
             if (packageVersions == null) {
-              if (!this.verbose) {
+              if (!this.verbose && this.progressBar.terminal.isTTY()) {
                 this.progressBar.increment();
               }
               resolve();
@@ -105,7 +105,7 @@ export default class ExecuteChangeDependencyVersion extends Command {
                 console.log('- updated ' + sfdxXmlFile + ' with ' + updatedObjectXml + '\n');
               }
             }
-            if (!this.verbose) {
+            if (!this.verbose && this.progressBar.terminal.isTTY()) {
               this.progressBar.increment();
               this.progressBar.update(null, { file: sfdxXmlFile });
             }
@@ -116,7 +116,7 @@ export default class ExecuteChangeDependencyVersion extends Command {
       promises.push(filePromise);
     }
     await Promise.all(promises); // Wait all files to be processed
-    if (!this.verbose) {
+    if (!this.verbose && this.progressBar.terminal.isTTY()) {
       // @ts-ignore
       this.progressBar.update(null, { file: 'Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - elapseStart) / 1000)) });
       this.progressBar.stop();

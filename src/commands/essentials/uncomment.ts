@@ -51,28 +51,32 @@ export default class ExecuteUncomment extends Command {
     const customAuraFileNameList = glob.sync(fetchAuraExpression);
 
     // Progress bar
-    if (!this.verbose) {
-      // @ts-ignore
-      this.progressBar = new cliProgress.SingleBar({
-        format: '{name} [{bar}] {percentage}% | {value}/{total} | {file} ',
-        stopOnComplete: true
-      });
+    // @ts-ignore
+    this.progressBar = new cliProgress.SingleBar({
+      format: '{name} [{bar}] {percentage}% | {value}/{total} | {file} ',
+      stopOnComplete: true
+    });
+    if (this.progressBar.terminal.isTTY()) {
       this.progressBar.start(customApexClassFileNameList.length + customAuraFileNameList.length, 0, { name: 'Progress', file: 'N/A' });
     }
 
     // Replace commented lines in each class
     customApexClassFileNameList.forEach((customApexClassFileName) => {
       this.processFile(customApexClassFileName);
-      this.progressBar.increment();
+      if (!this.verbose && this.progressBar.terminal.isTTY()) {
+        this.progressBar.increment();
+      }
     });
 
     // Replace commented lines in each aura item
     customAuraFileNameList.forEach((customAuraFileName) => {
       this.processFile(customAuraFileName);
-      this.progressBar.increment();
+      if (!this.verbose && this.progressBar.terminal.isTTY()) {
+        this.progressBar.increment();
+      }
     });
 
-    if (!this.verbose) {
+    if (!this.verbose && this.progressBar.terminal.isTTY()) {
       // @ts-ignore
       this.progressBar.update(null, { file: 'Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - elapseStart) / 1000)) });
       this.progressBar.stop();

@@ -33,6 +33,7 @@ export default class ExecuteMigrateObjectModel extends Command {
     './classes/*.cls',
     './objects/*/fields/*.xml',
     './objects/*/recordTypes/*.xml',
+    './objectTranslations/*/*.xml',
     './triggers/*.trigger',
     './permissionsets/*.xml',
     './profiles/*.xml',
@@ -82,15 +83,17 @@ export default class ExecuteMigrateObjectModel extends Command {
     // Expression list progress bars
     this.fetchExpressionList.forEach((fetchExpression: string) => {
       const customFileNameList = glob.sync(this.inputFolder + '/' + fetchExpression);
-      this.multibars[fetchExpression] = this.multibar.create(customFileNameList.length, 0, { name: fetchExpression.padEnd(30, ' '), file: 'N/A' });
+      if (this.multibar.terminal.isTTY()) {
+        this.multibars[fetchExpression] = this.multibar.create(customFileNameList.length, 0, { name: fetchExpression.padEnd(30, ' '), file: 'N/A' });
+      }
     });
     // Delete files progress bar
-    if (this.deleteFiles && this.configData.objectToDelete) {
+    if (this.deleteFiles && this.configData.objectToDelete && this.multibar.terminal.isTTY()) {
       this.multibars.deleteFiles = this.multibar.create(1, 0, { name: 'Delete files & folders'.padEnd(30, ' '), file: 'N/A' });
       this.multibars.total.setTotal(this.multibars.total.getTotal() + 1);
     }
     // Copy sfdx folder progress bar
-    if (this.copySfdxProjectFolder && this.configData.sfdxProjectFolder) {
+    if (this.copySfdxProjectFolder && this.configData.sfdxProjectFolder && this.multibar.terminal.isTTY()) {
       this.multibars.sfdxProjectFolder = this.multibar.create(1, 0, { name: 'Copy SFDX Project'.padEnd(30, ' '), file: 'N/A' });
       this.multibars.total.setTotal(this.multibars.total.getTotal() + 1);
     }
@@ -103,8 +106,10 @@ export default class ExecuteMigrateObjectModel extends Command {
 
       // Process file
       for (const customFileName of customFileNameList) {
-        this.multibars[fetchExpression].update(null, { file: customFileName });
-        this.multibar.update();
+        if (this.multibar.terminal.isTTY()) {
+          this.multibars[fetchExpression].update(null, { file: customFileName });
+          this.multibar.update();
+        }
         if (fetchExpression.includes('objects') && fetchExpression.includes('fields')) {
           //  dataModel file to read
           const objectsToMigrate = this.configData.objects;
@@ -116,14 +121,18 @@ export default class ExecuteMigrateObjectModel extends Command {
           // Replace in .cmp, .app & .evt files (send function as parameter)
           await this.processFileApexJsCmp(customFileName, replaceList);
         }
-        this.multibars[fetchExpression].increment();
-        this.multibar.update();
+        if (this.multibar.terminal.isTTY()) {
+          this.multibars[fetchExpression].increment();
+          this.multibar.update();
+        }
       }
       // progress bar update
-      // @ts-ignore
-      this.multibars[fetchExpression].update(null, { file: 'Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - fetchExprStartTime) / 1000)) });
-      this.multibars.total.increment();
-      this.multibar.update();
+      if (this.multibar.terminal.isTTY()) {
+        // @ts-ignore
+        this.multibars[fetchExpression].update(null, { file: 'Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - fetchExprStartTime) / 1000)) });
+        this.multibars.total.increment();
+        this.multibar.update();
+      }
     }
 
     // Delete Old data model content
@@ -135,11 +144,14 @@ export default class ExecuteMigrateObjectModel extends Command {
     if (this.copySfdxProjectFolder) {
       await this.copySfdxProjectManualItems();
     }
-    // @ts-ignore
-    this.multibars.total.update(null, { file: 'Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - elapseStart) / 1000)) });
-    this.multibars.total.stop();
-    this.multibar.update();
-    this.multibar.stop();
+
+    if (this.multibar.terminal.isTTY()) {
+      // @ts-ignore
+      this.multibars.total.update(null, { file: 'Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - elapseStart) / 1000)) });
+      this.multibars.total.stop();
+      this.multibar.update();
+      this.multibar.stop();
+    }
   }
 
   // Process component file
@@ -476,22 +488,26 @@ export default class ExecuteMigrateObjectModel extends Command {
       const elapseStart = Date.now();
 
       const customFileNameList = glob.sync('./*/*');
-      this.multibars.deleteFiles.setTotal(customFileNameList.length);
-      // @ts-ignore
-      const interval = EssentialsUtils.multibarStartProgress(this.multibars, 'deleteFiles', this.multibar, 'Deleting files');
+      let interval;
+      if (this.multibar.terminal.isTTY()) {
+        this.multibars.deleteFiles.setTotal(customFileNameList.length);
+        // @ts-ignore
+        interval = EssentialsUtils.multibarStartProgress(this.multibars, 'deleteFiles', this.multibar, 'Deleting files');
+      }
       await this.deleteFileOrFolder(customFileNameList, objectToDelete, true);
+    }
+    if (this.multibar.terminal.isTTY()) {
       // @ts-ignore
       EssentialsUtils.multibarStopProgress(interval);
       // @ts-ignore
       this.multibars.deleteFiles.update(null, { file: 'Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - elapseStart) / 1000)) });
       this.multibars.total.increment();
     }
-
   }
 
   public async deleteFileOrFolder(customFileNameList: any, objectToDelete: any, increment = false) {
     for (const file of customFileNameList) {
-      if (increment) {
+      if (increment && this.multibar.terminal.isTTY()) {
         this.multibars.deleteFiles.increment();
         this.multibar.update();
       }
@@ -591,16 +607,21 @@ export default class ExecuteMigrateObjectModel extends Command {
     const sfdxProjectFolder = this.configData.sfdxProjectFolder;
     if (sfdxProjectFolder) {
       const elapseStart = Date.now();
-      // @ts-ignore
-      const interval = EssentialsUtils.multibarStartProgress(this.multibars, 'sfdxProjectFolder', this.multibar, 'Copying files');
+      let interval;
+      if (this.multibar.terminal.isTTY()) {
+        // @ts-ignore
+        interval = EssentialsUtils.multibarStartProgress(this.multibars, 'sfdxProjectFolder', this.multibar, 'Copying files');
+      }
       await fsExtra.copy(this.configData.sfdxProjectFolder, this.inputFolder);
-      // @ts-ignore
-      EssentialsUtils.multibarStopProgress(interval);
-      this.multibars.sfdxProjectFolder.increment();
-      // @ts-ignore
-      this.multibars.sfdxProjectFolder.update(null, { file: 'Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - elapseStart) / 1000)) });
-      this.multibars.total.increment();
-      this.multibar.update();
+      if (this.multibar.terminal.isTTY()) {
+        // @ts-ignore
+        EssentialsUtils.multibarStopProgress(interval);
+        this.multibars.sfdxProjectFolder.increment();
+        // @ts-ignore
+        this.multibars.sfdxProjectFolder.update(null, { file: 'Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - elapseStart) / 1000)) });
+        this.multibars.total.increment();
+        this.multibar.update();
+      }
     }
   }
 
