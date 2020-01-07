@@ -320,3 +320,4 @@ EXAMPLE
 ```
 
 _See code: [src/commands/essentials/generate-permission-sets.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/generate-permission-sets.ts)_
+_See JSON configuration example: [examples/generate-permission-sets-config.json](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/generate-permission-sets-config.json)_
