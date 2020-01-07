@@ -316,7 +316,7 @@ OPTIONS
   -p, --packageXml=someString              package.xml file that will be used in order to generate permission sets
 
 EXAMPLE
-  $  sfdx essentials:generate-permission-sets -c "../generate-permission-sets-config.json" -p "Config/packageXml/package_DevRoot_Managed.xml"
+  $  sfdx essentials:generate-permission-sets -c "../generate-permission-sets-config.json" -p "Config/packageXml/package.xml"
 ```
 
 _See code: [src/commands/essentials/generate-permission-sets.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/generate-permission-sets.ts)_
