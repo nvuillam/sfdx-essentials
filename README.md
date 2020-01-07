@@ -320,4 +320,135 @@ EXAMPLE
 ```
 
 _See code: [src/commands/essentials/generate-permission-sets.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/generate-permission-sets.ts)_
+
+JSON configuration file used in order to generate permission sets
+
+```
+{
+	"Basic": {
+		"label": "Basic permission sets",
+		"description": "Basic permission sets",
+		"extended": "",
+		"packageXMLTypeList": [
+			{
+				"typeName": "ApexClass",
+				"permissionSetsElementList": [
+					{
+						"elementName": "apexClass"
+					},
+					{
+						"elementName": "enabled",
+						"value": true
+					}
+				]
+			},
+			{
+				"typeName": "ApexPage",
+				"permissionSetsElementList": [
+					{
+						"elementName": "pageAccesses"
+					},
+					{
+						"elementName": "enabled",
+						"value": true
+					}
+				]
+			},
+			{
+				"typeName": "CustomField",
+				"permissionSetsElementList": [
+					{
+						"elementName": "field"
+					},
+					{
+						"elementName": "editable",
+						"value": true
+					},
+					{
+						"elementName": "readable",
+						"value": true
+					}
+				]
+			},
+			{
+				"typeName": "CustomObject",
+				"permissionSetsElementList": [
+					{
+						"elementName": "object"
+					},
+					{
+						"elementName": "allowCreate",
+						"value": true
+					},
+					{
+						"elementName": "allowDelete",
+						"value": true
+					},
+					{
+						"elementName": "allowEdit",
+						"value": true
+					},
+					{
+						"elementName": "allowRead",
+						"value": true
+					},
+					{
+						"elementName": "modifyAllRecords",
+						"value": true
+					},
+					{
+						"elementName": "viewAllRecords",
+						"value": true
+					}
+				]
+			},
+			{
+				"typeName": "CustomTab",
+				"permissionSetsElementList": [
+					{
+						"elementName": "tab"
+					},
+					{
+						"elementName": "visibility",
+						"value": true
+					}
+				]
+			},
+			{
+				"typeName": "RecordType",
+				"permissionSetsElementList": [
+					{
+						"elementName": "recordType"
+					},
+					{
+						"elementName": "visible",
+						"value": true
+					}
+				]
+			}
+		]
+	},
+	"Admin": {
+		"label": "Omnichannel for Administrator",
+		"description": "Omnichannel CRM Administrator access. Manage acces to administration componants and views",
+		"hasActivationRequired": true,
+		"extended": "Basic",
+		"packageXMLTypeList": [
+			{
+				"typeName": "CustomApplication",
+				"permissionSetsElementList": [
+					{
+						"elementName": "applicationVisibilities"
+					},
+					{
+						"elementName": "visible",
+						"value": true
+					}
+				]
+			}
+		]
+	}
+}
+```
+
 _See JSON configuration example: [examples/generate-permission-sets-config.json](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/generate-permission-sets-config.json)_
