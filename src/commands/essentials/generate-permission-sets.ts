@@ -1,5 +1,9 @@
 import { Command, flags } from '@oclif/command';
-import { FILE } from 'dns';
+import * as fs from 'fs';
+import * as fse from 'fs-extra';
+import * as xml2js from 'xml2js';
+import * as builder from 'xmlbuilder';
+import metadataUtils = require('../../common/metadata-utils');
 
 export default class ExecuteFilter extends Command {
     public static description = '';
@@ -22,18 +26,13 @@ export default class ExecuteFilter extends Command {
     public namePermissionSet: string;
 
     // Internal properties
-    public fs = require('fs');
-    public fse = require('fs-extra');
-    public xml2js = require('xml2js');
-    public util = require('util');
-    public path = require('path');
-    public builder = require('xmlbuilder');
-    public metadataUtils = require('../../common/metadata-utils');
     public packageXmlMetadatasTypeLs = [];
     public sobjectCollectedInfo = {};
     public translatedLanguageList = [];
     public summaryResult = { metadataTypes: {}, objects: [], objectsTranslations: [] };
-    public describeMetadataAll = this.metadataUtils.describeMetadataTypes();
+
+    // @ts-ignore
+    public describeMetadataAll = metadataUtils.describeMetadataTypes();
 
     // Runtime methods
     public async run() {
@@ -46,12 +45,12 @@ export default class ExecuteFilter extends Command {
         this.packageXmlFile = flags.packagexml;
 
         // Read config.json file
-        const filterConfig: JSON = this.fse.readJsonSync(this.configFile);
+        const filterConfig: JSON = fse.readJsonSync(this.configFile);
 
         this.buildDescriptionHeader(filterConfig);
 
         // Read package.xml file
-        const parser = new this.xml2js.Parser();
+        const parser = new xml2js.Parser();
 
         const promises = [];
 
@@ -68,7 +67,7 @@ export default class ExecuteFilter extends Command {
                 }
 
                 const filePromise = new Promise((resolve, reject) => {
-                    this.fs.readFile(this.packageXmlFile, (err, data) => {
+                    fs.readFile(this.packageXmlFile, (err, data) => {
 
                         parser.parseString(data, (err2, result) => {
 
@@ -96,50 +95,13 @@ export default class ExecuteFilter extends Command {
                                         // Array of Types from package.xml
                                         const packageXmlTypesExtended = result.Package.types;
 
-                                        for (let packageXmlTypeExtended of packageXmlTypesExtended) {
-                                            const packageXmlTypesNameExtended = packageXmlTypeExtended.name[0];
-
-                                            if (packageXMLTypesConfigArrayExtended.includes(packageXmlTypesNameExtended) && filterConfigNameJSONArrayExtended.packageXMLTypeList.length > 0) {
-
-                                                let indexOfType = packageXMLTypesConfigArrayExtended.indexOf(packageXmlTypesNameExtended);
-                                                let packageXMLTypeConfigJSONExtended = filterConfigNameJSONArrayExtended.packageXMLTypeList[indexOfType];
-                                                let packageXmlMembersExtended = packageXmlTypeExtended.members;
-
-                                                for (let packageXmlMemberExtended of packageXmlMembersExtended) {
-                                                    let permissionSetsXMLElmementNameExtended = this.describeMetadataAll[packageXmlTypesNameExtended].permissionSetTypeName;
-
-                                                    // Test classes are excluded and also type name that are not described in describeMetadata (metadata-utils/index.ts)
-                                                    if (packageXmlMemberExtended.indexOf('_m') < 0 && packageXmlMemberExtended.indexOf('Test') < 0 && permissionSetsXMLElmementNameExtended !== undefined) {
-                                                        permissionSetsExtendedXmlElement += this.buildMultiplePermissionSetXML({ packageXMLTypeConfigJSON: packageXMLTypeConfigJSONExtended, typeMember: packageXmlMemberExtended });
-                                                    }
-                                                }
-                                            }
-                                        }
+                                        permissionSetsExtendedXmlElement = this.filterPackageXmlTypes(packageXmlTypesExtended, packageXMLTypesConfigArrayExtended, filterConfigNameJSONArrayExtended);
                                     }
                                 }
                             }
 
                             // Build permission sets for each types (multiple) from packageXMLTypeList (JSON configuration file)
-                            for (let packageXmlType of packageXmlTypes) {
-
-                                const packageXmlTypesName = packageXmlType.name[0];
-
-                                if (packageXMLTypesConfigArray.includes(packageXmlTypesName) && filterConfigNameJSONArray.packageXMLTypeList.length > 0) {
-
-                                    let indexOfType = packageXMLTypesConfigArray.indexOf(packageXmlTypesName);
-                                    let packageXMLTypeConfigJSON = filterConfigNameJSONArray.packageXMLTypeList[indexOfType];
-                                    let packageXmlMembers = packageXmlType.members;
-
-                                    for (let packageXmlMember of packageXmlMembers) {
-                                        let permissionSetsXMLElmementName = this.describeMetadataAll[packageXmlTypesName].permissionSetTypeName;
-
-                                        // Test classes are excluded and also type name that are not described in describeMetadata (metadata-utils/index.ts)
-                                        if (packageXmlMember.indexOf('_m') < 0 && packageXmlMember.indexOf('Test') < 0 && permissionSetsXMLElmementName !== undefined) {
-                                            permissionSetsMultipleXmlElement += this.buildMultiplePermissionSetXML({ packageXMLTypeConfigJSON, typeMember: packageXmlMember });
-                                        }
-                                    }
-                                }
-                            }
+                            permissionSetsMultipleXmlElement = this.filterPackageXmlTypes(packageXmlTypes, packageXMLTypesConfigArray, filterConfigNameJSONArray);
 
                             // Build permission sets for each types (single)
                             permissionSetsSingleXmlElement = this.buildSinglePermissionSetXML(filterConfigNameJSONArray);
@@ -152,7 +114,7 @@ export default class ExecuteFilter extends Command {
 
                             // Write permission sets in XML format
                             let outputFilename = './' + configName + '.permissionset-meta.xml';
-                            this.fs.writeFile(outputFilename, permissionSetsXmlElements, (err3) => {
+                            fs.writeFile(outputFilename, permissionSetsXmlElements, (err3) => {
                                 if (!err3) {
                                     console.log('      - ' + outputFilename);
                                     resolve();
@@ -273,7 +235,7 @@ export default class ExecuteFilter extends Command {
         permissionSetsXMLElmementName = this.describeMetadataAll[typeName].permissionSetTypeName;
         permissionSetXMLMemberName = this.describeMetadataAll[typeName].permissionSetMemberName;
 
-        permissionSetsXmlElement = this.builder.create(permissionSetsXMLElmementName);
+        permissionSetsXmlElement = builder.create(permissionSetsXMLElmementName);
         permissionSetsXmlElement.ele(permissionSetXMLMemberName, typeMember).end({ pretty: true });
 
         for (let permissionSetElementJSON of permissionSetElementJSONArray) {
@@ -282,6 +244,74 @@ export default class ExecuteFilter extends Command {
 
             if (elementValue != undefined) {
                 permissionSetsXmlElement.ele(elementName, elementValue).end({ pretty: true });
+            }
+        }
+
+        return permissionSetsXmlElement;
+    }
+
+    public filterPackageXmlTypes(packageXmlTypes: any, packageXMLTypesConfigArray: any, filterConfigNameJSONArray: any) {
+
+        let permissionSetsXmlElement = '';
+
+        for (let packageXmlType of packageXmlTypes) {
+
+            const packageXmlTypesName = packageXmlType.name[0];
+
+            if (packageXMLTypesConfigArray.includes(packageXmlTypesName) && filterConfigNameJSONArray.packageXMLTypeList.length > 0) {
+
+                let indexOfType = packageXMLTypesConfigArray.indexOf(packageXmlTypesName);
+                let packageXMLTypeConfigJSON = filterConfigNameJSONArray.packageXMLTypeList[indexOfType];
+                let packageXmlMembers = packageXmlType.members;
+                let permissionSetIncludedFilterArray = packageXMLTypeConfigJSON.includedFilterList;
+                let permissionSetExcludedFilterArray = packageXMLTypeConfigJSON.excludedFilterList;
+
+                for (let packageXmlMember of packageXmlMembers) {
+
+                    let isIncludedFilterActivated = false;
+                    let isExcludedFilterActivated = false;
+                    let isIncludedMatch = false;
+                    let isExcludedMatch = false;
+
+                    // Check included filters
+                    if (permissionSetIncludedFilterArray.length > 0) {
+                        isIncludedFilterActivated = true;
+                    }
+
+                    for (let permissionSetIncludedFilter of permissionSetIncludedFilterArray) {
+                        const isRegexIncluded = permissionSetIncludedFilter.startsWith('(');
+
+                        if ((isRegexIncluded && packageXmlMember.match(permissionSetIncludedFilter)) || (!isRegexIncluded && packageXmlMember === permissionSetIncludedFilter)) {
+                            isIncludedMatch = true;
+                        }
+                    }
+
+                    // Check excluded filters
+                    if (permissionSetExcludedFilterArray.length > 0) {
+                        isExcludedFilterActivated = true;
+                    }
+
+                    for (let permissionSetExcludedFilter of permissionSetExcludedFilterArray) {
+                        const isRegexExcluded = permissionSetExcludedFilter.startsWith('(');
+
+                        if ((isRegexExcluded && packageXmlMember.match(permissionSetExcludedFilter)) || (!isRegexExcluded && packageXmlMember === permissionSetExcludedFilter)) {
+                            isExcludedMatch = true;
+                        }
+                    }
+
+                    if ((isIncludedFilterActivated && !isExcludedFilterActivated && isIncludedMatch) ||
+                        (!isIncludedFilterActivated && isExcludedFilterActivated && !isExcludedMatch) ||
+                        (isIncludedFilterActivated && isExcludedFilterActivated && isIncludedMatch && !isExcludedMatch) ||
+                        (!isIncludedFilterActivated && !isExcludedFilterActivated)) {
+
+                        let permissionSetsXMLElmementName = this.describeMetadataAll[packageXmlTypesName].permissionSetTypeName;
+
+                        // Test classes are excluded and also type name that are not described in describeMetadata (metadata-utils/index.ts)
+                        if (permissionSetsXMLElmementName !== undefined) {
+                            permissionSetsXmlElement += this.buildMultiplePermissionSetXML({ packageXMLTypeConfigJSON, typeMember: packageXmlMember });
+                        }
+                    }
+                }
             }
         }
 
