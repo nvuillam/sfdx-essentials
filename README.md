@@ -4,6 +4,7 @@ Salesforce DX Essentials
 [![Version](https://img.shields.io/npm/v/sfdx-essentials.svg)](https://npmjs.org/package/sfdx-essentials)
 [![Downloads/week](https://img.shields.io/npm/dw/sfdx-essentials.svg)](https://npmjs.org/package/sfdx-essentials) 
 [![License](https://img.shields.io/npm/l/sfdx-essentials.svg)](https://github.com/nvuillam/sfdx-essentials/blob/master/package.json) 
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
 # PLUGIN
 
@@ -12,6 +13,11 @@ Sometimes ... Salesforce tools are delivered without the mandatory capabilities 
 Sometimes ... Salesforce R&D team shows some understanding, but sometimes ... not at all, even when a new SFDC Platform version prevents to generate a managed package.
 
 So after the third plugin I needed to create during a few weeks (not for fun, but to allow our managed package to survive!) , I decided to join them on a single plugin: **SFDX Essentials** , and to publish it as open source , by solidarity with fellow victims of savage platform upgrades :)
+
+Contributions are welcome, please run **npm run lint:fix** before making a new PR
+
+A revamping of the plugin sources to be more typescript oriented has been performed for version 1.0.0.
+Please create an issue if you have any problem
 
 Command list
 
@@ -23,6 +29,9 @@ Command list
 | [essentials:fix-lightning-attributes-names](#essentialsfix-lightning-attributes-names) | **Replace reserved lightning attribute names in lightning components and apex classes** ( if you named a lightning attribute like a custom apex class, since Summer 18 you simply can not generate a managed package again) |
 | [essentials:uncomment](#essentialsuncomment) | **Uncomment lines in sfdx/md files** (useful to manage @Deprecated annotations with managed packages) |
 | [essentials:check-sfdx-project-consistency](#essentialscheck-sfdx-project-consistency) | **Check consistency between a SFDX project files and package.xml files** |
+| [essentials:generate-permission-sets](#essentialsgenerate-permission-sets) | **Generate permission sets** from packageXml file depending JSON configuration file |
+| [essentials:migrate-object-model](#essentialsmigrate-object-model) | **Migrate sources from an object model to a new object model** |
+
 
 Please contribute :)
 
@@ -41,6 +50,13 @@ Its seems that sfdx plugins:update and sfdx update does not always work, in that
     sfdx plugins:uninstall sfdx-essentials
     sfdx plugins:install sfdx-essentials
 ```
+
+# CONTRIBUTE
+
+- Fork the repo and clone it on your computer
+- run $ sfdx plugins:link
+- Now your calls to sfdx essentials are performed on your local sources 
+- Once your code is ready and documented, please make a pull request :)
 
 # COMMANDS
 
@@ -69,6 +85,7 @@ DESCRIPTION
      - ApexComponent
      - ApexPage
      - ApexTrigger
+     - ApprovalProcess
      - AuraDefinitionBundle
      - BusinessProcess
      - ContentAsset
@@ -84,15 +101,19 @@ DESCRIPTION
      - EmailTemplate
      - EscalationRules
      - FlexiPage
+     - Flow
+     - FieldSet
      - GlobalValueSet
      - GlobalValueSetTranslation
      - HomePageLayout
      - ListView
+     - LightningComponentBundle
      - Layout
      - NamedCredential
      - Network
      - PermissionSet
      - Profile
+     - Queue
      - QuickAction
      - RecordType
      - RemoteSiteSetting
@@ -102,6 +123,7 @@ DESCRIPTION
      - StandardValueSetTranslation
      - StaticResource
      - Translations
+     - ValidationRule
      - WebLink
      - Workflow
 
@@ -131,41 +153,6 @@ When you perform deployments from one org to another, the features activated in 
 You may need to filter some elements in the XML files, for example in the Profiles
 
 This script requires a filter-config.json file following this example
-```json
-{
-	"filters" : [
-		{
-			"name" : "ProfileFiltering",
-			"description" :"Remove unwanted stuff in profiles",
-			"folders": 		[
-				"profiles"
-			],
-			"file_extensions":   [
-				"profile"
-			],
-			"exclude_list" : [
-				{ 
-					"type_tag":"userPermissions",
-					"identifier_tag" : "name",
-					"values" : [
-							"AllowUniversalSearch",
-							"EnableNotifications"
-					]
-				},
-				{
-					"type_tag":"tabVisibilities",
-					"identifier_tag" : "tab",
-					"values" : [
-							"TabExportScripts",
-							"TabInstallScripts"
-					]
-				}
-			]
-		}
-	]
-}
-```
-
 
 ```
 USAGE
@@ -180,6 +167,8 @@ EXAMPLE
   $ sfdx essentials:filter-xml-content -i "retrieveUnpackaged" 
 
 ```
+
+_See JSON configuration example: [examples/filter-xml-content-config.json](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/filter-xml-content-config.json)_
 
 _See code: [src/commands/essentials/filter-xml-content.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/filter-xml-content.ts)_
 
@@ -248,7 +237,6 @@ global static List<OrgDebugOption__c> setDebugOption() {
 }
 ```
 
-
 ```
 USAGE
   $ sfdx essentials:uncomment OPTIONS
@@ -281,3 +269,50 @@ EXAMPLE
 ```
 
 _See code: [src/commands/essentials/check-sfdx-project-consistency.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/check-sfdx-project-consistency.ts)_
+
+
+## `essentials:generate-permission-sets`
+
+Allows to generate permission sets in XML format used for SFDX project from package.xml file depending on JSON configuration file 
+
+```
+USAGE
+  $ sfdx essentials:generate-permission-sets OPTIONS
+
+OPTIONS
+  -c, --configFile=configFile              JSON configuration file that will be used in order to generate permission sets
+  -p, --packageXml=someString              package.xml file that will be used in order to generate permission sets
+
+EXAMPLE
+  $  sfdx essentials:generate-permission-sets -c "../generate-permission-sets-config.json" -p "Config/packageXml/package.xml"
+```
+
+_See JSON configuration example: [examples/generate-permission-sets-config.json](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/generate-permission-sets-config.json)_
+
+_See code: [src/commands/essentials/generate-permission-sets.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/generate-permission-sets.ts)_
+
+## `essentials:migrate-object-model`
+
+Use this command if you need to replace a SObject by another one in all your sfdx sources
+
+```
+USAGE
+  $ sfdx essentials:migrate-object-model OPTIONS
+
+OPTIONS
+  -c, --configFile=configFile              JSON configuration file 
+  -i, --inputFolder=someString              Input folder (default: "." )
+  -f, --fetchExpressionList     Fetch expression list. Let default if you dont know. ex: /aura/**/*.js,./aura/**/*.cmp,./classes/*.cls,./objects/*/fields/*.xml,./objects/*/recordTypes/*.xml,./triggers/*.trigger,./permissionsets/*.xml,./profiles/*.xml,./staticresources/*.json'
+  -r, --replaceExpressions       Replace expressions using fetchExpressionList. default: true
+  -d, --deleteFiles     Delete files with deprecated references. default: true
+  -k, --deleteFilesExpr     Delete files matching expression. default: true
+  -s, --copySfdxProjectFolder   Copy sfdx project files after process. default: true
+  -v, --verbose   Verbose
+
+EXAMPLE
+  $  sfdx essentials:migrate-object-model -c "./config/migrate-object-model-config.json"
+```
+
+_See JSON configuration example: [examples/migrate-object-model-config.json](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/migrate-object-model-config.json)_
+
+_See code: [src/commands/essentials/migrate-object-model.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/migrate-object-model.ts)_

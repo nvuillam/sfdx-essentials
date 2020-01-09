@@ -1,0 +1,177 @@
+{
+	"Basic": {
+		"label": "Basic permission sets",
+		"description": "Basic permission sets",
+		"extended": "",
+		"packageXMLTypeList": [
+			{
+				"typeName": "ApexClass",
+				"permissionSetsElementList": [
+					{
+						"elementName": "apexClass"
+					},
+					{
+						"elementName": "enabled",
+						"value": true
+					}
+				],
+				"includedFilterList": ["(.*)"],
+				"excludedFilterList": [
+					"(_m$)",
+					"(Test)"
+				]
+			},
+			{
+				"typeName": "ApexPage",
+				"permissionSetsElementList": [
+					{
+						"elementName": "pageAccesses"
+					},
+					{
+						"elementName": "enabled",
+						"value": true
+					}
+				],
+				"includedFilterList": ["(.*)"],
+				"excludedFilterList": []
+			},
+			{
+				"typeName": "CustomField",
+				"permissionSetsElementList": [
+					{
+						"elementName": "field"
+					},
+					{
+						"elementName": "editable",
+						"value": true
+					},
+					{
+						"elementName": "readable",
+						"value": true
+					}
+				],
+				"includedFilterList": ["(.*)"],
+				"excludedFilterList": []
+			},
+			{
+				"typeName": "CustomObject",
+				"permissionSetsElementList": [
+					{
+						"elementName": "object"
+					},
+					{
+						"elementName": "allowCreate",
+						"value": true
+					},
+					{
+						"elementName": "allowDelete",
+						"value": true
+					},
+					{
+						"elementName": "allowEdit",
+						"value": true
+					},
+					{
+						"elementName": "allowRead",
+						"value": true
+					},
+					{
+						"elementName": "modifyAllRecords",
+						"value": true
+					},
+					{
+						"elementName": "viewAllRecords",
+						"value": true
+					}
+				],
+				"includedFilterList": ["(.*)"],
+				"excludedFilterList": []
+			},
+			{
+				"typeName": "CustomTab",
+				"permissionSetsElementList": [
+					{
+						"elementName": "tab"
+					},
+					{
+						"elementName": "visibility",
+						"value": true
+					}
+				],
+				"includedFilterList": ["(.*)"],
+				"excludedFilterList": []
+			},
+			{
+				"typeName": "RecordType",
+				"permissionSetsElementList": [
+					{
+						"elementName": "recordType"
+					},
+					{
+						"elementName": "visible",
+						"value": true
+					}
+				],
+				"includedFilterList": ["(.*)"],
+				"excludedFilterList": []
+			}
+		]
+	},
+	"Admin": {
+		"label": "Omnichannel for Administrator",
+		"description": "Omnichannel CRM Administrator access. Manage acces to administration componants and views",
+		"hasActivationRequired": true,
+		"extended": "Basic",
+		"packageXMLTypeList": [
+			{
+				"typeName": "CustomApplication",
+				"permissionSetsElementList": [
+					{
+						"elementName": "applicationVisibilities"
+					},
+					{
+						"elementName": "visible",
+						"value": true
+					}
+				],
+				"includedFilterList": ["(.*)"],
+				"excludedFilterList": []
+			}
+		]
+	},
+	"CRM": {
+		"label": "Omnichannel for CRM",
+		"description": "Omnichannel access for CRM.",
+		"hasActivationRequired": false,
+		"extended": "Basic",
+		"packageXMLTypeList": []
+	},
+	"Distributor": {
+		"label": "Omnichannel for Distributor",
+		"description": "Omnichannel access for Distributor portal.",
+		"hasActivationRequired": false,
+		"extended": "Basic",
+		"packageXMLTypeList": []
+	},
+	"Insured": {
+		"label": "Omnichannel for Insured",
+		"description": "Omnichannel access for Insured portal.",
+		"hasActivationRequired": false,
+		"extended": "Basic",
+		"packageXMLTypeList": []
+	},
+	"Company": {
+		"label": "Omnichannel for Company",
+		"description": "Omnichannel access for Company portal.",
+		"hasActivationRequired": false,
+		"extended": "Basic",
+		"packageXMLTypeList": []
+	},
+	"Public": {
+		"label": "Omnichannel Administrators",
+		"description": "Omnichannel access for Public portal.",
+		"hasActivationRequired": false,
+		"extended": "Basic",
+		"packageXMLTypeList": []
+	}
+}
