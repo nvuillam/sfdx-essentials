@@ -14,6 +14,11 @@
 						"elementName": "enabled",
 						"value": true
 					}
+				],
+				"includedFilterList": ["(.*)"],
+				"excludedFilterList": [
+					"(_m$)",
+					"(Test)"
 				]
 			},
 			{
@@ -26,7 +31,9 @@
 						"elementName": "enabled",
 						"value": true
 					}
-				]
+				],
+				"includedFilterList": ["(.*)"],
+				"excludedFilterList": []
 			},
 			{
 				"typeName": "CustomField",
@@ -42,7 +49,9 @@
 						"elementName": "readable",
 						"value": true
 					}
-				]
+				],
+				"includedFilterList": ["(.*)"],
+				"excludedFilterList": []
 			},
 			{
 				"typeName": "CustomObject",
@@ -74,7 +83,9 @@
 						"elementName": "viewAllRecords",
 						"value": true
 					}
-				]
+				],
+				"includedFilterList": ["(.*)"],
+				"excludedFilterList": []
 			},
 			{
 				"typeName": "CustomTab",
@@ -86,7 +97,9 @@
 						"elementName": "visibility",
 						"value": true
 					}
-				]
+				],
+				"includedFilterList": ["(.*)"],
+				"excludedFilterList": []
 			},
 			{
 				"typeName": "RecordType",
@@ -98,7 +111,9 @@
 						"elementName": "visible",
 						"value": true
 					}
-				]
+				],
+				"includedFilterList": ["(.*)"],
+				"excludedFilterList": []
 			}
 		]
 	},
@@ -118,7 +133,9 @@
 						"elementName": "visible",
 						"value": true
 					}
-				]
+				],
+				"includedFilterList": ["(.*)"],
+				"excludedFilterList": []
 			}
 		]
 	},
