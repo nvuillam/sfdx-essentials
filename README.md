@@ -29,6 +29,7 @@ Command list
 | [essentials:fix-lightning-attributes-names](#essentialsfix-lightning-attributes-names) | **Replace reserved lightning attribute names in lightning components and apex classes** ( if you named a lightning attribute like a custom apex class, since Summer 18 you simply can not generate a managed package again) |
 | [essentials:uncomment](#essentialsuncomment) | **Uncomment lines in sfdx/md files** (useful to manage @Deprecated annotations with managed packages) |
 | [essentials:check-sfdx-project-consistency](#essentialscheck-sfdx-project-consistency) | **Check consistency between a SFDX project files and package.xml files** |
+| [essentials:generate-permission-sets](#essentialsgenerate-permission-sets) | **Generate permission sets from packageXml file depending JSON configuration file** |
 
 Please contribute :)
 
@@ -300,3 +301,24 @@ EXAMPLE
 ```
 
 _See code: [src/commands/essentials/check-sfdx-project-consistency.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/check-sfdx-project-consistency.ts)_
+
+
+## `essentials:generate-permission-sets`
+
+Allows to generate permission sets in XML format used for SFDX project from package.xml file depending on JSON configuration file 
+
+```
+USAGE
+  $ sfdx essentials:generate-permission-sets OPTIONS
+
+OPTIONS
+  -c, --configFile=configFile              JSON configuration file that will be used in order to generate permission sets
+  -p, --packageXml=someString              package.xml file that will be used in order to generate permission sets
+
+EXAMPLE
+  $  sfdx essentials:generate-permission-sets -c "../generate-permission-sets-config.json" -p "Config/packageXml/package.xml"
+```
+
+_See code: [src/commands/essentials/generate-permission-sets.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/generate-permission-sets.ts)_
+
+_See JSON configuration example: [examples/generate-permission-sets-config.json](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/generate-permission-sets-config.json)_
