@@ -29,7 +29,9 @@ Command list
 | [essentials:fix-lightning-attributes-names](#essentialsfix-lightning-attributes-names) | **Replace reserved lightning attribute names in lightning components and apex classes** ( if you named a lightning attribute like a custom apex class, since Summer 18 you simply can not generate a managed package again) |
 | [essentials:uncomment](#essentialsuncomment) | **Uncomment lines in sfdx/md files** (useful to manage @Deprecated annotations with managed packages) |
 | [essentials:check-sfdx-project-consistency](#essentialscheck-sfdx-project-consistency) | **Check consistency between a SFDX project files and package.xml files** |
-| [essentials:generate-permission-sets](#essentialsgenerate-permission-sets) | **Generate permission sets from packageXml file depending JSON configuration file** |
+| [essentials:generate-permission-sets](#essentialsgenerate-permission-sets) | **Generate permission sets** from packageXml file depending JSON configuration file |
+| [essentials:migrate-object-model](#essentialsmigrate-object-model) | **Migrate sources from an object model to a new object model** |
+
 
 Please contribute :)
 
@@ -151,41 +153,6 @@ When you perform deployments from one org to another, the features activated in 
 You may need to filter some elements in the XML files, for example in the Profiles
 
 This script requires a filter-config.json file following this example
-```json
-{
-	"filters" : [
-		{
-			"name" : "ProfileFiltering",
-			"description" :"Remove unwanted stuff in profiles",
-			"folders": 		[
-				"profiles"
-			],
-			"file_extensions":   [
-				"profile"
-			],
-			"exclude_list" : [
-				{ 
-					"type_tag":"userPermissions",
-					"identifier_tag" : "name",
-					"values" : [
-							"AllowUniversalSearch",
-							"EnableNotifications"
-					]
-				},
-				{
-					"type_tag":"tabVisibilities",
-					"identifier_tag" : "tab",
-					"values" : [
-							"TabExportScripts",
-							"TabInstallScripts"
-					]
-				}
-			]
-		}
-	]
-}
-```
-
 
 ```
 USAGE
@@ -200,6 +167,8 @@ EXAMPLE
   $ sfdx essentials:filter-xml-content -i "retrieveUnpackaged" 
 
 ```
+
+_See JSON configuration example: [examples/filter-xml-content-config.json](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/filter-xml-content-config.json)_
 
 _See code: [src/commands/essentials/filter-xml-content.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/filter-xml-content.ts)_
 
@@ -268,7 +237,6 @@ global static List<OrgDebugOption__c> setDebugOption() {
 }
 ```
 
-
 ```
 USAGE
   $ sfdx essentials:uncomment OPTIONS
@@ -319,6 +287,32 @@ EXAMPLE
   $  sfdx essentials:generate-permission-sets -c "../generate-permission-sets-config.json" -p "Config/packageXml/package.xml"
 ```
 
+_See JSON configuration example: [examples/generate-permission-sets-config.json](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/generate-permission-sets-config.json)_
+
 _See code: [src/commands/essentials/generate-permission-sets.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/generate-permission-sets.ts)_
 
-_See JSON configuration example: [examples/generate-permission-sets-config.json](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/generate-permission-sets-config.json)_
+## `essentials:migrate-object-model`
+
+Use this command if you need to replace a SObject by another one in all your sfdx sources
+
+```
+USAGE
+  $ sfdx essentials:migrate-object-model OPTIONS
+
+OPTIONS
+  -c, --configFile=configFile              JSON configuration file 
+  -i, --inputFolder=someString              Input folder (default: "." )
+  -f, --fetchExpressionList     Fetch expression list. Let default if you dont know. ex: /aura/**/*.js,./aura/**/*.cmp,./classes/*.cls,./objects/*/fields/*.xml,./objects/*/recordTypes/*.xml,./triggers/*.trigger,./permissionsets/*.xml,./profiles/*.xml,./staticresources/*.json'
+  -r, --replaceExpressions       Replace expressions using fetchExpressionList. default: true
+  -d, --deleteFiles     Delete files with deprecated references. default: true
+  -k, --deleteFilesExpr     Delete files matching expression. default: true
+  -s, --copySfdxProjectFolder   Copy sfdx project files after process. default: true
+  -v, --verbose   Verbose
+
+EXAMPLE
+  $  sfdx essentials:migrate-object-model -c "./config/migrate-object-model-config.json"
+```
+
+_See JSON configuration example: [examples/migrate-object-model-config.json](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/migrate-object-model-config.json)_
+
+_See code: [src/commands/essentials/migrate-object-model.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/migrate-object-model.ts)_

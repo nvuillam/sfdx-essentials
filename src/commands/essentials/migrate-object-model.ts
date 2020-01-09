@@ -17,8 +17,10 @@ export default class ExecuteMigrateObjectModel extends Command {
     configFile: flags.string({ char: 'c', description: 'JSON config file' }),
     inputFolder: flags.string({ char: 'i', description: 'Input folder (default: "." )' }),
     fetchExpressionList: flags.string({ char: 'f', description: 'Fetch expression list. Let default if you dont know. ex: /aura/**/*.js,./aura/**/*.cmp,./classes/*.cls,./objects/*/fields/*.xml,./objects/*/recordTypes/*.xml,./triggers/*.trigger,./permissionsets/*.xml,./profiles/*.xml,./staticresources/*.json' }),
-    deleteFiles: flags.string({ char: 'd', description: 'Delete files with deprecated references', default: 'true' }),
-    copySfdxProjectFolder: flags.string({ char: 's', description: 'Copy sfdx project files after process', default: 'true' }),
+    replaceExpressions: flags.boolean({ char: 'r', description: 'Replace expressions using fetchExpressionList', default: true, allowNo: true }) as unknown as flags.IOptionFlag<boolean>,
+    deleteFiles: flags.boolean({ char: 'd', description: 'Delete files with deprecated references', default: true, allowNo: true }) as unknown as flags.IOptionFlag<boolean>,
+    deleteFilesExpr: flags.boolean({ char: 'k', description: 'Delete files matching expression', default: true, allowNo: true }) as unknown as flags.IOptionFlag<boolean>,
+    copySfdxProjectFolder: flags.boolean({ char: 's', description: 'Copy sfdx project files after process', default: true, allowNo: true }) as unknown as flags.IOptionFlag<boolean>,
     verbose: flags.boolean({ char: 'v', description: 'Verbose', default: false }) as unknown as flags.IOptionFlag<boolean>
   };
 
@@ -39,7 +41,9 @@ export default class ExecuteMigrateObjectModel extends Command {
     './profiles/*.xml',
     './staticresources/*.json'
   ];
+  public replaceExpressions: boolean = true;
   public deleteFiles: boolean = true;
+  public deleteFilesExpr: boolean = true;
   public copySfdxProjectFolder: boolean = true;
   public verbose: boolean = false;
 
@@ -57,8 +61,10 @@ export default class ExecuteMigrateObjectModel extends Command {
 
     this.inputFolder = flags.inputFolder || '.';
     this.configFile = flags.configFile;
-    this.deleteFiles = (flags.deleteFiles === 'true');
-    this.copySfdxProjectFolder = (flags.copySfdxProjectFolder === 'true');
+    this.replaceExpressions = flags.replaceExpressions;
+    this.deleteFilesExpr = flags.deleteFilesExpr;
+    this.deleteFiles = flags.deleteFiles;
+    this.copySfdxProjectFolder = flags.copySfdxProjectFolder;
     this.verbose = flags.verbose;
 
     if (flags.fetchExpressionList) {
@@ -71,7 +77,9 @@ export default class ExecuteMigrateObjectModel extends Command {
     const jsonDataModelToMigrate = fs.readFileSync(this.configFile);
     this.configData = JSON.parse(jsonDataModelToMigrate.toString());
 
-    // Build progress bars
+    //////////////////////////////////////
+    /////// Build progress bars //////////
+    //////////////////////////////////////
     // @ts-ignore
     this.multibar = new cliProgress.MultiBar({
       clearOnComplete: false,
@@ -79,59 +87,82 @@ export default class ExecuteMigrateObjectModel extends Command {
       fps: 500,
       format: '{name} [{bar}] {percentage}% | {value}/{total} | {file} '
     }, cliProgress.Presets.shades_grey);
-    this.multibars.total = this.multibar.create(this.fetchExpressionList.length, 0, { name: 'Total'.padEnd(30, ' '), file: 'N/A' });
+    this.multibars.total = this.multibar.create(0, 0, { name: 'Total'.padEnd(30, ' '), file: 'N/A' });
+
+    if (!this.multibar.terminal.isTTY()) {
+      throw new Error('This script is a one-time script so it has been made to run on a local terminal only');
+    }
+
     // Expression list progress bars
-    this.fetchExpressionList.forEach((fetchExpression: string) => {
-      const customFileNameList = glob.sync(this.inputFolder + '/' + fetchExpression);
+    if (this.replaceExpressions) {
       if (this.multibar.terminal.isTTY()) {
-        this.multibars[fetchExpression] = this.multibar.create(customFileNameList.length, 0, { name: fetchExpression.padEnd(30, ' '), file: 'N/A' });
+        this.multibars.total.setTotal(this.multibars.total.getTotal() + this.fetchExpressionList.length);
       }
-    });
+      this.fetchExpressionList.forEach((fetchExpression: string) => {
+        const customFileNameList = glob.sync(this.inputFolder + '/' + fetchExpression);
+        if (this.multibar.terminal.isTTY()) {
+          this.multibars[fetchExpression] = this.multibar.create(customFileNameList.length, 0, { name: fetchExpression.padEnd(30, ' '), file: 'N/A' });
+        }
+      });
+    }
     // Delete files progress bar
     if (this.deleteFiles && this.configData.objectToDelete && this.multibar.terminal.isTTY()) {
-      this.multibars.deleteFiles = this.multibar.create(1, 0, { name: 'Delete files & folders'.padEnd(30, ' '), file: 'N/A' });
+      this.multibars.deleteFiles = this.multibar.create(1, 0, { name: 'Delete deprecated referencies'.padEnd(30, ' '), file: 'N/A' });
       this.multibars.total.setTotal(this.multibars.total.getTotal() + 1);
     }
+
+    // Delete files expressions bar
+    if (this.deleteFilesExpr && this.configData.objectToDelete && this.configData.objectToDelete.fetchExpressionList) {
+      this.multibars.deleteFilesExpr = this.multibar.create(1, 0, { name: 'Delete files by expressions'.padEnd(30, ' '), file: 'N/A' });
+      this.multibars.total.setTotal(this.multibars.total.getTotal() + 1);
+    }
+
     // Copy sfdx folder progress bar
     if (this.copySfdxProjectFolder && this.configData.sfdxProjectFolder && this.multibar.terminal.isTTY()) {
       this.multibars.sfdxProjectFolder = this.multibar.create(1, 0, { name: 'Copy SFDX Project'.padEnd(30, ' '), file: 'N/A' });
       this.multibars.total.setTotal(this.multibars.total.getTotal() + 1);
     }
 
+    /////////////////////////////////////////
+    /////// Execute script actions //////////
+    /////////////////////////////////////////
+
     // Iterate on each expression to browse files
-    for (const fetchExpression of this.fetchExpressionList) {
-      const fetchExprStartTime = Date.now();
-      // Get all files matching expression
-      const customFileNameList = glob.sync(this.inputFolder + '/' + fetchExpression);
+    if (this.replaceExpressions) {
+      for (const fetchExpression of this.fetchExpressionList) {
+        const fetchExprStartTime = Date.now();
+        // Get all files matching expression
+        const customFileNameList = glob.sync(this.inputFolder + '/' + fetchExpression);
 
-      // Process file
-      for (const customFileName of customFileNameList) {
+        // Process file
+        for (const customFileName of customFileNameList) {
+          if (this.multibar.terminal.isTTY()) {
+            this.multibars[fetchExpression].update(null, { file: customFileName });
+            this.multibar.update();
+          }
+          if (fetchExpression.includes('objects') && fetchExpression.includes('fields')) {
+            //  dataModel file to read
+            const objectsToMigrate = this.configData.objects;
+            // create a new lookup fields which match with the new object
+            await this.processFileXmlFields(customFileName, objectsToMigrate);
+          } else {
+            const replaceList = this.getObjectAndFieldToReplace(fetchExpression);
+
+            // Replace in .cmp, .app & .evt files (send function as parameter)
+            await this.processFileApexJsCmp(customFileName, replaceList);
+          }
+          if (this.multibar.terminal.isTTY()) {
+            this.multibars[fetchExpression].increment();
+            this.multibar.update();
+          }
+        }
+        // progress bar update
         if (this.multibar.terminal.isTTY()) {
-          this.multibars[fetchExpression].update(null, { file: customFileName });
+          // @ts-ignore
+          this.multibars[fetchExpression].update(null, { file: 'Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - fetchExprStartTime) / 1000)) });
+          this.multibars.total.increment();
           this.multibar.update();
         }
-        if (fetchExpression.includes('objects') && fetchExpression.includes('fields')) {
-          //  dataModel file to read
-          const objectsToMigrate = this.configData.objects;
-          // create a new lookup fields which match with the new object
-          await this.processFileXmlFields(customFileName, objectsToMigrate);
-        } else {
-          const replaceList = this.getObjectAndFieldToReplace(fetchExpression);
-
-          // Replace in .cmp, .app & .evt files (send function as parameter)
-          await this.processFileApexJsCmp(customFileName, replaceList);
-        }
-        if (this.multibar.terminal.isTTY()) {
-          this.multibars[fetchExpression].increment();
-          this.multibar.update();
-        }
-      }
-      // progress bar update
-      if (this.multibar.terminal.isTTY()) {
-        // @ts-ignore
-        this.multibars[fetchExpression].update(null, { file: 'Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - fetchExprStartTime) / 1000)) });
-        this.multibars.total.increment();
-        this.multibar.update();
       }
     }
 
@@ -140,11 +171,17 @@ export default class ExecuteMigrateObjectModel extends Command {
       await this.deleteOldDataModelReferency();
     }
 
+    if (this.deleteFilesExpr && this.configData.objectToDelete && this.configData.objectToDelete.fetchExpressionList) {
+      await this.deleteFetchExpressionMatchingFiles();
+    }
     // If defined, copy manually updated sfdx project ( including new object model )
     if (this.copySfdxProjectFolder) {
       await this.copySfdxProjectManualItems();
     }
 
+
+
+    // Complete progress bars if necessary
     if (this.multibar.terminal.isTTY()) {
       // @ts-ignore
       this.multibars.total.update(null, { file: 'Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - elapseStart) / 1000)) });
@@ -494,13 +531,54 @@ export default class ExecuteMigrateObjectModel extends Command {
         // @ts-ignore
         interval = EssentialsUtils.multibarStartProgress(this.multibars, 'deleteFiles', this.multibar, 'Deleting files');
       }
+      // Delete old model references
       await this.deleteFileOrFolder(customFileNameList, objectToDelete, true);
+
+      if (this.multibar.terminal.isTTY()) {
+        // @ts-ignore
+        EssentialsUtils.multibarStopProgress(interval);
+        // @ts-ignore
+        this.multibars.deleteFiles.update(null, { file: 'Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - elapseStart) / 1000)) });
+        this.multibars.total.increment();
+      }
     }
+  }
+  // Delete matching files defined in config file
+  public async deleteFetchExpressionMatchingFiles() {
+    const objectToDelete = this.configData.objectToDelete;
+    const elapseStart = Date.now();
+
+    let interval;
+    if (this.multibar.terminal.isTTY()) {
+      this.multibars.deleteFilesExpr.setTotal(objectToDelete.fetchExpressionList.length);
+      // @ts-ignore
+      interval = EssentialsUtils.multibarStartProgress(this.multibars, 'deleteFilesExpr', this.multibar, 'Deleting files');
+    }
+
+    for (const fetchExpression of objectToDelete.fetchExpressionList) {
+      // Get all files matching expression
+      const customFileNameList1 = glob.sync(this.inputFolder + '/' + fetchExpression);
+      for (const file of customFileNameList1) {
+        fsExtra.remove(file, (err: any) => {
+          if (err) { throw err; }
+          // if no error, file has been deleted successfully
+          // console.log('deleted file :' + file);
+        });
+        rimraf(file, (err: any) => {
+          if (err) { throw err; }
+          // if no error, file has been deleted successfully
+          // console.log('deleted folder :' + file);
+        });
+      }
+      this.multibars.deleteFilesExpr.increment();
+      this.multibar.update();
+    }
+
     if (this.multibar.terminal.isTTY()) {
       // @ts-ignore
       EssentialsUtils.multibarStopProgress(interval);
       // @ts-ignore
-      this.multibars.deleteFiles.update(null, { file: 'Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - elapseStart) / 1000)) });
+      this.multibars.deleteFilesExpr.update(null, { file: 'Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - elapseStart) / 1000)) });
       this.multibars.total.increment();
     }
   }
