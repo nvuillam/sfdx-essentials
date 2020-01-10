@@ -179,8 +179,6 @@ export default class ExecuteMigrateObjectModel extends Command {
       await this.copySfdxProjectManualItems();
     }
 
-
-
     // Complete progress bars if necessary
     if (this.multibar.terminal.isTTY()) {
       // @ts-ignore

@@ -3,27 +3,28 @@ import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import * as xml2js from 'xml2js';
 import * as builder from 'xmlbuilder';
+import * as xmlFormatter from 'xml-formatter';
 import metadataUtils = require('../../common/metadata-utils');
 
-export default class ExecuteFilter extends Command {
+export default class ExecuteGeneratePermissionSets extends Command {
     public static description = '';
     public static examples = [];
     public static args = [];
     public static flags = {
-
         // Flag with a value (-n, --name=VALUE)
         configfile: flags.string({ char: 'c', description: 'config.json file' }),
         packagexml: flags.string({ char: 'p', description: 'package.xml file path' }),
-        inputfolder: flags.string({ char: 'i', description: 'Input folder (default: "." )' }),
-        outputfolder: flags.string({ char: 'o', description: 'Output folder (default: permissionsets)' })
+        nameSuffix: flags.string({ char: 's', description: 'Name suffix for generated permission sets' }),
+        outputfolder: flags.string({ char: 'o', description: 'Output folder (default: "." )', default: '.' }),
+        verbose: flags.boolean({ char: 'v', description: 'Verbose', default: false }) as unknown as flags.IOptionFlag<boolean>
     };
 
     // Input params properties
     public configFile: string;
     public packageXmlFile: string;
-    public inputFolder: string;
+    public nameSuffix: string;
     public outputFolder: string;
-    public namePermissionSet: string;
+    public verbose: boolean = false;
 
     // Internal properties
     public packageXmlMetadatasTypeLs = [];
@@ -38,15 +39,19 @@ export default class ExecuteFilter extends Command {
     public async run() {
 
         // tslint:disable-next-line:no-shadowed-variable
-        const { args, flags } = this.parse(ExecuteFilter);
+        const { args, flags } = this.parse(ExecuteGeneratePermissionSets);
 
         // Get input arguments or default values
         this.configFile = flags.configfile;
         this.packageXmlFile = flags.packagexml;
+        this.nameSuffix = flags.nameSuffix;
+        this.outputFolder = flags.outputfolder;
+        this.verbose = flags.verbose;
 
         // Read config.json file
         const filterConfig: JSON = fse.readJsonSync(this.configFile);
 
+        // Build log header
         this.buildDescriptionHeader(filterConfig);
 
         // Read package.xml file
@@ -54,84 +59,88 @@ export default class ExecuteFilter extends Command {
 
         const promises = [];
 
+        const packageXml = await parser.parseStringPromise(fs.readFileSync(this.packageXmlFile));
+
+        // Build permission set file for each item described in config file (use parallel promises for perfs)
+        console.log(' Output files: ');
         for (let configName in filterConfig) {
-            if (filterConfig.hasOwnProperty(configName)) {
-                let filterConfigNameJSONArray = filterConfig[configName];
-                let extended = filterConfigNameJSONArray.extended;
-                let packageXMLTypeJSONArray = filterConfigNameJSONArray.packageXMLTypeList;
-                let packageXMLTypesConfigArray = new Array();
-                let packageXMLTypeJSON: any;
+            if (filterConfig.hasOwnProperty(configName) && !filterConfig[configName].isTemplate === true) {
+                const itemPromise = new Promise((resolve, reject) => {
 
-                for (packageXMLTypeJSON of packageXMLTypeJSONArray) {
-                    packageXMLTypesConfigArray.push(packageXMLTypeJSON.typeName);
-                }
+                    // Complete definition
+                    let filterConfigNameJSONArray = filterConfig[configName];
+                    filterConfigNameJSONArray = this.mergeExtendDependencies(filterConfigNameJSONArray, filterConfig, configName);
+                    let packageXMLTypeJSONArray = filterConfigNameJSONArray.packageXMLTypeList;
+                    let packageXMLTypesConfigArray = [];
+                    for (const packageXMLTypeJSON of packageXMLTypeJSONArray) {
+                        packageXMLTypesConfigArray.push(packageXMLTypeJSON.typeName);
+                    }
 
-                const filePromise = new Promise((resolve, reject) => {
-                    fs.readFile(this.packageXmlFile, (err, data) => {
+                    if (this.verbose) {
+                        console.log(`Generating ${configName} with computed config: \n` + JSON.stringify(filterConfigNameJSONArray, null, 2));
+                    }
 
-                        parser.parseString(data, (err2, result) => {
+                    // Build permission sets for each types (multiple) from packageXMLTypeList (JSON configuration file)
+                    let permissionSetsXmlElements = '<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">';
+                    let permissionSetsMultipleXmlElement = '';
+                    let permissionSetsSingleXmlElement = '';
+                    const packageXmlTypes = packageXml.Package.types;
+                    permissionSetsMultipleXmlElement = this.filterPackageXmlTypes(packageXmlTypes, packageXMLTypesConfigArray, filterConfigNameJSONArray);
 
-                            // Array of Types from package.xml
-                            const packageXmlTypes = result.Package.types;
+                    // Build permission sets for each types (single)
+                    permissionSetsSingleXmlElement = this.buildSinglePermissionSetXML(filterConfigNameJSONArray);
 
-                            let permissionSetsXmlElements = '<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">\n';
-                            let permissionSetsExtendedXmlElement = '';
-                            let permissionSetsMultipleXmlElement = '';
-                            let permissionSetsSingleXmlElement = '';
+                    // Build permission sets (extended, multiple & single)
+                    permissionSetsXmlElements += permissionSetsMultipleXmlElement;
+                    permissionSetsXmlElements += permissionSetsSingleXmlElement;
+                    permissionSetsXmlElements += '</PermissionSet>';
 
-                            // Build permission sets for each types (multiple) using extended option
-                            if (extended !== '') {
-                                for (let configNameExtended in filterConfig) {
-                                    if (configNameExtended === extended) {
-                                        let filterConfigNameJSONArrayExtended = filterConfig[configNameExtended];
-                                        let packageXMLTypeJSONArrayExtended = filterConfigNameJSONArrayExtended.packageXMLTypeList;
-                                        let packageXMLTypesConfigArrayExtended = new Array();
-                                        let packageXMLTypeJSONExtended: any;
-
-                                        for (packageXMLTypeJSONExtended of packageXMLTypeJSONArrayExtended) {
-                                            packageXMLTypesConfigArrayExtended.push(packageXMLTypeJSONExtended.typeName);
-                                        }
-
-                                        // Array of Types from package.xml
-                                        const packageXmlTypesExtended = result.Package.types;
-
-                                        permissionSetsExtendedXmlElement = this.filterPackageXmlTypes(packageXmlTypesExtended, packageXMLTypesConfigArrayExtended, filterConfigNameJSONArrayExtended);
-                                    }
-                                }
-                            }
-
-                            // Build permission sets for each types (multiple) from packageXMLTypeList (JSON configuration file)
-                            permissionSetsMultipleXmlElement = this.filterPackageXmlTypes(packageXmlTypes, packageXMLTypesConfigArray, filterConfigNameJSONArray);
-
-                            // Build permission sets for each types (single)
-                            permissionSetsSingleXmlElement = this.buildSinglePermissionSetXML(filterConfigNameJSONArray);
-
-                            // Build permission sets (extended, multiple & single)
-                            permissionSetsXmlElements += permissionSetsExtendedXmlElement;
-                            permissionSetsXmlElements += permissionSetsMultipleXmlElement;
-                            permissionSetsXmlElements += permissionSetsSingleXmlElement;
-                            permissionSetsXmlElements += '</PermissionSet>';
-
-                            // Write permission sets in XML format
-                            let outputFilename = './' + configName + '.permissionset-meta.xml';
-                            fs.writeFile(outputFilename, permissionSetsXmlElements, (err3) => {
-                                if (!err3) {
-                                    console.log('      - ' + outputFilename);
-                                    resolve();
-                                }
-                            });
-                        });
+                    // Write permission sets in XML format
+                    if (this.nameSuffix) { // Manage name suffix if provided
+                        configName += this.nameSuffix;
+                    }
+                    const outputFilename = this.outputFolder + '/' + configName + '.permissionset-meta.xml';
+                    const formattedPsXml = xmlFormatter(permissionSetsXmlElements, { collapseContent: true });
+                    fs.writeFile(outputFilename, formattedPsXml, (err3) => {
+                        if (!err3) {
+                            console.log('      - ' + outputFilename);
+                            resolve();
+                        } else {
+                            console.error(err3.message);
+                            reject();
+                        }
                     });
                 });
 
-                promises.push(filePromise);
+                promises.push(itemPromise);
             }
         }
 
-        console.log(' Output files: ');
-
         // Wait all files to be processed
         await Promise.all(promises);
+    }
+
+    // Complete description with extend description
+    public mergeExtendDependencies(filterConfigItem: any, filterConfig: any, configName: string) {
+        if (filterConfig[configName].extends) {
+            let filterConfigItemExtend = filterConfig[filterConfig[configName].extends];
+
+            // Append objects of low-level packageXml in template config
+            const packageXmlListItemExtend = filterConfigItemExtend.packageXMLTypeList;
+            const packageXmlListItem = filterConfigItem.packageXMLTypeList || [];
+            for (const packageItemExtend of packageXmlListItemExtend) {
+                const match = packageXmlListItem.filter((item: any) => (item.typeName === packageItemExtend.typeName));
+                // If packageXml item defined on template level and not on current level, add it
+                if (match.length === 0) {
+                    packageXmlListItem.push(packageItemExtend);
+                }
+            }
+            filterConfigItem.packageXMLTypeList = packageXmlListItem.sort((a: any, b: any) => a.typeName.localeCompare(b.typeName)); // Sort by typeName value;
+
+            // Add upper extends if here
+            filterConfigItem = this.mergeExtendDependencies(filterConfigItem, filterConfig, filterConfig[configName].extends);
+        }
+        return filterConfigItem;
     }
 
     // Build header description
@@ -139,87 +148,45 @@ export default class ExecuteFilter extends Command {
 
         const configFilename = this.configFile.substring(this.configFile.lastIndexOf('/') + 1);
 
-        let basicConfig = filterConfig['Basic'];
-
-        console.log('\n');
-
-        if (basicConfig === undefined) {
-            console.log('+-------------------------------------------WARNING!---------------------------------------------+');
-            console.log('|                                                                                                |');
-            console.log('|                                                                                                |');
-            console.log('|   There is no basic permission set defined in ' + configFilename + '. The basic  |');
-            console.log('|   permission set can be an easy way to generate permission sets and to avoid copy/paste if     |');
-            console.log('|   there are common permissions sets. The "extended" parameter is used in order to indicate     |');
-            console.log('|   the permission sets name that will be extended. In case there is no value for "extended",    |');
-            console.log('|   only description in packageXMLTypeList parameter will be taken into account.                 |');
-            console.log('|                                                                                                |');
-            console.log('|                                                                                                |');
-        }
-
-        console.log('+---------------------------------------CONFIGURATION FILE---------------------------------------+');
-        console.log('|                                                                                                |');
-        console.log('|  Directory:                                                                                    |');
-        console.log('|   - "' + this.configFile + '"          |');
-        console.log('|                                                                                                |');
-        console.log('|________________________________________________________________________________________________|');
-        console.log('|                                                                                                |');
-        console.log('| Order    Label          Extended from     Description                                          |');
-        console.log('|________________________________________________________________________________________________|');
-        console.log('|                                                                                                |');
+        console.log('Directory: ' + this.configFile);
 
         let order = 0;
-        const labelLengthMax = 15;
-        const extendedLengthMax = 18;
-        const descriptionLengthMax = 52;
-
-        for (let configName in filterConfig) {
+        const tableLog = [];
+        let hasTemplate = false;
+        for (const configName in filterConfig) {
             if (filterConfig.hasOwnProperty(configName)) {
-                let labelLength = configName.length;
-                let configNameFormatted = configName;
-                let extendedLength = filterConfig[configName].extended.length;
-                let extendedLabelFormatted = filterConfig[configName].extended;
-                let descriptionLength = filterConfig[configName].description.length;
-                let descriptionLabelFormatted = filterConfig[configName].description;
-
-                for (let i = labelLength; i < labelLengthMax; i++) {
-                    configNameFormatted = configNameFormatted + ' ';
-                }
-
-                for (let i = extendedLength; i < extendedLengthMax; i++) {
-                    extendedLabelFormatted = extendedLabelFormatted + ' ';
-                }
-
-                for (let i = descriptionLength; i < descriptionLengthMax; i++) {
-                    descriptionLabelFormatted = descriptionLabelFormatted + ' ';
-                }
-
-                if (descriptionLabelFormatted.length > descriptionLengthMax) {
-                    descriptionLabelFormatted = descriptionLabelFormatted.substring(0, 47) + '...  ';
-                }
-
-                console.log('|  ' + order + '       ' + configNameFormatted + extendedLabelFormatted + descriptionLabelFormatted + ' |');
+                const configItem = filterConfig[configName];
+                tableLog.push({
+                    'Order': order,
+                    'Label': configName,
+                    'Extended from': (configItem.extends) ? configItem.extends : '',
+                    'Description': configItem.description
+                });
                 order++;
+                if (filterConfig[configName].isTemplate) {
+                    hasTemplate = true;
+                }
             }
         }
+        console.table(tableLog);
 
-        console.log('|                                                                                                |');
-        console.log('|                                                                                                |');
-        console.log('|                                  <Press any key to continue>                                   |');
-        console.log('|                                                                                                |');
-        console.log('|------------------------------------------------------------------------------------------------|\n');
+        if (hasTemplate === false) {
+            console.warn(`WARNING: There is no "isTemplate: true" permission set defined in ${configFilename}. The basic permission set can be an easy way to generate permission sets and to avoid copy/paste if there are common permissions sets. The "extends" parameter is used in order to indicate the permission sets name that will be extended. In case there is no value for "extends",  only description in packageXMLTypeList parameter will be taken into account.`);
+        }
     }
 
     // Build permission set information by type for single element
-    public buildSinglePermissionSetXML(filterConfigNameJSONArray: JSON) {
+    public buildSinglePermissionSetXML(filterConfigData: any) {
 
         let permissionSetsXmlElement = '';
-
-        for (let filterConfigNameJSON in filterConfigNameJSONArray) {
-            if (filterConfigNameJSON !== 'extended' && filterConfigNameJSON !== 'packageXMLTypeList') {
-                permissionSetsXmlElement += '<' + filterConfigNameJSON + '>' + filterConfigNameJSONArray[filterConfigNameJSON] + '</' + filterConfigNameJSON + '>\n';
+        for (let filterConfigDataField in filterConfigData) {
+            if (filterConfigDataField !== 'extends' && filterConfigDataField !== 'packageXMLTypeList') {
+                if (this.nameSuffix && (filterConfigDataField === 'label' || filterConfigDataField === 'description')) {
+                    filterConfigData[filterConfigDataField] += ' (' + this.nameSuffix + ')';
+                }
+                permissionSetsXmlElement += '<' + filterConfigDataField + '>' + filterConfigData[filterConfigDataField] + '</' + filterConfigDataField + '>';
             }
         }
-
         return permissionSetsXmlElement;
     }
 
@@ -228,9 +195,9 @@ export default class ExecuteFilter extends Command {
 
         let typeName = packageXMLTypeConfigJSON.typeName;
         let permissionSetElementJSONArray = packageXMLTypeConfigJSON.permissionSetsElementList;
-        let permissionSetsXmlElement;
-        let permissionSetsXMLElmementName;
-        let permissionSetXMLMemberName;
+        let permissionSetsXmlElement: any;
+        let permissionSetsXMLElmementName: any;
+        let permissionSetXMLMemberName: any;
 
         permissionSetsXMLElmementName = this.describeMetadataAll[typeName].permissionSetTypeName;
         permissionSetXMLMemberName = this.describeMetadataAll[typeName].permissionSetMemberName;
@@ -251,20 +218,18 @@ export default class ExecuteFilter extends Command {
     }
 
     public filterPackageXmlTypes(packageXmlTypes: any, packageXMLTypesConfigArray: any, filterConfigNameJSONArray: any) {
-
         let permissionSetsXmlElement = '';
-
         for (let packageXmlType of packageXmlTypes) {
 
             const packageXmlTypesName = packageXmlType.name[0];
 
             if (packageXMLTypesConfigArray.includes(packageXmlTypesName) && filterConfigNameJSONArray.packageXMLTypeList.length > 0) {
 
-                let indexOfType = packageXMLTypesConfigArray.indexOf(packageXmlTypesName);
-                let packageXMLTypeConfigJSON = filterConfigNameJSONArray.packageXMLTypeList[indexOfType];
-                let packageXmlMembers = packageXmlType.members;
-                let permissionSetIncludedFilterArray = packageXMLTypeConfigJSON.includedFilterList;
-                let permissionSetExcludedFilterArray = packageXMLTypeConfigJSON.excludedFilterList;
+                const indexOfType = packageXMLTypesConfigArray.indexOf(packageXmlTypesName);
+                const packageXMLTypeConfigJSON = filterConfigNameJSONArray.packageXMLTypeList[indexOfType];
+                const packageXmlMembers = packageXmlType.members;
+                const permissionSetIncludedFilterArray = packageXMLTypeConfigJSON.includedFilterList || ['(.*)']; // Default is regex "all"
+                const permissionSetExcludedFilterArray = packageXMLTypeConfigJSON.excludedFilterList || []; // Default is no exclusion
 
                 for (let packageXmlMember of packageXmlMembers) {
 
@@ -304,7 +269,7 @@ export default class ExecuteFilter extends Command {
                         (isIncludedFilterActivated && isExcludedFilterActivated && isIncludedMatch && !isExcludedMatch) ||
                         (!isIncludedFilterActivated && !isExcludedFilterActivated)) {
 
-                        let permissionSetsXMLElmementName = this.describeMetadataAll[packageXmlTypesName].permissionSetTypeName;
+                        const permissionSetsXMLElmementName = this.describeMetadataAll[packageXmlTypesName].permissionSetTypeName;
 
                         // Test classes are excluded and also type name that are not described in describeMetadata (metadata-utils/index.ts)
                         if (permissionSetsXMLElmementName !== undefined) {
