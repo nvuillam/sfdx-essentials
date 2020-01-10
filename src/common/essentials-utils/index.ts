@@ -22,7 +22,7 @@ export class EssentialsUtils {
         return interval;
     }
     public static multibarStopProgress(interval: NodeJS.Timer) {
-        if (interval != null) {
+        if (interval) {
             clearInterval(interval);
         }
     }

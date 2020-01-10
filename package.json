@@ -1,7 +1,7 @@
 {
   "name": "sfdx-essentials",
   "description": "Tools to cover the lacks of missing required functions of SFDX",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "author": "NicolasVuillamy @nvuillam",
   "bugs": "https://github.com/nvuillam/sfdx-essentials/issues",
   "dependencies": {
@@ -10,7 +10,9 @@
     "@oclif/errors": "^1.2.0",
     "@salesforce/command": "0.1.5",
     "@types/cli-progress": "^1.8.1",
+    "@types/fs-extra": "^8.0.1",
     "@types/rimraf": "^2.0.3",
+    "@types/xml-formatter": "^1.1.0",
     "@types/xml2js": "^0.4.5",
     "array-compare": "^2.0.0",
     "camelcase": "^5.0.0",
@@ -21,7 +23,8 @@
     "glob": "^7.1.2",
     "path": "^0.12.7",
     "util": "^0.11.0",
-    "xml2js": "^0.4.19"
+    "xml-formatter": "^1.2.0",
+    "xml2js": "^0.4.23"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1.17.0",

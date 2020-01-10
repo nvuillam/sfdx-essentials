@@ -1,8 +1,8 @@
 {
-	"Basic": {
-		"label": "Basic permission sets",
-		"description": "Basic permission sets",
-		"extended": "",
+	"InsuranceBase": {
+		"label": "Base permission set",
+		"description": "Base permission set",
+		"isTemplate": true,
 		"packageXMLTypeList": [
 			{
 				"typeName": "ApexClass",
@@ -15,9 +15,10 @@
 						"value": true
 					}
 				],
-				"includedFilterList": ["(.*)"],
+				"includedFilterList": [
+					"(.*)"
+				],
 				"excludedFilterList": [
-					"(_m$)",
 					"(Test)"
 				]
 			},
@@ -32,7 +33,77 @@
 						"value": true
 					}
 				],
-				"includedFilterList": ["(.*)"],
+				"includedFilterList": [
+					"(.*)"
+				]
+			},
+			{
+				"typeName": "CustomField",
+				"permissionSetsElementList": [
+					{
+						"elementName": "field"
+					},
+					{
+						"elementName": "readable",
+						"value": true
+					}
+				],
+				"includedFilterList": [
+					"(.*)"
+				]
+			},
+			{
+				"typeName": "CustomObject",
+				"permissionSetsElementList": [
+					{
+						"elementName": "object"
+					},
+					{
+						"elementName": "allowRead",
+						"value": true
+					}
+				],
+				"includedFilterList": [
+					"(.*)"
+				]
+			},
+			{
+				"typeName": "RecordType",
+				"permissionSetsElementList": [
+					{
+						"elementName": "recordType"
+					},
+					{
+						"elementName": "visible",
+						"value": true
+					}
+				],
+				"includedFilterList": [
+					"(.*)"
+				]
+			}
+		]
+	},
+	"InsuranceAdmin": {
+		"label": "DXC OmniChannel Administrator user",
+		"description": "DXC Omnichannel CRM Administrator access. Manage acces to administration components and views",
+		"hasActivationRequired": true,
+		"extends": "InsuranceBase",
+		"packageXMLTypeList": [
+			{
+				"typeName": "ApexClass",
+				"permissionSetsElementList": [
+					{
+						"elementName": "apexClass"
+					},
+					{
+						"elementName": "enabled",
+						"value": true
+					}
+				],
+				"includedFilterList": [
+					"(.*)"
+				],
 				"excludedFilterList": []
 			},
 			{
@@ -50,8 +121,9 @@
 						"value": true
 					}
 				],
-				"includedFilterList": ["(.*)"],
-				"excludedFilterList": []
+				"includedFilterList": [
+					"(.*)"
+				]
 			},
 			{
 				"typeName": "CustomObject",
@@ -84,8 +156,9 @@
 						"value": true
 					}
 				],
-				"includedFilterList": ["(.*)"],
-				"excludedFilterList": []
+				"includedFilterList": [
+					"(.*)"
+				]
 			},
 			{
 				"typeName": "CustomTab",
@@ -98,30 +171,32 @@
 						"value": true
 					}
 				],
-				"includedFilterList": ["(.*)"],
-				"excludedFilterList": []
+				"includedFilterList": [
+					"(.*)"
+				]
 			},
 			{
-				"typeName": "RecordType",
+				"typeName": "CustomApplication",
 				"permissionSetsElementList": [
 					{
-						"elementName": "recordType"
+						"elementName": "applicationVisibilities"
 					},
 					{
 						"elementName": "visible",
 						"value": true
 					}
 				],
-				"includedFilterList": ["(.*)"],
-				"excludedFilterList": []
+				"includedFilterList": [
+					"DXCO4SF_Admin"
+				]
 			}
 		]
 	},
-	"Admin": {
-		"label": "Omnichannel for Administrator",
-		"description": "Omnichannel CRM Administrator access. Manage acces to administration componants and views",
-		"hasActivationRequired": true,
-		"extended": "Basic",
+	"InsuranceCRM": {
+		"label": "CRM user",
+		"description": "DXC Omnichannel access for CRM user",
+		"hasActivationRequired": false,
+		"extends": "InsuranceBase",
 		"packageXMLTypeList": [
 			{
 				"typeName": "CustomApplication",
@@ -134,44 +209,38 @@
 						"value": true
 					}
 				],
-				"includedFilterList": ["(.*)"],
-				"excludedFilterList": []
+				"includedFilterList": [
+					"DXCO4SF_Example"
+				]
 			}
 		]
 	},
-	"CRM": {
-		"label": "Omnichannel for CRM",
-		"description": "Omnichannel access for CRM.",
+	"InsuranceDistributor": {
+		"label": "Distributor user",
+		"description": "DXC Omnichannel access for Distributor portal user",
 		"hasActivationRequired": false,
-		"extended": "Basic",
+		"extends": "InsuranceBase",
 		"packageXMLTypeList": []
 	},
-	"Distributor": {
-		"label": "Omnichannel for Distributor",
-		"description": "Omnichannel access for Distributor portal.",
+	"InsuranceInsured": {
+		"label": "Insured user",
+		"description": "DXC Omnichannel access for Insured portal user",
 		"hasActivationRequired": false,
-		"extended": "Basic",
+		"extends": "InsuranceBase",
 		"packageXMLTypeList": []
 	},
-	"Insured": {
-		"label": "Omnichannel for Insured",
-		"description": "Omnichannel access for Insured portal.",
+	"InsuranceCompany": {
+		"label": "Company user",
+		"description": "DXC Omnichannel access for Company portal user",
 		"hasActivationRequired": false,
-		"extended": "Basic",
+		"extends": "InsuranceBase",
 		"packageXMLTypeList": []
 	},
-	"Company": {
-		"label": "Omnichannel for Company",
-		"description": "Omnichannel access for Company portal.",
+	"InsurancePublic": {
+		"label": "Public user",
+		"description": "DXC Omnichannel access for public user.",
 		"hasActivationRequired": false,
-		"extended": "Basic",
-		"packageXMLTypeList": []
-	},
-	"Public": {
-		"label": "Omnichannel Administrators",
-		"description": "Omnichannel access for Public portal.",
-		"hasActivationRequired": false,
-		"extended": "Basic",
+		"extends": "InsuranceBase",
 		"packageXMLTypeList": []
 	}
 }
