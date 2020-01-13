@@ -314,8 +314,10 @@ OPTIONS
   -s, --copySfdxProjectFolder   Copy sfdx project files after process. default: true
   -v, --verbose   Verbose
 
-EXAMPLE
-  $  sfdx essentials:migrate-object-model -c "./config/migrate-object-model-config.json"
+EXAMPLES
+  $ sfdx essentials:migrate-object-model -c "./config/migrate-object-model-config.json"
+
+  $ sfdx essentials:migrate-object-model -c migration/config-to-oem.json -i Config/packageXml --fetchExpressionList "./package*.xml" --no-deleteFiles --no-deleteFilesExpr --no-copySfdxProjectFolder
 ```
 
 _See JSON configuration example: [examples/migrate-object-model-config.json](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/migrate-object-model-config.json)_

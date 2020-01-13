@@ -336,6 +336,7 @@ export default class ExecuteMigrateObjectModel extends Command {
       { name: 'simpleQuote', before: '\'', after: '\'', replacementPrefix: null, replacementSuffix: null },
       { name: 'tag', before: '<', after: '>' },
       { name: 'xmlFile', before: '>', after: '</' },
+      { name: 'packageXmlFile', before: '>', after: '.' },
       { name: 'stringlist', before: '\'', after: '.' }, // ClassName.MEthodNmae('MyObject.Myfield');
       { name: 'space', before: ' ', after: ' ' },
       { name: 'spacePoint', before: ' ', after: '.' }, // Database.upsert( objectList, fieldobject.Fields.fieldName__c,false) ;
@@ -361,7 +362,8 @@ export default class ExecuteMigrateObjectModel extends Command {
       { name: 'point', before: '.', after: '.' },
       { name: 'pointSpace', before: '.', after: ' ' },
       { name: 'xmlFile', before: '>', after: '</' },
-      { name: 'xmlFile', before: '.', after: '</' },
+      { name: 'xmlFile2', before: '.', after: '</' },
+      { name: 'packageXmlFile', before: '>', after: '.' },
       { name: 'pointQuote', before: '.', after: '\'' }, // ClassName.MEthodNmae('MyObject.Myfield');
       { name: 'spacePoint', before: ' ', after: '.' }, // Database.upsert( objectList, fieldobject.Fields.fieldName__c,false) ;
       { name: 'pointEndLine', before: '.', after: ';' }, // Select id FROM MyObject__c WHERE ObjectFields__r.objectField__c
