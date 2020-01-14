@@ -132,11 +132,13 @@ export default class ExecuteCheckProjectConsistency extends Command {
         // Build item name
         const fpath = element.replace(/\\/g, '/');
         let fileName = fpath.substring(fpath.lastIndexOf('/') + 1);
-        sfdxTypeDesc.sfdxNameSuffixList.forEach((suffix) => {
-          if (suffix !== '') {
-            fileName = fileName.replace(suffix, '');
-          }
-        });
+        if (sfdxTypeDesc.sfdxNameSuffixList) {
+          sfdxTypeDesc.sfdxNameSuffixList.forEach((suffix) => {
+            if (suffix !== '') {
+              fileName = fileName.replace(suffix, '');
+            }
+          });
+        }
         // add item name if not already in the list
         if (!(itemList.indexOf(fileName) > -1) && !fileName.endsWith('-meta')) {
           itemList.push(fileName);
