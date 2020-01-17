@@ -1,5 +1,10 @@
 import { Command, flags } from '@oclif/command';
-import { FILE } from 'dns';
+import * as fs from 'fs';
+import * as xml2js from 'xml2js';
+import * as util from 'util';
+import * as arrayCompare from 'array-compare';
+import metadataUtils = require('../../common/metadata-utils');
+import { assert } from 'console';
 
 export default class ExecuteCheckProjectConsistency extends Command {
   public static description = '';
@@ -13,8 +18,9 @@ export default class ExecuteCheckProjectConsistency extends Command {
     // flag with a value (-n, --name=VALUE)
     packageXmlList: flags.string({ char: 'p', description: 'List of package.xml files path' }),
     inputfolder: flags.string({ char: 'i', description: 'SFDX Project folder (default: "." )' }),
-    chatty: flags.boolean({ char: 'c', description: 'Chatty logs' }) as unknown as flags.IOptionFlag<boolean>,
-    jsonLogging: flags.boolean({ char: 'j', description: 'JSON logs' }) as unknown as flags.IOptionFlag<boolean>
+    failIfError: flags.boolean({ char: 'f', default: false, description: 'SFDX Project folder (default: "." )' }) as unknown as flags.IOptionFlag<boolean>,
+    chatty: flags.boolean({ char: 'c', default: false, description: 'Chatty logs' }) as unknown as flags.IOptionFlag<boolean>,
+    jsonLogging: flags.boolean({ char: 'j', default: false, description: 'JSON logs' }) as unknown as flags.IOptionFlag<boolean>
   };
 
   // Input params properties
@@ -23,22 +29,18 @@ export default class ExecuteCheckProjectConsistency extends Command {
   public outputFolder;
 
   // Internal properties
-  public fs = require('fs');
-  public fse = require('fs-extra');
-  public xml2js = require('xml2js');
-  public util = require('util');
-  public path = require('path');
-  public arrayCompare = require('array-compare');
-  public metadataUtils = require('../../common/metadata-utils');
+
   public allPackageXmlFilesTypes = {};
   public allSfdxFilesTypes = {};
 
   public jsonLogs = false;
   public chattyLogs = false;
+  public failIfError = false;
+
   public sobjectCollectedInfo = {};
   public translatedLanguageList = [];
   public summaryResult = { metadataTypes: {}, objects: [], objectsTranslations: [] };
-  public cmdLog = { compareResult: {} };
+  public cmdLog = { compareResult: {}, scriptSuccess: false };
 
   // Runtime methods
   public async run() {
@@ -50,6 +52,8 @@ export default class ExecuteCheckProjectConsistency extends Command {
     this.inputFolder = flags.inputfolder || '.';
     this.jsonLogs = flags.jsonLogging || false;
     this.chattyLogs = flags.chatty || false;
+    this.failIfError = flags.failIfError || false;
+
     if (this.jsonLogs === false && this.chattyLogs === false) {
       this.chattyLogs = true;
     }
@@ -71,43 +75,45 @@ export default class ExecuteCheckProjectConsistency extends Command {
       console.log(JSON.stringify(this.cmdLog));
     }
 
+    if (this.failIfError) {
+      assert(this.cmdLog.scriptSuccess === true, 'SFDX Project consistency contains errors. Check logs for details');
+    }
+
   }
   // Read package.xml files and build concatenated list of items
   public appendPackageXmlFilesContent() {
-    const self = this;
     // loop on packageXml files
-    this.packageXmlFileList.forEach(function(packageXmlFile) {
-      const parser = new self.xml2js.Parser();
+    for (const packageXmlFile of this.packageXmlFileList) {
+      const parser = new xml2js.Parser();
       // read file content
-      const data = self.fs.readFileSync(packageXmlFile);
+      const data = fs.readFileSync(packageXmlFile);
       // parse xml content
-      parser.parseString(data, function(err2, result) {
-        if (self.chattyLogs) {
-          console.log(`Parsed ${packageXmlFile} :\n` + self.util.inspect(result, false, null));
+      parser.parseString(data, (err2, result) => {
+        if (this.chattyLogs) {
+          console.log(`Parsed ${packageXmlFile} :\n` + util.inspect(result, false, null));
         }
         let packageXmlMetadatasTypeLs;
         // get metadata types in parse result
         try { packageXmlMetadatasTypeLs = result.Package.types; } catch { throw new Error('Unable to parse package Xml file ' + packageXmlFile); }
         // Add metadata members in concatenation list of items
-        packageXmlMetadatasTypeLs.forEach(function(typePkg) {
+        packageXmlMetadatasTypeLs.forEach((typePkg) => {
           const nameKey = typePkg.name[0];
-          if (self.allPackageXmlFilesTypes[nameKey] != null && typePkg.members != null) {
-            self.allPackageXmlFilesTypes[nameKey] = self.allPackageXmlFilesTypes[nameKey].concat(typePkg.members);
+          if (this.allPackageXmlFilesTypes[nameKey] != null && typePkg.members != null) {
+            this.allPackageXmlFilesTypes[nameKey] = this.allPackageXmlFilesTypes[nameKey].concat(typePkg.members);
           } else if (typePkg.members != null) {
-            self.allPackageXmlFilesTypes[nameKey] = typePkg.members;
+            this.allPackageXmlFilesTypes[nameKey] = typePkg.members;
           }
         });
       });
-    });
-    this.allPackageXmlFilesTypes = self.sortObject(this.allPackageXmlFilesTypes);
-    if (self.chattyLogs) {
-      console.log('Package.xml files concatenation results :\n' + self.util.inspect(this.allPackageXmlFilesTypes, false, null));
+      this.allPackageXmlFilesTypes = this.sortObject(this.allPackageXmlFilesTypes);
+      if (this.chattyLogs) {
+        console.log('Package.xml files concatenation results :\n' + util.inspect(this.allPackageXmlFilesTypes, false, null));
+      }
     }
   }
 
   // List all SFDX project items
   public listSfdxProjectItems() {
-    const self = this;
 
     // List sub folders
     console.log('Analyzing SFDX project ...');
@@ -119,7 +125,7 @@ export default class ExecuteCheckProjectConsistency extends Command {
 
     // collect elements and build allSfdxFilesTypes
     sfdxProjectFolders.forEach((folder) => {
-      const sfdxTypeDesc = self.getSfdxTypeDescription(folder);
+      const sfdxTypeDesc = this.getSfdxTypeDescription(folder);
       if (sfdxTypeDesc == null) {
         console.log('Skipped ' + folder + ' (no description found)');
         return;
@@ -128,53 +134,54 @@ export default class ExecuteCheckProjectConsistency extends Command {
       const itemList = [];
 
       const folderFiles = readdirSync(this.inputFolder + '/' + folder);
-      folderFiles.forEach((element) => {
+
+      for (const element of folderFiles) {
         // Build item name
         const fpath = element.replace(/\\/g, '/');
         let fileName = fpath.substring(fpath.lastIndexOf('/') + 1);
         if (sfdxTypeDesc.sfdxNameSuffixList) {
-          sfdxTypeDesc.sfdxNameSuffixList.forEach((suffix) => {
+          for (const suffix of sfdxTypeDesc.sfdxNameSuffixList) {
             if (suffix !== '') {
               fileName = fileName.replace(suffix, '');
             }
-          });
+          }
         }
         // add item name if not already in the list
         if (!(itemList.indexOf(fileName) > -1) && !fileName.endsWith('-meta')) {
           itemList.push(fileName);
         }
-      });
+      }
 
       // Add items in allSfdxFilesTypes
       const nameKey = sfdxTypeDesc.metadataType;
-      self.allSfdxFilesTypes[nameKey] = itemList;
+      this.allSfdxFilesTypes[nameKey] = itemList;
 
     });
 
     // Special case of objects folder
     const sfdxObjectFolders = listFoldersFunc(this.inputFolder + '/objects');
     sfdxObjectFolders.forEach((objectFolder) => {
-      if (self.chattyLogs) {
+      if (this.chattyLogs) {
         console.log('Browsing object folder ' + objectFolder + ' ...');
       }
       // If custom, add in CustomObject
       if (objectFolder.endsWith('__c') || objectFolder.endsWith('__mdt')) {
-        if (self.allSfdxFilesTypes['CustomObject'] == null) {
-          self.allSfdxFilesTypes['CustomObject'] = [objectFolder];
+        if (this.allSfdxFilesTypes['CustomObject'] == null) {
+          this.allSfdxFilesTypes['CustomObject'] = [objectFolder];
         } else {
-          self.allSfdxFilesTypes['CustomObject'] = self.allSfdxFilesTypes['CustomObject'].concat([objectFolder]);
+          this.allSfdxFilesTypes['CustomObject'] = this.allSfdxFilesTypes['CustomObject'].concat([objectFolder]);
         }
       }
       // Manage object sub-attributes
       const sfdxObjectSubFolders = listFoldersFunc(this.inputFolder + '/objects/' + objectFolder);
       sfdxObjectSubFolders.forEach((sfdxObjectSubFolder) => {
-        if (self.chattyLogs) {
+        if (this.chattyLogs) {
           console.log('  Browsing object subfolder ' + sfdxObjectSubFolder + ' ...');
         }
         // Get SubFolder description
-        const objectPropertyDesc = self.getSfdxObjectPropertyDescription(sfdxObjectSubFolder);
+        const objectPropertyDesc = this.getSfdxObjectPropertyDescription(sfdxObjectSubFolder);
         if (objectPropertyDesc == null) {
-          if (self.chattyLogs) {
+          if (this.chattyLogs) {
             console.log('Skipped ' + objectFolder + '/' + sfdxObjectSubFolder + ' (no description found)');
           }
           return;
@@ -188,11 +195,11 @@ export default class ExecuteCheckProjectConsistency extends Command {
           // Build item name
           const fpath = element.replace(/\\/g, '/');
           let fileName = fpath.substring(fpath.lastIndexOf('/') + 1);
-          objectPropertyDesc.sfdxNameSuffixList.forEach((suffix) => {
+          for (const suffix of objectPropertyDesc.sfdxNameSuffixList) {
             if (suffix !== '') {
               fileName = fileName.replace(suffix, '');
             }
-          });
+          }
           // add sub item name if not already in the list
           const fullSubItemName = objectFolder + '.' + fileName;
           if (!(subItemList.indexOf(fullSubItemName) > -1) && !fullSubItemName.endsWith('-meta')) {
@@ -202,29 +209,36 @@ export default class ExecuteCheckProjectConsistency extends Command {
 
         // Add items in allSfdxFilesTypes
         const nameKey = objectPropertyDesc.packageXmlPropName;
-        if (self.allSfdxFilesTypes[nameKey] == null) {
-          self.allSfdxFilesTypes[nameKey] = subItemList;
+        if (this.allSfdxFilesTypes[nameKey] == null) {
+          this.allSfdxFilesTypes[nameKey] = subItemList;
         } else {
-          self.allSfdxFilesTypes[nameKey] = self.allSfdxFilesTypes[nameKey].concat(subItemList);
+          this.allSfdxFilesTypes[nameKey] = this.allSfdxFilesTypes[nameKey].concat(subItemList);
         }
 
       });
 
     });
-    this.allSfdxFilesTypes = self.sortObject(this.allSfdxFilesTypes);
-    if (self.chattyLogs) {
-      console.log('SFDX Project browsing results :\n' + self.util.inspect(this.allSfdxFilesTypes, false, null));
+    this.allSfdxFilesTypes = this.sortObject(this.allSfdxFilesTypes);
+    if (this.chattyLogs) {
+      console.log('SFDX Project browsing results :\n' + util.inspect(this.allSfdxFilesTypes, false, null));
     }
   }
 
   // get Metadatype description
-  public getSfdxTypeDescription(sfdxTypeFolder) {
-    const descAll = this.metadataUtils.describeMetadataTypes();
+  public getSfdxTypeDescription(sfdxTypeFolder: any) {
+    // @ts-ignore
+    const descAll = metadataUtils.describeMetadataTypes();
     let typeDesc = null;
     for (const key in descAll) {
       if (descAll[key].folder === sfdxTypeFolder) {
         descAll[key].metadataType = key;
         typeDesc = descAll[key];
+        if (typeDesc.sfdxNameSuffixList) {
+          typeDesc.sfdxNameSuffixList = typeDesc.sfdxNameSuffixList.sort((a, b) => {
+            return b.length - a.length || // sort by length, if equal then
+              b.localeCompare(a);    // sort by dictionary order
+          });
+        }
       }
     }
     return typeDesc;
@@ -232,7 +246,8 @@ export default class ExecuteCheckProjectConsistency extends Command {
 
   // get Metadatype description
   public getSfdxObjectPropertyDescription(sfdxObjectPropertyFolder) {
-    const descAllObjectProperties = this.metadataUtils.describeObjectProperties();
+    // @ts-ignore
+    const descAllObjectProperties = metadataUtils.describeObjectProperties();
     let objectPropDesc = null;
     descAllObjectProperties.forEach((element) => {
       if (element.objectXmlPropName === sfdxObjectPropertyFolder || element.sfdxFolderName === sfdxObjectPropertyFolder) {
@@ -258,6 +273,7 @@ export default class ExecuteCheckProjectConsistency extends Command {
   // Compare results
   public compareResults() {
     const allTypesLog = [];
+    let scriptSuccess = true;
     // tslint:disable-next-line:forin
     for (const mdType in this.allSfdxFilesTypes) {
       if (this.chattyLogs) {
@@ -276,7 +292,7 @@ export default class ExecuteCheckProjectConsistency extends Command {
       const sfdxProjectTypeItems = this.allSfdxFilesTypes[mdType] || [];
       const packageXmlTypeItems = this.allPackageXmlFilesTypes[mdType] || [];
 
-      const compareResult = this.arrayCompare(sfdxProjectTypeItems, packageXmlTypeItems);
+      const compareResult = arrayCompare(sfdxProjectTypeItems, packageXmlTypeItems);
       const compareResultDisp = JSON.parse(JSON.stringify(compareResult));
 
       if (packageXmlTypeItems.length === 1 && packageXmlTypeItems[0] === '*') {
@@ -295,6 +311,7 @@ export default class ExecuteCheckProjectConsistency extends Command {
             console.log('  - ' + typeLog.in_sfdx_but_not_in_pckg_xml_nb + ' items in SFDX project but not in packageXmls : \n    - ' + typeLog.in_sfdx_but_not_in_pckg_xml);
           }
           typeLog.status = 'warning';
+          scriptSuccess = false;
         }
         if (compareResultDisp['added'].length > 0) {
           typeLog.in_pckg_xml_but_not_in_sfdx = this.getListObjValues(compareResultDisp['added']);
@@ -303,12 +320,13 @@ export default class ExecuteCheckProjectConsistency extends Command {
             console.log('  - ' + typeLog.in_pckg_xml_but_not_in_sfdx_nb + ' items in packageXmls but not in SFDX project : \n    - ' + typeLog.in_pckg_xml_but_not_in_sfdx);
           }
           typeLog.status = 'error';
+          scriptSuccess = false;
         }
       }
       allTypesLog.push(typeLog);
     }
     this.cmdLog.compareResult = allTypesLog;
-
+    this.cmdLog.scriptSuccess = scriptSuccess;
   }
 
 }
