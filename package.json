@@ -1,7 +1,7 @@
 {
   "name": "sfdx-essentials",
   "description": "Tools to cover the lacks of missing required functions of SFDX",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "author": "NicolasVuillamy @nvuillam",
   "bugs": "https://github.com/nvuillam/sfdx-essentials/issues",
   "dependencies": {

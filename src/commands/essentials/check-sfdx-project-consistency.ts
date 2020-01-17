@@ -73,6 +73,8 @@ export default class ExecuteCheckProjectConsistency extends Command {
 
     if (this.jsonLogs) {
       console.log(JSON.stringify(this.cmdLog));
+    } else {
+      console.table(this.cmdLog.compareResult, ['md_type', 'status', 'identical_nb', 'in_sfdx_but_not_in_pckg_xml_nb', 'in_pckg_xml_but_not_in_sfdx_nb']);
     }
 
     if (this.failIfError) {
