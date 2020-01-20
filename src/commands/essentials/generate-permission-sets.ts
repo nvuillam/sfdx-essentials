@@ -1,10 +1,12 @@
 import { Command, flags } from '@oclif/command';
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
+import * as glob from 'glob';
 import * as xml2js from 'xml2js';
 import * as builder from 'xmlbuilder';
 import * as xmlFormatter from 'xml-formatter';
 import metadataUtils = require('../../common/metadata-utils');
+import { FILE } from 'dns';
 
 export default class ExecuteGeneratePermissionSets extends Command {
     public static description = '';
@@ -14,6 +16,7 @@ export default class ExecuteGeneratePermissionSets extends Command {
         // Flag with a value (-n, --name=VALUE)
         configfile: flags.string({ char: 'c', description: 'config.json file' }),
         packagexml: flags.string({ char: 'p', description: 'package.xml file path' }),
+        sfdxSourcesFolder: flags.string({ char: 'f', description: 'SFDX Sources folder (used to filter required and masterDetail fields)' }),
         nameSuffix: flags.string({ char: 's', description: 'Name suffix for generated permission sets' }),
         outputfolder: flags.string({ char: 'o', description: 'Output folder (default: "." )', default: '.' }),
         verbose: flags.boolean({ char: 'v', description: 'Verbose', default: false }) as unknown as flags.IOptionFlag<boolean>
@@ -22,6 +25,7 @@ export default class ExecuteGeneratePermissionSets extends Command {
     // Input params properties
     public configFile: string;
     public packageXmlFile: string;
+    public sfdxSourcesFolder: string;
     public nameSuffix: string;
     public outputFolder: string;
     public verbose: boolean = false;
@@ -44,6 +48,7 @@ export default class ExecuteGeneratePermissionSets extends Command {
         // Get input arguments or default values
         this.configFile = flags.configfile;
         this.packageXmlFile = flags.packagexml;
+        this.sfdxSourcesFolder = flags.sfdxSourcesFolder;
         this.nameSuffix = flags.nameSuffix;
         this.outputFolder = flags.outputfolder;
         this.verbose = flags.verbose;
@@ -65,11 +70,14 @@ export default class ExecuteGeneratePermissionSets extends Command {
         console.log(' Output files: ');
         for (let configName in filterConfig) {
             if (filterConfig.hasOwnProperty(configName) && !filterConfig[configName].isTemplate === true) {
-                const itemPromise = new Promise((resolve, reject) => {
+                const itemPromise = new Promise(async (resolve, reject) => {
 
                     // Complete definition
                     let filterConfigNameJSONArray = filterConfig[configName];
                     filterConfigNameJSONArray = this.mergeExtendDependencies(filterConfigNameJSONArray, filterConfig, configName);
+                    if (filterConfigNameJSONArray.packageXMLTypeList.findIndex((item: any) => (item.typeName === 'CustomField')) > -1) {
+                        filterConfigNameJSONArray = await this.excludeCustomFields(filterConfigNameJSONArray);
+                    }
                     let packageXMLTypeJSONArray = filterConfigNameJSONArray.packageXMLTypeList;
                     let packageXMLTypesConfigArray = [];
                     for (const packageXMLTypeJSON of packageXMLTypeJSONArray) {
@@ -175,6 +183,54 @@ export default class ExecuteGeneratePermissionSets extends Command {
         }
     }
 
+    // Exclude CustomFields which are of type MasterDetail or are required
+    public async excludeCustomFields(filterConfigData: any) {
+        if (!fs.existsSync(this.sfdxSourcesFolder)) {
+            console.warn('Please provide a valid SFDX folder (-f) to filter required & masterDetail CustomFields');
+            return filterConfigData;
+        }
+        // List all fields files
+        const fetchCustomFieldsExpression = this.sfdxSourcesFolder + '/objects/*/fields/*.field-meta.xml';
+        const customFieldsFileList = glob.sync(fetchCustomFieldsExpression);
+        const promises = [];
+        const excludedCustomFieldList = [];
+        for (const customFieldFile of customFieldsFileList) {
+            const itemPromise = new Promise((resolve, reject) => {
+                // Read field file XML
+                const parser = new xml2js.Parser();
+                parser.parseString(fs.readFileSync(customFieldFile), (err: any, fieldXml: any) => {
+                    if (err) {
+                        console.error(`Error in : ${customFieldFile}` + err.message);
+                        resolve();
+                    }
+                    // Add in exclude list if it must be removed from Permission Sets
+                    let excludeIt = false;
+                    if (fieldXml.CustomField.required && fieldXml.CustomField.required[0] === 'true') {
+                        excludeIt = true;
+                    } else if (fieldXml.CustomField.type && fieldXml.CustomField.type[0] === 'MasterDetail') {
+                        excludeIt = true;
+                    }
+                    if (excludeIt === true) {
+                        const objectName = customFieldFile.match(new RegExp('/objects/(.*)/fields'))[1];
+                        const fieldName = customFieldFile.match(new RegExp('/fields/(.*).field-meta.xml'))[1];
+                        const eltName = objectName + '.' + fieldName;
+                        excludedCustomFieldList.push(eltName);
+                    }
+                    resolve();
+                });
+            });
+            promises.push(itemPromise);
+        }
+        // Await all fields to be processed and update excludedFilterList to add custom fields to filter
+        await Promise.all(promises);
+        const customFieldDefPos = filterConfigData.packageXMLTypeList.findIndex((item: any) => (item.typeName === 'CustomField'));
+        const customFieldDef = filterConfigData.packageXMLTypeList[customFieldDefPos];
+        const permissionSetExcludedFilterArray: any[] = customFieldDef.excludedFilterList || [];
+        customFieldDef.excludedFilterList = permissionSetExcludedFilterArray.concat(excludedCustomFieldList);
+        filterConfigData.packageXMLTypeList[customFieldDefPos] = customFieldDef;
+        return filterConfigData;
+    }
+
     // Build permission set information by type for single element
     public buildSinglePermissionSetXML(filterConfigData: any) {
 
@@ -205,9 +261,9 @@ export default class ExecuteGeneratePermissionSets extends Command {
         permissionSetsXmlElement = builder.create(permissionSetsXMLElmementName);
         permissionSetsXmlElement.ele(permissionSetXMLMemberName, typeMember).end({ pretty: true });
 
-        for (let permissionSetElementJSON of permissionSetElementJSONArray) {
-            let elementName = permissionSetElementJSON.elementName;
-            let elementValue = permissionSetElementJSON.value;
+        for (const permissionSetElementJSON of permissionSetElementJSONArray) {
+            const elementName = permissionSetElementJSON.elementName;
+            const elementValue = permissionSetElementJSON.value;
 
             if (elementValue != undefined) {
                 permissionSetsXmlElement.ele(elementName, elementValue).end({ pretty: true });
@@ -219,7 +275,7 @@ export default class ExecuteGeneratePermissionSets extends Command {
 
     public filterPackageXmlTypes(packageXmlTypes: any, packageXMLTypesConfigArray: any, filterConfigNameJSONArray: any) {
         let permissionSetsXmlElement = '';
-        for (let packageXmlType of packageXmlTypes) {
+        for (const packageXmlType of packageXmlTypes) {
 
             const packageXmlTypesName = packageXmlType.name[0];
 
