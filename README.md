@@ -282,14 +282,15 @@ USAGE
 OPTIONS
   -c, --configFile=configFile              JSON configuration file that will be used in order to generate permission sets
   -p, --packageXml=someString              package.xml file that will be used in order to generate permission sets
+  -f, --sfdxSourcesFolder=someString       SFDX Sources folder (used to filter required and masterDetail fields)
   -s, --nameSuffix=someString              If provided, suffix string appended to file name, label and description of generated PS
   -o, --outputfolder=someString            Output folder for PS files (default: '.')
   -v, --verbose                            Display more logs           
 
 EXAMPLES
-  $  sfdx essentials:generate-permission-sets -c "./Config/generate-permission-sets.json" -p "./Config/packageXml/package_DevRoot_Managed.xml" -o "./Projects/DevRootSource/force-app/main/default/permissionsets"
+  $  sfdx essentials:generate-permission-sets -c "./Config/generate-permission-sets.json" -p "./Config/packageXml/package_DevRoot_Managed.xml" -f "./Projects/DevRootSource/force-app/main/default" -o "./Projects/DevRootSource/force-app/main/default/permissionsets"
 
-  $  sfdx essentials:generate-permission-sets -c "./Config/generate-permission-sets.json" -p "./Config/packageXml/package_DevRoot_xDemo.xml" --nameSuffix Custom -o "./Projects/DevRootSource/force-app/main/default/permissionsets"
+  $  sfdx essentials:generate-permission-sets -c "./Config/generate-permission-sets.json" -p "./Config/packageXml/package_DevRoot_xDemo.xml" -f "./Projects/DevRootSource/force-app/main/default" --nameSuffix Custom -o "./Projects/DevRootSource/force-app/main/default/permissionsets"
 ```
 
 _See JSON configuration example: [examples/generate-permission-sets-config.json](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/generate-permission-sets-config.json)_
