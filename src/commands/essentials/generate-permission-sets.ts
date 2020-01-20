@@ -201,18 +201,20 @@ export default class ExecuteGeneratePermissionSets extends Command {
                 parser.parseString(fs.readFileSync(customFieldFile), (err: any, fieldXml: any) => {
                     if (err) {
                         console.error(`Error in : ${customFieldFile}` + err.message);
-                        resolve()
+                        resolve();
                     }
                     // Add in exclude list if it must be removed from Permission Sets
                     let excludeIt = false;
                     if (fieldXml.CustomField.required && fieldXml.CustomField.required[0] === 'true') {
                         excludeIt = true;
-                    }
-                    else if (fieldXml.CustomField.type && fieldXml.CustomField.type[0] === 'MasterDetail') {
+                    } else if (fieldXml.CustomField.type && fieldXml.CustomField.type[0] === 'MasterDetail') {
                         excludeIt = true;
                     }
                     if (excludeIt === true) {
-                        excludedCustomFieldList.push(customFieldFile);
+                        const objectName = customFieldFile.match(new RegExp('/objects/(.*)/fields'))[1];
+                        const fieldName = customFieldFile.match(new RegExp('/fields/(.*).field-meta.xml'))[1];
+                        const eltName = objectName + '.' + fieldName;
+                        excludedCustomFieldList.push(eltName);
                     }
                     resolve();
                 });
@@ -223,7 +225,7 @@ export default class ExecuteGeneratePermissionSets extends Command {
         await Promise.all(promises);
         const customFieldDefPos = filterConfigData.packageXMLTypeList.findIndex((item: any) => (item.typeName === 'CustomField'));
         const customFieldDef = filterConfigData.packageXMLTypeList[customFieldDefPos];
-        const permissionSetExcludedFilterArray: Array<any> = customFieldDef.excludedFilterList || [];
+        const permissionSetExcludedFilterArray: any[] = customFieldDef.excludedFilterList || [];
         customFieldDef.excludedFilterList = permissionSetExcludedFilterArray.concat(excludedCustomFieldList);
         filterConfigData.packageXMLTypeList[customFieldDefPos] = customFieldDef;
         return filterConfigData;
