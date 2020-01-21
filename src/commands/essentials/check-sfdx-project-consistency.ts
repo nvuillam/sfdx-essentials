@@ -18,15 +18,17 @@ export default class ExecuteCheckProjectConsistency extends Command {
     // flag with a value (-n, --name=VALUE)
     packageXmlList: flags.string({ char: 'p', description: 'List of package.xml files path' }),
     inputfolder: flags.string({ char: 'i', description: 'SFDX Project folder (default: "." )' }),
+    ignoreDuplicateTypes: flags.string({ char: 'd', default: '', description: 'List of types to ignore while checking for duplicates in package.xml files' }),
     failIfError: flags.boolean({ char: 'f', default: false, description: 'SFDX Project folder (default: "." )' }) as unknown as flags.IOptionFlag<boolean>,
     chatty: flags.boolean({ char: 'c', default: false, description: 'Chatty logs' }) as unknown as flags.IOptionFlag<boolean>,
     jsonLogging: flags.boolean({ char: 'j', default: false, description: 'JSON logs' }) as unknown as flags.IOptionFlag<boolean>
   };
 
   // Input params properties
-  public packageXmlFileList;
-  public inputFolder;
-  public outputFolder;
+  public packageXmlFileList: string[];
+  public inputFolder: string;
+  public outputFolder: string;
+  public ignoreDuplicateTypes: string[];
 
   // Internal properties
 
@@ -49,6 +51,7 @@ export default class ExecuteCheckProjectConsistency extends Command {
 
     // Get input arguments or default values
     this.packageXmlFileList = flags.packageXmlList.split(',');
+    this.ignoreDuplicateTypes = flags.ignoreDuplicateTypes.split(',');
     this.inputFolder = flags.inputfolder || '.';
     this.jsonLogs = flags.jsonLogging || false;
     this.chattyLogs = flags.chatty || false;
@@ -93,7 +96,7 @@ export default class ExecuteCheckProjectConsistency extends Command {
       if (this.chattyLogs) {
         console.log(`Parsed ${packageXmlFile} :\n` + util.inspect(result, false, null));
       }
-      let packageXmlMetadatasTypeLs;
+      let packageXmlMetadatasTypeLs: any[];
       // get metadata types in parse result
       try { packageXmlMetadatasTypeLs = result.Package.types; } catch { throw new Error('Unable to parse package Xml file ' + packageXmlFile); }
 
@@ -103,12 +106,16 @@ export default class ExecuteCheckProjectConsistency extends Command {
         if (this.allPackageXmlFilesTypes[nameKey] != null && typePkg.members != null) {
           const compareRes = arrayCompare(typePkg.members, this.allPackageXmlFilesTypes[nameKey]);
           if (compareRes.found.length > 0) {
-            doublingItems.push(compareRes.found);
-            console.warn(`ERROR: ${nameKey} items are existing in several package.xml files:` + JSON.stringify(compareRes.found, null, 2));
+            if (!this.ignoreDuplicateTypes.includes(nameKey)) {
+              doublingItems.push(compareRes.found);
+              console.warn(`ERROR: ${nameKey} items are existing in several package.xml files:` + JSON.stringify(compareRes.found, null, 2));
+            } else {
+              console.warn(`WARNING: ${nameKey} items are existing in several package.xml files:` + JSON.stringify(compareRes.found, null, 2));
+            }
           }
-          this.allPackageXmlFilesTypes[nameKey] = this.allPackageXmlFilesTypes[nameKey].concat(typePkg.members);
+          this.allPackageXmlFilesTypes[nameKey] = Array.from(new Set(this.allPackageXmlFilesTypes[nameKey].concat(typePkg.members)));
         } else if (typePkg.members != null) {
-          this.allPackageXmlFilesTypes[nameKey] = typePkg.members;
+          this.allPackageXmlFilesTypes[nameKey] = Array.from(new Set(typePkg.members));
         }
       }
     }
