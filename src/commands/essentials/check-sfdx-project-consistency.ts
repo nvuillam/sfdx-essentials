@@ -54,14 +54,11 @@ export default class ExecuteCheckProjectConsistency extends Command {
     this.chattyLogs = flags.chatty || false;
     this.failIfError = flags.failIfError || false;
 
-    if (this.jsonLogs === false && this.chattyLogs === false) {
-      this.chattyLogs = true;
-    }
     this.log(`Initialize consistency check of SFDX project ${this.inputFolder} ,using ${flags.packageXmlList}`);
 
     // gather elements defined in package.xml files
     this.log(`\n\nAppending ${flags.packageXmlList} ...\n`);
-    this.appendPackageXmlFilesContent();
+    await this.appendPackageXmlFilesContent();
 
     // gather elements defined in SFDX project
     this.log(`\n\nBrowsing ${flags.packageXmlList} ...\n`);
@@ -77,41 +74,55 @@ export default class ExecuteCheckProjectConsistency extends Command {
       console.table(this.cmdLog.compareResult, ['md_type', 'status', 'identical_nb', 'in_sfdx_but_not_in_pckg_xml_nb', 'in_pckg_xml_but_not_in_sfdx_nb']);
     }
 
-    if (this.failIfError) {
-      assert(this.cmdLog.scriptSuccess === true, 'SFDX Project consistency contains errors. Check logs for details');
+    if (this.failIfError && this.cmdLog.scriptSuccess === false) {
+      throw Error('SFDX Project consistency contains errors. Check logs for details');
     }
 
   }
   // Read package.xml files and build concatenated list of items
-  public appendPackageXmlFilesContent() {
+  public async appendPackageXmlFilesContent() {
+
+    const doublingItems = [];
     // loop on packageXml files
     for (const packageXmlFile of this.packageXmlFileList) {
       const parser = new xml2js.Parser();
       // read file content
       const data = fs.readFileSync(packageXmlFile);
       // parse xml content
-      parser.parseString(data, (err2, result) => {
-        if (this.chattyLogs) {
-          console.log(`Parsed ${packageXmlFile} :\n` + util.inspect(result, false, null));
-        }
-        let packageXmlMetadatasTypeLs;
-        // get metadata types in parse result
-        try { packageXmlMetadatasTypeLs = result.Package.types; } catch { throw new Error('Unable to parse package Xml file ' + packageXmlFile); }
-        // Add metadata members in concatenation list of items
-        packageXmlMetadatasTypeLs.forEach((typePkg) => {
-          const nameKey = typePkg.name[0];
-          if (this.allPackageXmlFilesTypes[nameKey] != null && typePkg.members != null) {
-            this.allPackageXmlFilesTypes[nameKey] = this.allPackageXmlFilesTypes[nameKey].concat(typePkg.members);
-          } else if (typePkg.members != null) {
-            this.allPackageXmlFilesTypes[nameKey] = typePkg.members;
-          }
-        });
-      });
-      this.allPackageXmlFilesTypes = this.sortObject(this.allPackageXmlFilesTypes);
+      const result: any = await parser.parseStringPromise(data);
       if (this.chattyLogs) {
-        console.log('Package.xml files concatenation results :\n' + util.inspect(this.allPackageXmlFilesTypes, false, null));
+        console.log(`Parsed ${packageXmlFile} :\n` + util.inspect(result, false, null));
+      }
+      let packageXmlMetadatasTypeLs;
+      // get metadata types in parse result
+      try { packageXmlMetadatasTypeLs = result.Package.types; } catch { throw new Error('Unable to parse package Xml file ' + packageXmlFile); }
+
+      // Add metadata members in concatenation list of items & store doublings
+      for (const typePkg of packageXmlMetadatasTypeLs) {
+        const nameKey = typePkg.name[0];
+        if (this.allPackageXmlFilesTypes[nameKey] != null && typePkg.members != null) {
+          const compareRes = arrayCompare(typePkg.members, this.allPackageXmlFilesTypes[nameKey]);
+          if (compareRes.found.length > 0) {
+            doublingItems.push(compareRes.found);
+            console.warn(`ERROR: ${nameKey} items are existing in several package.xml files:` + JSON.stringify(compareRes.found, null, 2));
+          }
+          this.allPackageXmlFilesTypes[nameKey] = this.allPackageXmlFilesTypes[nameKey].concat(typePkg.members);
+        } else if (typePkg.members != null) {
+          this.allPackageXmlFilesTypes[nameKey] = typePkg.members;
+        }
       }
     }
+    // Check doubling items if failIfError = true
+    if (this.failIfError === true && doublingItems.length > 0) {
+      throw Error('There are doubling items in package.xml files, please make them unique');
+    }
+
+    // Sort result & display in logs if requested
+    this.allPackageXmlFilesTypes = this.sortObject(this.allPackageXmlFilesTypes);
+    if (this.chattyLogs) {
+      console.log('Package.xml files concatenation results :\n' + util.inspect(this.allPackageXmlFilesTypes, false, null));
+    }
+
   }
 
   // List all SFDX project items
@@ -278,9 +289,7 @@ export default class ExecuteCheckProjectConsistency extends Command {
     let scriptSuccess = true;
     // tslint:disable-next-line:forin
     for (const mdType in this.allSfdxFilesTypes) {
-      if (this.chattyLogs) {
-        console.log('\n' + mdType + ':');
-      }
+      console.log('\n' + mdType + ':');
       const typeLog = {
         md_type: mdType,
         status: 'success',
@@ -292,12 +301,16 @@ export default class ExecuteCheckProjectConsistency extends Command {
         comment: ''
       };
       const sfdxProjectTypeItems = this.allSfdxFilesTypes[mdType] || [];
-      const packageXmlTypeItems = this.allPackageXmlFilesTypes[mdType] || [];
+      const packageXmlTypeItems: any[] = this.allPackageXmlFilesTypes[mdType] || [];
 
       const compareResult = arrayCompare(sfdxProjectTypeItems, packageXmlTypeItems);
       const compareResultDisp = JSON.parse(JSON.stringify(compareResult));
 
-      if (packageXmlTypeItems.length === 1 && packageXmlTypeItems[0] === '*') {
+      if (packageXmlTypeItems.includes('*')) {
+        typeLog.identical_nb = sfdxProjectTypeItems.length;
+        typeLog.in_sfdx_but_not_in_pckg_xml_nb = null;
+        typeLog.in_pckg_xml_but_not_in_sfdx_nb = null;
+
         if (this.chattyLogs) {
           console.log('  - wildcard (*) used in packageXmls, comparison is not necessary');
         }
@@ -309,18 +322,14 @@ export default class ExecuteCheckProjectConsistency extends Command {
         if (compareResultDisp['missing'].length > 0) {
           typeLog.in_sfdx_but_not_in_pckg_xml = this.getListObjValues(compareResultDisp['missing']);
           typeLog.in_sfdx_but_not_in_pckg_xml_nb = typeLog.in_sfdx_but_not_in_pckg_xml.length;
-          if (this.chattyLogs) {
-            console.log('  - ' + typeLog.in_sfdx_but_not_in_pckg_xml_nb + ' items in SFDX project but not in packageXmls : \n    - ' + typeLog.in_sfdx_but_not_in_pckg_xml);
-          }
+          console.error('  - ' + typeLog.in_sfdx_but_not_in_pckg_xml_nb + ' items in SFDX project but not in packageXmls : \n    - ' + typeLog.in_sfdx_but_not_in_pckg_xml);
           typeLog.status = 'warning';
           scriptSuccess = false;
         }
         if (compareResultDisp['added'].length > 0) {
           typeLog.in_pckg_xml_but_not_in_sfdx = this.getListObjValues(compareResultDisp['added']);
           typeLog.in_pckg_xml_but_not_in_sfdx_nb = typeLog.in_pckg_xml_but_not_in_sfdx.length;
-          if (this.chattyLogs) {
-            console.log('  - ' + typeLog.in_pckg_xml_but_not_in_sfdx_nb + ' items in packageXmls but not in SFDX project : \n    - ' + typeLog.in_pckg_xml_but_not_in_sfdx);
-          }
+          console.error('  - ' + typeLog.in_pckg_xml_but_not_in_sfdx_nb + ' items in packageXmls but not in SFDX project : \n    - ' + typeLog.in_pckg_xml_but_not_in_sfdx);
           typeLog.status = 'error';
           scriptSuccess = false;
         }
