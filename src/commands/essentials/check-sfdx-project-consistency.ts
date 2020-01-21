@@ -289,7 +289,7 @@ export default class ExecuteCheckProjectConsistency extends Command {
     let scriptSuccess = true;
     // tslint:disable-next-line:forin
     for (const mdType in this.allSfdxFilesTypes) {
-      console.log('\n' + mdType + ':');
+      let logItem = mdType + ':';
       const typeLog = {
         md_type: mdType,
         status: 'success',
@@ -312,29 +312,30 @@ export default class ExecuteCheckProjectConsistency extends Command {
         typeLog.in_pckg_xml_but_not_in_sfdx_nb = null;
 
         if (this.chattyLogs) {
-          console.log('  - wildcard (*) used in packageXmls, comparison is not necessary');
+          logItem += '\n  - wildcard (*) used in packageXmls, comparison is not necessary';
         }
       } else {
         typeLog.identical_nb = compareResultDisp['found'].length;
         if (this.chattyLogs) {
-          console.log('  - ' + typeLog.identical_nb + ' identical item(s)');
+          logItem += '\n  - ' + typeLog.identical_nb + ' identical item(s)';
         }
         if (compareResultDisp['missing'].length > 0) {
           typeLog.in_sfdx_but_not_in_pckg_xml = this.getListObjValues(compareResultDisp['missing']);
           typeLog.in_sfdx_but_not_in_pckg_xml_nb = typeLog.in_sfdx_but_not_in_pckg_xml.length;
-          console.error('  - ' + typeLog.in_sfdx_but_not_in_pckg_xml_nb + ' items in SFDX project but not in packageXmls : \n    - ' + typeLog.in_sfdx_but_not_in_pckg_xml);
+          logItem += '\n  - ' + typeLog.in_sfdx_but_not_in_pckg_xml_nb + ' items in SFDX project but not in packageXmls : \n    - ' + typeLog.in_sfdx_but_not_in_pckg_xml;
           typeLog.status = 'warning';
           scriptSuccess = false;
         }
         if (compareResultDisp['added'].length > 0) {
           typeLog.in_pckg_xml_but_not_in_sfdx = this.getListObjValues(compareResultDisp['added']);
           typeLog.in_pckg_xml_but_not_in_sfdx_nb = typeLog.in_pckg_xml_but_not_in_sfdx.length;
-          console.error('  - ' + typeLog.in_pckg_xml_but_not_in_sfdx_nb + ' items in packageXmls but not in SFDX project : \n    - ' + typeLog.in_pckg_xml_but_not_in_sfdx);
+          logItem += '\n  - ' + typeLog.in_pckg_xml_but_not_in_sfdx_nb + ' items in packageXmls but not in SFDX project : \n    - ' + typeLog.in_pckg_xml_but_not_in_sfdx;
           typeLog.status = 'error';
           scriptSuccess = false;
         }
       }
       allTypesLog.push(typeLog);
+      console.log(logItem + '\n');
     }
     this.cmdLog.compareResult = allTypesLog;
     this.cmdLog.scriptSuccess = scriptSuccess;
