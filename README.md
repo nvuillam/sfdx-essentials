@@ -23,15 +23,15 @@ Command list
 
 | Command | Description |
 | ------------- | ------------- |
+| [essentials:change-dependency-version](#essentialschange-dependency-version) | **Replace other managed packages dependency version number** ( very useful when you build a managed package over another managed package, like Financial Services Cloud ) |
+| [essentials:check-sfdx-project-consistency](#essentialscheck-sfdx-project-consistency) | **Check consistency between a SFDX project files and package.xml files** |
 | [essentials:filter-metadatas](#essentialsfilter-metadatas) | **Filter metadatas generated from a SFDX Project** in order to be able to deploy only part of them on an org |
 | [essentials:filter-xml-content](#essentialsfilter-xml-content) | **Filter content of metadatas (XML)** in order to be able to deploy only part of them on an org |
-| [essentials:change-dependency-version](#essentialschange-dependency-version) | **Replace other managed packages dependency version number** ( very useful when you build a managed package over another managed package, like Financial Services Cloud ) |
 | [essentials:fix-lightning-attributes-names](#essentialsfix-lightning-attributes-names) | **Replace reserved lightning attribute names in lightning components and apex classes** ( if you named a lightning attribute like a custom apex class, since Summer 18 you simply can not generate a managed package again) |
-| [essentials:uncomment](#essentialsuncomment) | **Uncomment lines in sfdx/md files** (useful to manage @Deprecated annotations with managed packages) |
-| [essentials:check-sfdx-project-consistency](#essentialscheck-sfdx-project-consistency) | **Check consistency between a SFDX project files and package.xml files** |
 | [essentials:generate-permission-sets](#essentialsgenerate-permission-sets) | **Generate permission sets** from packageXml file depending JSON configuration file |
 | [essentials:migrate-object-model](#essentialsmigrate-object-model) | **Migrate sources from an object model to a new object model** |
-
+| [essentials:order-package-xml](#essentialsorder-package-xml) | **Reorder alphabetically the content of package.xml file(s)** |
+| [essentials:uncomment](#essentialsuncomment) | **Uncomment lines in sfdx/md files** (useful to manage @Deprecated annotations with managed packages) |
 
 Please contribute :)
 
@@ -261,11 +261,15 @@ USAGE
   $ sfdx essentials:check-sfdx-project-consistency OPTIONS
 
 OPTIONS
-  -p, --folder=folder              List of package.xml files path
-  -i, --inputfolder=someString              SFDX Project folder . Default : '.'
+  -p, --packageXmlList=someString                   List of package.xml files path
+  -i, --inputfolder=someString                      SFDX Project folder . Default : '.'
+  -d, --ignoreDuplicateTypes=someString             List of types to ignore while checking for duplicates in package.xml files
+  -f, --failIfError                                 Script failing if errors are founds. Default: false
+  -c, --chatty                                      Chatty logs. Default: false
+  -j, --jsonLogging                                 JSON logs. Default: false                              
 
 EXAMPLE
-  $  sfdx essentials:check-sfdx-project-consistency -p "./Config/packageXml/package_DevRoot_Managed.xml,./Config/packageXml/package_DevRoot_xDemo.xml" -i "./Projects/DevRootSource/force-app/main/default"
+  $  sfdx essentials:check-sfdx-project-consistency -p "./Config/packageXml/package_DevRoot_Managed.xml,./Config/packageXml/package_DevRoot_xDemo.xml" -i "./Projects/DevRootSource/force-app/main/default" -d "Document,EmailTemplate" --failIfError
 ```
 
 _See code: [src/commands/essentials/check-sfdx-project-consistency.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/check-sfdx-project-consistency.ts)_
@@ -324,3 +328,24 @@ EXAMPLES
 _See JSON configuration example: [examples/migrate-object-model-config.json](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/migrate-object-model-config.json)_
 
 _See code: [src/commands/essentials/migrate-object-model.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/migrate-object-model.ts)_
+
+## `essentials:order-package-xml`
+
+Developers have the bad habit to input package.xml files in a non-alphabetical order. 
+
+Use this command to reorder alphabetically your package.xml files !
+
+```
+USAGE
+  $ sfdx essentials:order-package-xml OPTIONS
+
+OPTIONS
+  -p, --packagexml=folderOrFile                Path to package.xml file, or folder containing package.xml files ( *.xml are processed)
+
+EXAMPLES
+  $ sfdx essentials:order-package-xml -p "./Config/packageXml/package.xml"
+
+  $ sfdx essentials:order-package-xml -p "./Config/packageXml"
+```
+
+_See code: [src/commands/essentials/order-package-xml.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/order-package-xml.ts)_
