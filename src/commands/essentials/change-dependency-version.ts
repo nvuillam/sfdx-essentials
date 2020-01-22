@@ -17,6 +17,8 @@ export default class ExecuteChangeDependencyVersion extends Command {
     namespace: flags.string({ char: 'n', description: 'Namespace of the managed package' }),
     majorversion: flags.string({ char: 'j', description: 'Major version' }),
     minorversion: flags.string({ char: 'm', description: 'Minor version' }),
+    apiversion: flags.string({ char: 'a', description: 'If sent, updates api version' }),
+    remove: flags.boolean({ char: 'r', description: 'Verbose', default: false }) as unknown as flags.IOptionFlag<boolean>,
     folder: flags.string({ char: 'f', description: 'SFDX project folder containing files' }),
     verbose: flags.boolean({ char: 'v', description: 'Verbose' }) as unknown as flags.IOptionFlag<boolean>
   };
@@ -27,6 +29,8 @@ export default class ExecuteChangeDependencyVersion extends Command {
   public namespace: string;
   public majorversion: string;
   public minorversion: string;
+  public apiVersion: string;
+  public remove: boolean = false;
   public folder: string;
   public verbose: boolean = false;
 
@@ -44,11 +48,17 @@ export default class ExecuteChangeDependencyVersion extends Command {
     this.namespace = flags.namespace;
     this.majorversion = flags.majorversion;
     this.minorversion = flags.minorversion;
+    this.apiVersion = flags.apiversion;
+    this.remove = flags.remove;
     this.folder = flags.folder || '.';
     if (flags.verbose) {
       this.verbose = true;
     }
-    console.log(`Initialize update of dependencies in ${this.folder} with ${this.namespace} ${this.majorversion}.${this.minorversion}`);
+    if (this.remove === true) {
+      console.log(`Initialize removal of dependencies with ${this.namespace} in ${this.folder}`);
+    } else {
+      console.log(`Initialize update of dependencies in ${this.folder} with ${this.namespace} ${this.majorversion}.${this.minorversion}`);
+    }
 
     // Read files
     const fileList = glob.sync('**/*.xml');
@@ -85,18 +95,40 @@ export default class ExecuteChangeDependencyVersion extends Command {
               return;
             }
             let changed = false;
-            for (let i = 0; i < packageVersions.length; i++) {
-              const dependency = packageVersions[i];
-              // Update dependency in parsed XML object
-              if (dependency.namespace[0] === this.namespace) {
-                dependency.majorNumber[0] = this.majorversion;
-                dependency.minorNumber[0] = this.minorversion;
-                parsedXmlFile[typeX].packageVersions[i] = dependency;
+
+            // Update apiVersion if requested
+            if (this.apiVersion && parsedXmlFile[typeX].apiVersion && parsedXmlFile[typeX].apiVersion[0] !== this.apiVersion) {
+              changed = true;
+              parsedXmlFile[typeX].apiVersion[0] = this.apiVersion;
+            }
+
+            // Remove dependency
+            if (this.remove) {
+              const filteredPackageVersions = packageVersions.filter((item) => item.namespace[0] !== this.namespace);
+              if (filteredPackageVersions.length !== packageVersions.length) {
                 changed = true;
+                // Remove packageVersions from xml if there is no dependency
+                if (filteredPackageVersions.length === 0) {
+                  delete parsedXmlFile[typeX].packageVersions;
+                } else {
+                  parsedXmlFile[typeX].packageVersions = filteredPackageVersions;
+                }
+              }
+            } else {
+              // Update dependency
+              for (let i = 0; i < packageVersions.length; i++) {
+                const dependency = packageVersions[i];
+                // Update dependency in parsed XML object
+                if (dependency.namespace[0] === this.namespace) {
+                  dependency.majorNumber[0] = this.majorversion;
+                  dependency.minorNumber[0] = this.minorversion;
+                  parsedXmlFile[typeX].packageVersions[i] = dependency;
+                  changed = true;
+                }
               }
             }
+            // Update file if content updated
             if (changed) {
-              // Update file
               const builder = new xml2js.Builder();
               const updatedObjectXml = builder.buildObject(parsedXmlFile);
               fs.writeFileSync(sfdxXmlFile, updatedObjectXml);

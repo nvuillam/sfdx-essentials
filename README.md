@@ -176,6 +176,11 @@ _See code: [src/commands/essentials/filter-xml-content.ts](https://github.com/nv
 
 Allows to change an external package dependency version
 
+Can also :
+
+- remove package dependencies if --namespace and --remove arguments are sent 
+- update API version
+
 ```
 USAGE
   $ sfdx essentials:change-dependency-version OPTIONS
@@ -185,9 +190,15 @@ OPTIONS
   -j, --majorversion=majorversion  Major version
   -m, --minorversion=minorversion  Minor version
   -n, --namespace=namespace        Namespace of the managed package
+  -a, --apiversion=apiversion      API Version
+  -r, --remove                     Remove package dependency
 
-EXAMPLE
+EXAMPLES
   $ sfdx essentials:change-dependency-version -n FinServ -j 214 -m 7
+
+  $ sfdx essentials:change-dependency-version -n FinServ -r
+
+  $ sfdx essentials:change-dependency-version -a 47.0
 ```
 
 _See code: [src/commands/essentials/change-dependency-version.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/change-dependency-version.ts)_
