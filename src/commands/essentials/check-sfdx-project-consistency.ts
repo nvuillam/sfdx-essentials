@@ -166,10 +166,37 @@ export default class ExecuteCheckProjectConsistency extends Command {
             }
           }
         }
+
         // add item name if not already in the list
-        if (!(itemList.indexOf(fileName) > -1) && !fileName.endsWith('-meta')) {
+        if (!(itemList.indexOf(fileName) > -1) && !fileName.endsWith('-meta') && !fileName.startsWith('.')) {
           itemList.push(fileName);
         }
+
+        // Manage case of sfdx sub-directory metadata types (must be declared as metasInSubFolders = true in metadata-utils)
+        if (sfdxTypeDesc.metasInSubFolders === true && fs.lstatSync(this.inputFolder + '/' + folder + '/' + element).isDirectory()) {
+          const fpathSub = this.inputFolder + '/' + folder + '/' + element.replace(/\\/g, '/');
+
+          // Browse files of sub folder
+          const folderFilesSub = readdirSync(fpathSub);
+
+          for (const elementSub of folderFilesSub) {
+            const fileSub = this.inputFolder + '/' + folder + '/' + element.replace(/\\/g, '/') + '/' + elementSub.replace(/\\/g, '/');
+            let fileNameSub = fileSub.substring(fileSub.lastIndexOf('/') + 1);
+            if (sfdxTypeDesc.sfdxNameSuffixList) {
+              for (const suffix of sfdxTypeDesc.sfdxNameSuffixList) {
+                if (suffix !== '') {
+                  fileNameSub = fileNameSub.replace(suffix, '');
+                }
+              }
+            }
+            fileNameSub = element + '/' + fileNameSub;
+            // add sub item name if not already in the list
+            if (!(itemList.indexOf(fileNameSub) > -1) && !fileNameSub.endsWith('-meta') && !fileNameSub.startsWith('.')) {
+              itemList.push(fileNameSub);
+            }
+          }
+        }
+
       }
 
       // Add items in allSfdxFilesTypes
@@ -222,7 +249,7 @@ export default class ExecuteCheckProjectConsistency extends Command {
           }
           // add sub item name if not already in the list
           const fullSubItemName = objectFolder + '.' + fileName;
-          if (!(subItemList.indexOf(fullSubItemName) > -1) && !fullSubItemName.endsWith('-meta')) {
+          if (!(subItemList.indexOf(fullSubItemName) > -1) && !fullSubItemName.endsWith('-meta') && !fullSubItemName.startsWith('.')) {
             subItemList.push(fullSubItemName);
           }
         });
