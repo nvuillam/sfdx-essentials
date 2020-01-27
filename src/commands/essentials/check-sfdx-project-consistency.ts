@@ -147,7 +147,9 @@ export default class ExecuteCheckProjectConsistency extends Command {
     sfdxProjectFolders.forEach((folder) => {
       const sfdxTypeDesc = this.getSfdxTypeDescription(folder);
       if (sfdxTypeDesc == null) {
-        console.log('Skipped ' + folder + ' (no description found)');
+        if (folder !== 'objects') {
+          console.warn('WARNING: Skipped ' + folder + ' (no description found)');
+        }
         return;
       }
       // list items in folder
