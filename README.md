@@ -84,6 +84,7 @@ DESCRIPTION
      - ApexTrigger
      - ApprovalProcess
      - AuraDefinitionBundle
+     - AuthProvider
      - BusinessProcess
      - ContentAsset
      - CustomApplication
@@ -108,6 +109,7 @@ DESCRIPTION
      - Layout
      - NamedCredential
      - Network
+     - NetworkBranding
      - PermissionSet
      - Profile
      - Queue
