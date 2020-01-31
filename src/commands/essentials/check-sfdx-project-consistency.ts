@@ -214,7 +214,7 @@ export default class ExecuteCheckProjectConsistency extends Command {
         console.log('Browsing object folder ' + objectFolder + ' ...');
       }
       // If custom, add in CustomObject
-      if (objectFolder.endsWith('__c') || objectFolder.endsWith('__mdt')) {
+      if (objectFolder.endsWith('__c') || objectFolder.endsWith('__mdt') || objectFolder.endsWith('__e')) {
         if (this.allSfdxFilesTypes['CustomObject'] == null) {
           this.allSfdxFilesTypes['CustomObject'] = [objectFolder];
         } else {
