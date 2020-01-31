@@ -51,13 +51,13 @@ export default class ExecuteFilterMetadatas extends Command {
     }
     this.log(`Initialize filtering of ${this.inputFolder} ,using ${this.packageXmlFile} , into ${this.outputFolder}`);
 
-    // @ts-ignore
-    this.multibar = new cliProgress.MultiBar({
-      clearOnComplete: false,
-      fps: 500,
-      format: '{name} [{bar}] {percentage}% | {value}/{total} | {file} '
-    }, cliProgress.Presets.shades_grey);
-    if (this.multibar.terminal.isTTY()) {
+    if (!this.verbose && this.multibar.terminal.isTTY()) {
+      // @ts-ignore
+      this.multibar = new cliProgress.MultiBar({
+        clearOnComplete: false,
+        fps: 500,
+        format: '{name} [{bar}] {percentage}% | {value}/{total} | {file} '
+      }, cliProgress.Presets.shades_grey);
       this.multibars.total = this.multibar.create(3, 0, { name: 'Total'.padEnd(30, ' '), file: 'N/A' });
       this.multibars.initialize = this.multibar.create(1, 0, { name: 'Initialize'.padEnd(30, ' '), file: 'N/A' });
       this.multibars.filterMetadatasByType = this.multibar.create(1, 0, { name: 'Filter metadatas by type'.padEnd(30, ' '), file: 'N/A' });
@@ -66,7 +66,7 @@ export default class ExecuteFilterMetadatas extends Command {
 
     // Read package.xml file
     let interval: any;
-    if (this.multibar.terminal.isTTY()) {
+    if (!this.verbose && this.multibar.terminal.isTTY()) {
       // @ts-ignore
       interval = EssentialsUtils.multibarStartProgress(this.multibars, 'initialize', this.multibar, 'Initializing');
     }
@@ -299,9 +299,11 @@ export default class ExecuteFilterMetadatas extends Command {
       this.multibars.copyImpactedObjects.setTotal(Object.keys(this.sobjectCollectedInfo).length);
     }
     // Create objects folder
-    fs.mkdirSync(this.outputFolder + '/objects/');
+    if (!fs.existsSync(this.outputFolder + '/objects/')) {
+      fs.mkdirSync(this.outputFolder + '/objects/');
+    }
     // Create objectTranslations folder if necessary
-    if (this.translatedLanguageList.length > 0) {
+    if (this.translatedLanguageList.length > 0 && !fs.existsSync(this.outputFolder + '/objectTranslations/')) {
       fs.mkdirSync(this.outputFolder + '/objectTranslations/');
     }
 
