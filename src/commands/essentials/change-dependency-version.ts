@@ -56,6 +56,8 @@ export default class ExecuteChangeDependencyVersion extends Command {
     }
     if (this.remove === true) {
       console.log(`Initialize removal of dependencies with ${this.namespace} in ${this.folder}`);
+    } else if (this.apiVersion != null) {
+      console.log(`Initialize update of apiVersion in ${this.folder} with ${this.apiVersion}`);
     } else {
       console.log(`Initialize update of dependencies in ${this.folder} with ${this.namespace} ${this.majorversion}.${this.minorversion}`);
     }
@@ -87,7 +89,7 @@ export default class ExecuteChangeDependencyVersion extends Command {
             const typeX = Object.keys(parsedXmlFile)[0];
             const objDescription = parsedXmlFile[typeX];
             const packageVersions = objDescription.packageVersions;
-            if (packageVersions == null) {
+            if (packageVersions == null && this.apiVersion == null) {
               if (!this.verbose && this.progressBar.terminal.isTTY()) {
                 this.progressBar.increment();
               }
@@ -114,7 +116,7 @@ export default class ExecuteChangeDependencyVersion extends Command {
                   parsedXmlFile[typeX].packageVersions = filteredPackageVersions;
                 }
               }
-            } else {
+            } else if (packageVersions) {
               // Update dependency
               for (let i = 0; i < packageVersions.length; i++) {
                 const dependency = packageVersions[i];
