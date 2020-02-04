@@ -164,11 +164,13 @@ export default class ExecuteGeneratePermissionSets extends Command {
         for (const configName in filterConfig) {
             if (filterConfig.hasOwnProperty(configName)) {
                 const configItem = filterConfig[configName];
+                const configNameExt = (this.nameSuffix) ? configName + this.nameSuffix : configName ;
+                const descriptionExt = (this.nameSuffix) ? configItem.description + '(' + this.nameSuffix + ')' : configItem.description ;
                 tableLog.push({
                     'Order': order,
-                    'Label': configName,
+                    'Name': configNameExt,
                     'Extended from': (configItem.extends) ? configItem.extends : '',
-                    'Description': configItem.description
+                    'Description': descriptionExt
                 });
                 order++;
                 if (filterConfig[configName].isTemplate) {

@@ -40,6 +40,11 @@ Please contribute :)
 
 - Windows users: [sfdx plugin generator](https://github.com/forcedotcom/sfdx-plugin-generate) is bugged on windows (hardcode call of linux rm instruction) , so you may use [Git Bash](https://gitforwindows.org/) to run this code ( at least while it installs the plugin dependencies )
 
+- CI Users: As the plugin is not signed, to install it from a Dockerfile or a script:
+```
+    echo 'y' | sfdx plugins:install
+```
+
 # UPGRADE
 
 Its seems that sfdx plugins:update and sfdx update does not always work, in that case , uninstall then reinstall the plugin
@@ -281,9 +286,11 @@ OPTIONS
 EXAMPLE
   $  sfdx essentials:check-sfdx-project-consistency -p "./Config/packageXml/package_DevRoot_Managed.xml,./Config/packageXml/package_DevRoot_xDemo.xml" -i "./Projects/DevRootSource/force-app/main/default" -d "Document,EmailTemplate" --failIfError
 ```
+_See log example: [src/commands/essentials/examples/check-sfdx-project-consistency.log](https://github.com/nvuillam/sfdx-essentials/blob/master/src/examples/check-sfdx-project-consistency.log)_
 
 _See code: [src/commands/essentials/check-sfdx-project-consistency.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/check-sfdx-project-consistency.ts)_
 
+![Check SFDX project consistency log image](https://github.com/nvuillam/sfdx-essentials/blob/master/src/examples/check-sfdx-project-consistencys-log.png "Check SFDX project consistency log image")
 
 ## `essentials:generate-permission-sets`
 
@@ -309,7 +316,11 @@ EXAMPLES
 
 _See JSON configuration example: [examples/generate-permission-sets-config.json](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/generate-permission-sets-config.json)_
 
+_See log example: [src/commands/essentials/examples/generate-permission-sets.log](https://github.com/nvuillam/sfdx-essentials/blob/master/src/examples/generate-permission-sets.log)_
+
 _See code: [src/commands/essentials/generate-permission-sets.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/generate-permission-sets.ts)_
+
+![Generate permission sets log image](https://github.com/nvuillam/sfdx-essentials/blob/master/src/examples/generate-permission-sets-log.png "Generate permission sets log image")
 
 ## `essentials:migrate-object-model`
 

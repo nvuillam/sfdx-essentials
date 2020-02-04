@@ -1,0 +1,48 @@
+$ NODE_OPTIONS=--inspect-brk C:/Work/git/sfdx-essentials/bin/run essentials:generate-permission-sets -c "./Config/generate-permission-sets.json" -p "./Config/packag
+eXml/package_DevRoot_Managed.xml" -o "./Projects/DevRootSource/force-app/main/default/permissionsets" -f "./Projects/DevRootSource/force-app/main/default"
+
+Directory: ./Config/generate-permission-sets.json
+┌─────────┬───────┬────────────────────────┬─────────────────┬─────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ (index) │ Order │          Name          │  Extended from  │                                           Description                                           │
+├─────────┼───────┼────────────────────────┼─────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────┤
+│    0    │   0   │    'InsuranceBase'     │       ''        │                                      'Base permission set'                                      │
+│    1    │   1   │    'InsuranceAdmin'    │ 'InsuranceBase' │ 'DXC Omnichannel CRM Administrator access. Manage acces to administration components and views' │
+│    2    │   2   │     'InsuranceCRM'     │ 'InsuranceBase' │                              'DXC Omnichannel access for CRM user'                              │
+│    3    │   3   │ 'InsuranceDistributor' │ 'InsuranceBase' │                      'DXC Omnichannel access for Distributor portal user'                       │
+│    4    │   4   │   'InsuranceInsured'   │ 'InsuranceBase' │                        'DXC Omnichannel access for Insured portal user'                         │
+│    5    │   5   │   'InsuranceCompany'   │ 'InsuranceBase' │                        'DXC Omnichannel access for Company portal user'                         │
+│    6    │   6   │   'InsurancePublic'    │ 'InsuranceBase' │                            'DXC Omnichannel access for public user.'                            │
+└─────────┴───────┴────────────────────────┴─────────────────┴─────────────────────────────────────────────────────────────────────────────────────────────────┘
+ Output files: 
+      - ./Projects/DevRootSource/force-app/main/default/permissionsets/InsuranceDistributor.permissionset-meta.xml
+      - ./Projects/DevRootSource/force-app/main/default/permissionsets/InsuranceInsured.permissionset-meta.xml
+      - ./Projects/DevRootSource/force-app/main/default/permissionsets/InsuranceAdmin.permissionset-meta.xml
+      - ./Projects/DevRootSource/force-app/main/default/permissionsets/InsuranceCRM.permissionset-meta.xml
+      - ./Projects/DevRootSource/force-app/main/default/permissionsets/InsuranceCompany.permissionset-meta.xml
+      - ./Projects/DevRootSource/force-app/main/default/permissionsets/InsurancePublic.permissionset-meta.xml
+
+
+
+$ NODE_OPTIONS=--inspect-brk C:/Work/git/sfdx-essentials/bin/run essentials:generate-permission-sets -c "./Config/generate-permission-sets.json" -p "./Config/packag
+eXml/package_DevRoot_xDemo.xml" --nameSuffix CustomDemo -o "./Projects/DevRootSource/force-app/main/default/permissionsets"  -f "./Projects/DevRootSource/force-app/
+main/default"
+
+Directory: ./Config/generate-permission-sets.json
+┌─────────┬───────┬──────────────────────────────────┬─────────────────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ (index) │ Order │               Name               │  Extended from  │                                                 Description                                                 │
+├─────────┼───────┼──────────────────────────────────┼─────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│    0    │   0   │    'InsuranceBaseCustomDemo'     │       ''        │                                      'Base permission set(CustomDemo)'                                      │
+│    1    │   1   │    'InsuranceAdminCustomDemo'    │ 'InsuranceBase' │ 'DXC Omnichannel CRM Administrator access. Manage acces to administration components and views(CustomDemo)' │
+│    2    │   2   │     'InsuranceCRMCustomDemo'     │ 'InsuranceBase' │                              'DXC Omnichannel access for CRM user(CustomDemo)'                              │
+│    3    │   3   │ 'InsuranceDistributorCustomDemo' │ 'InsuranceBase' │                      'DXC Omnichannel access for Distributor portal user(CustomDemo)'                       │
+│    4    │   4   │   'InsuranceInsuredCustomDemo'   │ 'InsuranceBase' │                        'DXC Omnichannel access for Insured portal user(CustomDemo)'                         │
+│    5    │   5   │   'InsuranceCompanyCustomDemo'   │ 'InsuranceBase' │                        'DXC Omnichannel access for Company portal user(CustomDemo)'                         │
+│    6    │   6   │   'InsurancePublicCustomDemo'    │ 'InsuranceBase' │                            'DXC Omnichannel access for public user.(CustomDemo)'                            │
+└─────────┴───────┴──────────────────────────────────┴─────────────────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+ Output files:
+      - ./Projects/DevRootSource/force-app/main/default/permissionsets/InsuranceAdminCustomDemo.permissionset-meta.xml
+      - ./Projects/DevRootSource/force-app/main/default/permissionsets/InsuranceInsuredCustomDemo.permissionset-meta.xml
+      - ./Projects/DevRootSource/force-app/main/default/permissionsets/InsuranceDistributorCustomDemo.permissionset-meta.xml
+      - ./Projects/DevRootSource/force-app/main/default/permissionsets/InsuranceCRMCustomDemo.permissionset-meta.xml
+      - ./Projects/DevRootSource/force-app/main/default/permissionsets/InsurancePublicCustomDemo.permissionset-meta.xml
+      - ./Projects/DevRootSource/force-app/main/default/permissionsets/InsuranceCompanyCustomDemo.permissionset-meta.xml

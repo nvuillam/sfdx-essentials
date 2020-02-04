@@ -1,0 +1,154 @@
+$ NODE_OPTIONS=--inspect-brk C:/Work/git/sfdx-essentials/bin/run essentials:check-sfdx-project-consistency -p "./Config/packageXml/package_DevRoot_Managed.xml,./Con
+fig/packageXml/package_DevRoot_xDemo.xml,./Config/packageXml/package_DevRoot_xCommunitiesOnly.xml" -i "./Projects/DevRootSource/force-app/main/default" -d "Document
+,EmailTemplate" --failIfError
+
+Initialize consistency check of SFDX project ./Projects/DevRootSource/force-app/main/default ,using ./Config/packageXml/package_DevRoot_Managed.xml,./Config/packageXml/package_DevRoot_xDemo.xml,./Config/packageXml/package_DevRoot_xCommunitiesOnly.xml
+
+Appending ./Config/packageXml/package_DevRoot_Managed.xml,./Config/packageXml/package_DevRoot_xDemo.xml,./Config/packageXml/package_DevRoot_xCommunitiesOnly.xml ...
+
+WARNING: Document items are existing in several package.xml files:[
+  {
+    "a": "Communities_Shared_Document_Folder",
+    "b": "Communities_Shared_Document_Folder"
+  },
+  {
+    "a": "Communities_Shared_Document_Folder/logo_png",
+    "b": "Communities_Shared_Document_Folder/logo_png"
+  }
+]
+WARNING: EmailTemplate items are existing in several package.xml files:[
+  {
+    "a": "unfiled$public/WelcomeInsuredCommunity",
+    "b": "unfiled$public/WelcomeInsuredCommunity"
+  }
+]
+
+Browsing ./Config/packageXml/package_DevRoot_Managed.xml,./Config/packageXml/package_DevRoot_xDemo.xml,./Config/packageXml/package_DevRoot_xCommunitiesOnly.xml ...
+
+Analyzing SFDX project ...
+SFDX Project subFolders :applications,aura,cachePartitions,classes,components,contentassets,customMetadata,documents,email,flexipages,globalValueSets,globalValueSetTranslations,homePageLayouts,labels,layouts,lwc,namedCredentials,networkBranding,networks,objects,objectTranslations,pages,permissionsets,profiles,quickActions,remoteSiteSettings,settings,sites,standardValueSets,standardValueSetTranslations,staticresources,tabs,translations,triggers,workflows
+
+
+Comparing ./Config/packageXml/package_DevRoot_Managed.xml,./Config/packageXml/package_DevRoot_xDemo.xml,./Config/packageXml/package_DevRoot_xCommunitiesOnly.xml ...
+
+ApexClass:
+
+ApexComponent:
+
+ApexPage:
+
+ApexTrigger:
+
+AuraDefinitionBundle:
+
+ContentAsset:
+
+CustomApplication:
+
+CustomField:
+
+CustomLabel:
+
+CustomMetadata:
+
+CustomObject:
+
+CustomObjectTranslation:
+
+CustomSite:
+
+CustomTab:
+
+Document:
+
+EmailTemplate:
+
+FlexiPage:
+
+GlobalValueSet:
+
+GlobalValueSetTranslation:
+
+HomePageLayout:
+
+Layout:
+
+LightningComponentBundle:
+
+ListView:
+
+NamedCredential:
+
+Network:
+
+NetworkBranding:
+
+PermissionSet:
+
+PlatformCachePartition:
+
+Profile:
+
+QuickAction:
+
+RecordType:
+
+RemoteSiteSetting:
+
+Settings:
+
+StandardValueSet:
+
+StandardValueSetTranslation:
+
+StaticResource:
+
+Translations:
+
+WebLink:
+
+Workflow:
+
+┌─────────┬───────────────────────────────┬───────────┬──────────────┬────────────────────────────────┬────────────────────────────────┐
+│ (index) │            md_type            │  status   │ identical_nb │ in_sfdx_but_not_in_pckg_xml_nb │ in_pckg_xml_but_not_in_sfdx_nb │
+├─────────┼───────────────────────────────┼───────────┼──────────────┼────────────────────────────────┼────────────────────────────────┤
+│    0    │          'ApexClass'          │ 'success' │     468      │               0                │               0                │
+│    1    │        'ApexComponent'        │ 'success' │      1       │               0                │               0                │
+│    2    │          'ApexPage'           │ 'success' │      23      │               0                │               0                │
+│    3    │         'ApexTrigger'         │ 'success' │      12      │               0                │               0                │
+│    4    │    'AuraDefinitionBundle'     │ 'success' │     434      │               0                │               0                │
+│    5    │        'ContentAsset'         │ 'success' │      3       │               0                │               0                │
+│    6    │      'CustomApplication'      │ 'success' │      2       │               0                │               0                │
+│    7    │         'CustomField'         │ 'success' │     700      │               0                │               0                │
+│    8    │         'CustomLabel'         │ 'success' │      1       │              null              │              null              │
+│    9    │       'CustomMetadata'        │ 'success' │     279      │              null              │              null              │
+│   10    │        'CustomObject'         │ 'success' │      65      │               0                │               0                │
+│   11    │   'CustomObjectTranslation'   │ 'success' │      84      │               0                │               0                │
+│   12    │         'CustomSite'          │ 'success' │      4       │               0                │               0                │
+│   13    │          'CustomTab'          │ 'success' │      37      │               0                │               0                │
+│   14    │          'Document'           │ 'success' │      25      │               0                │               0                │
+│   15    │        'EmailTemplate'        │ 'success' │      6       │               0                │               0                │
+│   16    │          'FlexiPage'          │ 'success' │      2       │               0                │               0                │
+│   17    │       'GlobalValueSet'        │ 'success' │      19      │               0                │               0                │
+│   18    │  'GlobalValueSetTranslation'  │ 'success' │      33      │               0                │               0                │
+│   19    │       'HomePageLayout'        │ 'success' │      1       │               0                │               0                │
+│   20    │           'Layout'            │ 'success' │      48      │               0                │               0                │
+│   21    │  'LightningComponentBundle'   │ 'success' │      0       │               0                │               0                │
+│   22    │          'ListView'           │ 'success' │      24      │               0                │               0                │
+│   23    │       'NamedCredential'       │ 'success' │      5       │               0                │               0                │
+│   24    │           'Network'           │ 'success' │      4       │               0                │               0                │
+│   25    │       'NetworkBranding'       │ 'success' │      2       │               0                │               0                │
+│   26    │        'PermissionSet'        │ 'success' │      12      │               0                │               0                │
+│   27    │   'PlatformCachePartition'    │ 'success' │      0       │               0                │               0                │
+│   28    │           'Profile'           │ 'success' │      1       │               0                │               0                │
+│   29    │         'QuickAction'         │ 'success' │      3       │               0                │               0                │
+│   30    │         'RecordType'          │ 'success' │      38      │               0                │               0                │
+│   31    │      'RemoteSiteSetting'      │ 'success' │      20      │               0                │               0                │
+│   32    │          'Settings'           │ 'success' │      3       │               0                │               0                │
+│   33    │      'StandardValueSet'       │ 'success' │      6       │               0                │               0                │
+│   34    │ 'StandardValueSetTranslation' │ 'success' │      1       │               0                │               0                │
+│   35    │       'StaticResource'        │ 'success' │      53      │               0                │               0                │
+│   36    │        'Translations'         │ 'success' │      5       │               0                │               0                │
+│   37    │           'WebLink'           │ 'success' │      3       │               0                │               0                │
+│   38    │          'Workflow'           │ 'success' │      46      │               0                │               0                │
+└─────────┴───────────────────────────────┴───────────┴──────────────┴────────────────────────────────┴────────────────────────────────┘

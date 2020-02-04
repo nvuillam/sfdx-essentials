@@ -1,7 +1,7 @@
 {
   "name": "sfdx-essentials",
-  "description": "Tools to cover the lacks of missing required functions of SFDX",
-  "version": "1.5.6",
+  "description": "Toolbox for Salesforce DX to provide some very helpful additional features to base sfdx commands.",
+  "version": "1.5.7",
   "author": "NicolasVuillamy @nvuillam",
   "bugs": "https://github.com/nvuillam/sfdx-essentials/issues",
   "dependencies": {
