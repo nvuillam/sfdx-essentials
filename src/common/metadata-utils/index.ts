@@ -35,7 +35,7 @@ export class MetadataUtils {
       Layout: { folder: 'layouts', nameSuffixList: ['.layout'], sfdxNameSuffixList: ['.layout-meta.xml'] },
       NamedCredential: { folder: 'namedCredentials', nameSuffixList: ['.namedCredential'], sfdxNameSuffixList: ['.namedCredential-meta.xml'] },
       Network: { folder: 'networks', nameSuffixList: ['.network'], sfdxNameSuffixList: ['.network-meta.xml'] },
-      NetworkBranding: { folder: 'networkBranding', nameSuffixList: ['', '.networkBranding'], sfdxNameSuffixList: ['.networkBranding-meta.xml', '.networkBranding'] },
+      NetworkBranding: { folder: 'networkBranding', nameSuffixList: ['', '.networkBranding', '.networkBranding-meta.xml'], sfdxNameSuffixList: ['.networkBranding-meta.xml', '.networkBranding'] },
       PermissionSet: { folder: 'permissionsets', nameSuffixList: ['.permissionset'], sfdxNameSuffixList: ['.permissionset-meta.xml'] },
       PlatformCachePartition: { folder: 'cachePartitions', nameSuffixList: ['.cachePartition'], sfdxNameSuffixList: ['.cachePartition-meta.xml'] },
       Profile: { folder: 'profiles', nameSuffixList: ['.profile'], sfdxNameSuffixList: ['.profile-meta.xml'] },
