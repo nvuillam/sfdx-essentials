@@ -133,7 +133,7 @@ DESCRIPTION
 
 ```
 
-_See [conversion tables](https://github.com/nvuillam/sfdx-essentials/blob/master/src/common/metadata-utils.ts)_
+_See [Metadata / SFDX Correspondance](https://github.com/nvuillam/sfdx-essentials/blob/master/src/common/metadata-utils/index.ts)_
 
 EXAMPLES
 
