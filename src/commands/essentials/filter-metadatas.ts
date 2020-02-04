@@ -51,13 +51,14 @@ export default class ExecuteFilterMetadatas extends Command {
     }
     this.log(`Initialize filtering of ${this.inputFolder} ,using ${this.packageXmlFile} , into ${this.outputFolder}`);
 
+    // @ts-ignore
+    this.multibar = new cliProgress.MultiBar({
+      clearOnComplete: false,
+      fps: 500,
+      format: '{name} [{bar}] {percentage}% | {value}/{total} | {file} '
+    }, cliProgress.Presets.shades_grey);
+
     if (!this.verbose && this.multibar.terminal.isTTY()) {
-      // @ts-ignore
-      this.multibar = new cliProgress.MultiBar({
-        clearOnComplete: false,
-        fps: 500,
-        format: '{name} [{bar}] {percentage}% | {value}/{total} | {file} '
-      }, cliProgress.Presets.shades_grey);
       this.multibars.total = this.multibar.create(3, 0, { name: 'Total'.padEnd(30, ' '), file: 'N/A' });
       this.multibars.initialize = this.multibar.create(1, 0, { name: 'Initialize'.padEnd(30, ' '), file: 'N/A' });
       this.multibars.filterMetadatasByType = this.multibar.create(1, 0, { name: 'Filter metadatas by type'.padEnd(30, ' '), file: 'N/A' });
