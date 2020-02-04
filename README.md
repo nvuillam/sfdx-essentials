@@ -14,9 +14,7 @@ Toolbox for Salesforce DX to provide some very helpful additional features to ba
 
 Easy to integrate in a CD/CI process (Jenkins Pipeline,CircleCI...)
 
-Contributions are ery welcome, please run **npm run lint:fix** before making a new PR
-
-Command list
+# Command list
 
 | Command | Description |
 | ------------- | ------------- |
@@ -42,7 +40,7 @@ Please contribute :)
 
 - CI Users: As the plugin is not signed, to install it from a Dockerfile or a script:
 ```
-    echo 'y' | sfdx plugins:install
+    echo 'y' | sfdx plugins:install sfdx-essentials
 ```
 
 # UPGRADE
@@ -55,10 +53,12 @@ Its seems that sfdx plugins:update and sfdx update does not always work, in that
 
 # CONTRIBUTE
 
+Contributions are very welcome, please run **npm run lint:fix** before making a new PR
+
 - Fork the repo and clone it on your computer
-- run $ sfdx plugins:link
+- To [debug](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_plugins.meta/sfdx_cli_plugins/cli_plugins_debug.htm), run  ``` $ sfdx plugins:link ``` or use  ``` $ NODE_OPTIONS=--inspect-brk bin/run yourcommand ```
 - Now your calls to sfdx essentials are performed on your local sources 
-- Once your code is ready and documented, please make a pull request :)
+- Once your code is ready, documented and linted, please make a pull request :)
 
 # COMMANDS
 
