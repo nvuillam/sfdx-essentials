@@ -286,11 +286,11 @@ OPTIONS
 EXAMPLE
   $  sfdx essentials:check-sfdx-project-consistency -p "./Config/packageXml/package_DevRoot_Managed.xml,./Config/packageXml/package_DevRoot_xDemo.xml" -i "./Projects/DevRootSource/force-app/main/default" -d "Document,EmailTemplate" --failIfError
 ```
-_See log example: [src/commands/essentials/examples/check-sfdx-project-consistency.log](https://github.com/nvuillam/sfdx-essentials/blob/master/src/examples/check-sfdx-project-consistency.log)_
+_See log example: [src/commands/essentials/examples/check-sfdx-project-consistency.log](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/check-sfdx-project-consistency.log)_
 
 _See code: [src/commands/essentials/check-sfdx-project-consistency.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/check-sfdx-project-consistency.ts)_
 
-![Check SFDX project consistency log image](https://github.com/nvuillam/sfdx-essentials/blob/master/src/examples/check-sfdx-project-consistencys-log.png "Check SFDX project consistency log image")
+![Check SFDX project consistency log image](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/check-sfdx-project-consistencys-log.png "Check SFDX project consistency log image")
 
 ## `essentials:generate-permission-sets`
 
@@ -316,11 +316,11 @@ EXAMPLES
 
 _See JSON configuration example: [examples/generate-permission-sets-config.json](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/generate-permission-sets-config.json)_
 
-_See log example: [src/commands/essentials/examples/generate-permission-sets.log](https://github.com/nvuillam/sfdx-essentials/blob/master/src/examples/generate-permission-sets.log)_
+_See log example: [src/commands/essentials/examples/generate-permission-sets.log](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/generate-permission-sets.log)_
 
 _See code: [src/commands/essentials/generate-permission-sets.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/generate-permission-sets.ts)_
 
-![Generate permission sets log image](https://github.com/nvuillam/sfdx-essentials/blob/master/src/examples/generate-permission-sets-log.png "Generate permission sets log image")
+![Generate permission sets log image](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/generate-permission-sets-log.png "Generate permission sets log image")
 
 ## `essentials:migrate-object-model`
 
