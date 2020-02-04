@@ -170,7 +170,7 @@ export default class ExecuteCheckProjectConsistency extends Command {
         }
 
         // add item name if not already in the list
-        if (!(itemList.indexOf(fileName) > -1) && !fileName.endsWith('-meta') && !fileName.startsWith('.')) {
+        if (!(itemList.indexOf(fileName) > -1) && !fileName.endsWith('-meta') && !fileName.startsWith('.') && element !== 'unfiled$public') {
           itemList.push(fileName);
         }
 
