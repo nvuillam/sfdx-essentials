@@ -1,12 +1,7 @@
 import { Command, flags } from '@oclif/command';
 import { promises as fsPromises } from 'fs';
 import * as glob from 'glob';
-import * as fse from 'fs-extra';
 import * as xml2js from 'xml2js';
-import * as util from 'util';
-import * as cliProgress from 'cli-progress';
-import EssentialsUtils = require('../../common/essentials-utils');
-import metadataUtils = require('../../common/metadata-utils');
 
 export default class OrderPackageXml extends Command {
     public static description = '';
@@ -28,7 +23,7 @@ export default class OrderPackageXml extends Command {
     // Runtime methods
     public async run() {
         // tslint:disable-next-line:no-shadowed-variable
-        const { args, flags } = this.parse(OrderPackageXml);
+        const { flags } = this.parse(OrderPackageXml);
 
         // Get input arguments or default values
         this.packageXmlFile = flags.packagexml;
@@ -36,7 +31,7 @@ export default class OrderPackageXml extends Command {
         // If directory, browse files and process them
         if (stat.isDirectory()) {
             const fileList = glob.sync(`${this.packageXmlFile}/*.xml`);
-            await Promise.all(fileList.map(async (file) => {
+            await Promise.all(fileList.map(async file => {
                 await this.reorderPackageXmlFile(file);
             }));
         } else {

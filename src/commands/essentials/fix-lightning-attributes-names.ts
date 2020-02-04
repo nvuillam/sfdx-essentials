@@ -1,5 +1,4 @@
 import { Command, flags } from '@oclif/command';
-import { FILE } from 'dns';
 
 export default class ExecuteFixLightningAttrNames extends Command {
   public static description = '';
@@ -31,7 +30,7 @@ export default class ExecuteFixLightningAttrNames extends Command {
   public async run() {
 
     // tslint:disable-next-line:no-shadowed-variable
-    const { args, flags } = this.parse(ExecuteFixLightningAttrNames);
+    const { flags } = this.parse(ExecuteFixLightningAttrNames);
 
     this.folder = flags.folder || '.';
 
@@ -40,11 +39,11 @@ export default class ExecuteFixLightningAttrNames extends Command {
     console.log('Fetching classes with expression : ' + fetchClassesExpression);
     const customApexClassFileNameList = this.glob.sync(fetchClassesExpression);
     const customApexClassList = [];
-    customApexClassFileNameList.forEach((customApexClassFileName) => {
+    customApexClassFileNameList.forEach(customApexClassFileName => {
       customApexClassList.push(this.cint.after(customApexClassFileName, '/classes/').replace('.cls', ''));
     });
     console.log('Custom apex class names :' + JSON.stringify(customApexClassList, null, 2));
-    customApexClassList.forEach((customApexClass) => {
+    customApexClassList.forEach(customApexClass => {
       this.reservedAttributeNames[customApexClass] = {
         type: 'apexClass',
         numberReplacements: 0,
@@ -59,11 +58,11 @@ export default class ExecuteFixLightningAttrNames extends Command {
     console.log('Fetching objects with expression : ' + fetchObjectsExpression);
     const objectsFolderNameList = this.glob.sync(fetchObjectsExpression);
     const objectNameList = [];
-    objectsFolderNameList.forEach((objectFolderName) => {
+    objectsFolderNameList.forEach(objectFolderName => {
       objectNameList.push(this.cint.after(objectFolderName, '/objects/'));
     });
     console.log('objects names :' + JSON.stringify(objectNameList, null, 2));
-    objectNameList.forEach((objectName) => {
+    objectNameList.forEach(objectName => {
       this.reservedAttributeNames[objectName] = {
         type: 'object',
         numberReplacements: 0,
@@ -75,7 +74,7 @@ export default class ExecuteFixLightningAttrNames extends Command {
 
     // Build replacement names for each reserved attribute name
     const self = this;
-    Object.keys(this.reservedAttributeNames).forEach((reservedAttributeName) => {
+    Object.keys(this.reservedAttributeNames).forEach(reservedAttributeName => {
       const reservedAttributeNameReplacement = this.camelCase(reservedAttributeName);
       self.reservedAttributeNames[reservedAttributeName].replacement = reservedAttributeNameReplacement;
     });
@@ -89,39 +88,39 @@ export default class ExecuteFixLightningAttrNames extends Command {
     const customComponentFolderList = this.glob.sync(fetchCmpExpression);
     console.log('Component files: ' + JSON.stringify(customComponentFolderList, null, 2));
     const replacementPromisesCmp = [];
-    customComponentFolderList.forEach((customComponentFolder) => {
-      replacementPromisesCmp.push(new Promise(function(resolve, reject) {
+    customComponentFolderList.forEach(customComponentFolder => {
+      replacementPromisesCmp.push(new Promise((resolve, reject) => {
         // Get file name
         const tokenLs = customComponentFolder.split('/');
         const filePart = tokenLs[tokenLs.length - 1];
         // Replace in .cmp, .app & .evt files (send function as parameter)
-        self.processFile(customComponentFolder, filePart, ['.cmp', '.app', '.evt'], self.replaceAttributeNamesInCmp).then(function() {
+        self.processFile(customComponentFolder, filePart, ['.cmp', '.app', '.evt'], self.replaceAttributeNamesInCmp).then(() => {
           // Replace in component controller (send function as parameter)
           return self.processFile(customComponentFolder, filePart, ['Controller.js'], self.replaceAttributeNamesInJs);
-        }).then(function() {
+        }).then(() => {
           // Replace in component helper javascript (send function as parameter)
           return self.processFile(customComponentFolder, filePart, ['Helper.js'], self.replaceAttributeNamesInJs);
-        }).then(function() {
+        }).then(() => {
           resolve();
-        }).catch(function(err) {
+        }).catch(err => {
           console.log('Replacement promise error: ' + err);
           resolve();
         });
       }));
     });
 
-    Promise.all(replacementPromisesCmp).then(function() {
+    Promise.all(replacementPromisesCmp).then(() => {
       // Process replacements on apex classes
       const replacementPromisesApex = [];
-      Object.keys(self.reservedAttributeNames).forEach((reservedAttributeName) => {
+      Object.keys(self.reservedAttributeNames).forEach(reservedAttributeName => {
         // Check if there has been replacements in lightning components
         if (self.reservedAttributeNames[reservedAttributeName].type === 'apexClass') {
-          replacementPromisesApex.push(new Promise(function(resolve, reject) {
+          replacementPromisesApex.push(new Promise((resolve, reject) => {
             // Replace in apex class files (.cls) (send function as parameter)
             self.processFile(self.folder + '/classes', reservedAttributeName, ['.cls'], self.replaceAttributeNamesInApex)
-              .then(function() {
+              .then(() => {
                 resolve();
-              }).catch(function(err) {
+              }).catch(err => {
                 console.log('Replacement promise error: ' + err);
                 reject();
               });
@@ -130,15 +129,15 @@ export default class ExecuteFixLightningAttrNames extends Command {
       });
 
       // Log summary
-      Promise.all(replacementPromisesApex).then(function() {
-        Object.keys(self.reservedAttributeNames).forEach((reservedAttributeName) => {
+      Promise.all(replacementPromisesApex).then(() => {
+        Object.keys(self.reservedAttributeNames).forEach(reservedAttributeName => {
           if (self.reservedAttributeNames[reservedAttributeName].numberReplacements > 0) {
             self.reservedAttributeNamesUsed[reservedAttributeName] = self.reservedAttributeNames[reservedAttributeName];
           }
         });
         console.log('Attributes replacements results :\n' + JSON.stringify(self.reservedAttributeNamesUsed, null, 2));
         console.log('Total replacements :' + self.totalReplacements);
-      }).catch(function(err) {
+      }).catch(err => {
         console.log('Promises error: ' + err);
       });
     });
@@ -147,10 +146,10 @@ export default class ExecuteFixLightningAttrNames extends Command {
   // Process component file
   public processFile(customComponentFolder, filePart, extensions, replaceFunction) {
     const self = this;
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
       // Find file
       let filePath = null;
-      extensions.forEach((extension) => {
+      extensions.forEach(extension => {
         const filePathTest = customComponentFolder + '/' + filePart + extension;
         if (filePath == null && self.fs.existsSync(filePathTest)) {
           filePath = filePathTest;
@@ -173,7 +172,7 @@ export default class ExecuteFixLightningAttrNames extends Command {
       // Process file lines one by one
       let updated = false;
       let updatedFileContent = '';
-      arrayFileLines.forEach((line) => {
+      arrayFileLines.forEach(line => {
         const newLine = replaceFunction.call(self, line, filePart); // (clone line var to be able to compare later)
         updatedFileContent += newLine + '\n';
         if (updated === false && newLine !== line) {
@@ -191,7 +190,7 @@ export default class ExecuteFixLightningAttrNames extends Command {
   // Replace attribute names in component ( xml )
   public replaceAttributeNamesInCmp(xmlLine, _itemName) {
     const self = this;
-    Object.keys(this.reservedAttributeNames).forEach((reservedAttributeName) => {
+    Object.keys(this.reservedAttributeNames).forEach(reservedAttributeName => {
       // aura:attribute name
       xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `name="${reservedAttributeName}"`, `name="${self.reservedAttributeNames[reservedAttributeName].replacement}"`, 'cmp');
       xmlLine = self.replaceExpression(xmlLine, reservedAttributeName, `name= "${reservedAttributeName}"`, `name="${self.reservedAttributeNames[reservedAttributeName].replacement}"`, 'cmp');
@@ -223,7 +222,7 @@ export default class ExecuteFixLightningAttrNames extends Command {
   // Replace attribute names in javascript file
   public replaceAttributeNamesInJs(jsLine, _itemName) {
     const self = this;
-    Object.keys(this.reservedAttributeNames).forEach((reservedAttributeName) => {
+    Object.keys(this.reservedAttributeNames).forEach(reservedAttributeName => {
       // Attribute name
       jsLine = self.replaceExpression(jsLine, reservedAttributeName, `'v.${reservedAttributeName}'`, `'v.${self.reservedAttributeNames[reservedAttributeName].replacement}'`, 'js');
       jsLine = self.replaceExpression(jsLine, reservedAttributeName, `"v.${reservedAttributeName}"`, `"v.${self.reservedAttributeNames[reservedAttributeName].replacement}"`, 'js');
@@ -246,7 +245,7 @@ export default class ExecuteFixLightningAttrNames extends Command {
   // Replace attribute names in javascript file
   public replaceAttributeNamesInApex(apexLine, itemName) {
     const self = this;
-    Object.keys(this.reservedAttributeNames).forEach((reservedAttributeName) => {
+    Object.keys(this.reservedAttributeNames).forEach(reservedAttributeName => {
       if (!apexLine.includes(`getGlobalDescribe().get('${reservedAttributeName}'`) &&
         !apexLine.includes(`objectReference.get('${reservedAttributeName}'`)) {
         // get & put in maps

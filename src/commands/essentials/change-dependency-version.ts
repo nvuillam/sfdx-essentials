@@ -1,8 +1,8 @@
 import { Command, flags } from '@oclif/command';
-import * as glob from 'glob';
-import * as fs from 'fs';
-import * as xml2js from 'xml2js';
 import * as cliProgress from 'cli-progress';
+import * as fs from 'fs';
+import * as glob from 'glob';
+import * as xml2js from 'xml2js';
 import EssentialsUtils = require('../../common/essentials-utils');
 
 export default class ExecuteChangeDependencyVersion extends Command {
@@ -42,7 +42,7 @@ export default class ExecuteChangeDependencyVersion extends Command {
     const elapseStart = Date.now();
 
     // tslint:disable-next-line:no-shadowed-variable
-    const { args, flags } = this.parse(ExecuteChangeDependencyVersion);
+    const { flags } = this.parse(ExecuteChangeDependencyVersion);
 
     // Get input arguments or default values
     this.namespace = flags.namespace;
@@ -106,7 +106,7 @@ export default class ExecuteChangeDependencyVersion extends Command {
 
             // Remove dependency
             if (this.remove) {
-              const filteredPackageVersions = packageVersions.filter((item) => item.namespace[0] !== this.namespace);
+              const filteredPackageVersions = packageVersions.filter(item => item.namespace[0] !== this.namespace);
               if (filteredPackageVersions.length !== packageVersions.length) {
                 changed = true;
                 // Remove packageVersions from xml if there is no dependency

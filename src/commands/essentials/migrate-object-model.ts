@@ -1,10 +1,10 @@
 import { Command, flags } from '@oclif/command';
-import * as glob from 'glob';
+import * as cliProgress from 'cli-progress';
 import * as fs from 'fs';
 import * as fsExtra from 'fs-extra';
+import * as glob from 'glob';
 import * as rimraf from 'rimraf';
 import * as xml2js from 'xml2js';
-import * as cliProgress from 'cli-progress';
 import EssentialsUtils = require('../../common/essentials-utils');
 
 export default class ExecuteMigrateObjectModel extends Command {
@@ -57,7 +57,7 @@ export default class ExecuteMigrateObjectModel extends Command {
 
     const elapseStart = Date.now();
     // tslint:disable-next-line:no-shadowed-variable
-    const { args, flags } = this.parse(ExecuteMigrateObjectModel);
+    const { flags } = this.parse(ExecuteMigrateObjectModel);
 
     this.inputFolder = flags.inputFolder || '.';
     this.configFile = flags.configFile;
@@ -400,7 +400,7 @@ export default class ExecuteMigrateObjectModel extends Command {
 
     objectsToMigrate.forEach((object: any) => {
 
-      aroundCharReplaceObjectList.forEach((aroundChars) => {
+      aroundCharReplaceObjectList.forEach(aroundChars => {
         let oldString: string;
         if (!aroundChars.after.includes('$')) {
           oldString = '\\' + aroundChars.before + object.previousObject + '\\' + aroundChars.after;
@@ -433,9 +433,9 @@ export default class ExecuteMigrateObjectModel extends Command {
       });
 
       if (object.fieldsMapping) {
-        object.fieldsMapping.forEach((fieldToChange) => {
+        object.fieldsMapping.forEach(fieldToChange => {
 
-          aroundCharReplacefieldList.forEach((aroundChars) => {
+          aroundCharReplacefieldList.forEach(aroundChars => {
             let oldString;
             if (!aroundChars.after.includes('$')) {
               oldString = '\\' + aroundChars.before + fieldToChange.previousField + '\\' + aroundChars.after;

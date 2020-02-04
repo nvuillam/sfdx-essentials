@@ -32,7 +32,7 @@ export default class ExecuteFilterXmlContent extends Command {
   // Runtime methods
   public async run() {
     // tslint:disable-next-line:no-shadowed-variable
-    const { args, flags } = this.parse(ExecuteFilterXmlContent);
+    const { flags } = this.parse(ExecuteFilterXmlContent);
 
     // Get input arguments or default values
     this.configFile = flags.configFile || './filter-config.json';
@@ -60,18 +60,18 @@ export default class ExecuteFilterXmlContent extends Command {
 
     // Browse filters
     const self = this;
-    filterConfig.filters.forEach(function(filter) {
+    filterConfig.filters.forEach(filter => {
       console.log(filter.name + ' (' + filter.description + ')');
       // Browse filter folders
-      filter.folders.forEach(function(filterFolder) {
+      filter.folders.forEach(filterFolder => {
 
         // Browse folder files
         const folderFiles = self.fs.readdirSync(self.outputFolder + '/' + filterFolder);
-        folderFiles.forEach((file) => {
+        folderFiles.forEach(file => {
           // Build file name
           const fpath = file.replace(/\\/g, '/');
           const browsedFileExtension = fpath.substring(fpath.lastIndexOf('.') + 1);
-          filter.file_extensions.forEach((filterFileExt) => {
+          filter.file_extensions.forEach(filterFileExt => {
             if (browsedFileExtension === filterFileExt) {
               // Found a matching file, process it
               const fullFilePath = self.outputFolder + '/' + filterFolder + '/' + fpath;
@@ -96,11 +96,10 @@ export default class ExecuteFilterXmlContent extends Command {
     const parser = new this.xml2js.Parser();
     const builder = new this.xml2js.Builder();
     const self = this;
-    const xmlHasChanged = false;
     const data = this.fs.readFileSync(file);
-    parser.parseString(data, function(err2, fileXmlContent) {
+    parser.parseString(data, (err2, fileXmlContent) => {
       console.log('Parsed XML \n' + self.util.inspect(fileXmlContent, false, null));
-      Object.keys(fileXmlContent).forEach((eltKey) => {
+      Object.keys(fileXmlContent).forEach(eltKey => {
         fileXmlContent[eltKey] = self.filterElement(fileXmlContent[eltKey], filter, file);
       });
       if (self.smmryUpdatedFiles[file] != null && self.smmryUpdatedFiles[file].updated === true) {
@@ -115,10 +114,10 @@ export default class ExecuteFilterXmlContent extends Command {
     const self = this;
     // Object case
     if (typeof elementValue === 'object') {
-      Object.keys(elementValue).forEach((eltKey) => {
+      Object.keys(elementValue).forEach(eltKey => {
         let found = false;
         // Browse filter exclude_list for elementValue
-        filter.exclude_list.forEach((excludeDef) => {
+        filter.exclude_list.forEach(excludeDef => {
 
           if (excludeDef.type_tag === eltKey) {
             // Found matching type tag
@@ -128,7 +127,7 @@ export default class ExecuteFilterXmlContent extends Command {
             // Filter type values
             const typeValues = elementValue[eltKey];
             const newTypeValues = [];
-            typeValues.forEach((typeItem) => {
+            typeValues.forEach(typeItem => {
               if (excludeDef.values.includes(typeItem[excludeDef.identifier_tag]) || excludeDef.values.includes(typeItem[excludeDef.identifier_tag][0])) {
                 console.log('----- filtered ' + typeItem[excludeDef.identifier_tag]);
                 if (self.smmryUpdatedFiles[file] == null) {
@@ -152,7 +151,7 @@ export default class ExecuteFilterXmlContent extends Command {
       });
     } else if (Array.isArray(elementValue)) {
       const newElementValue = [];
-      elementValue.forEach((element) => {
+      elementValue.forEach(element => {
         element = self.filterElement(element, filter, file);
         newElementValue.push(element);
       });

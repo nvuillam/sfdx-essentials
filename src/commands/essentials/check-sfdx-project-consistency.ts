@@ -1,10 +1,9 @@
 import { Command, flags } from '@oclif/command';
-import * as fs from 'fs';
-import * as xml2js from 'xml2js';
-import * as util from 'util';
 import * as arrayCompare from 'array-compare';
+import * as fs from 'fs';
+import * as util from 'util';
+import * as xml2js from 'xml2js';
 import metadataUtils = require('../../common/metadata-utils');
-import { assert } from 'console';
 
 export default class ExecuteCheckProjectConsistency extends Command {
   public static description = '';
@@ -47,7 +46,7 @@ export default class ExecuteCheckProjectConsistency extends Command {
   // Runtime methods
   public async run() {
     // tslint:disable-next-line:no-shadowed-variable
-    const { args, flags } = this.parse(ExecuteCheckProjectConsistency);
+    const { flags } = this.parse(ExecuteCheckProjectConsistency);
 
     // Get input arguments or default values
     this.packageXmlFileList = flags.packageXmlList.split(',');
@@ -139,12 +138,12 @@ export default class ExecuteCheckProjectConsistency extends Command {
     console.log('Analyzing SFDX project ...');
     const { readdirSync, statSync } = require('fs');
     const { join } = require('path');
-    const listFoldersFunc = (p) => readdirSync(p).filter((f) => statSync(join(p, f)).isDirectory());
+    const listFoldersFunc = p => readdirSync(p).filter(f => statSync(join(p, f)).isDirectory());
     const sfdxProjectFolders = listFoldersFunc(this.inputFolder);
     console.log('SFDX Project subFolders :' + sfdxProjectFolders.join(','));
 
     // collect elements and build allSfdxFilesTypes
-    sfdxProjectFolders.forEach((folder) => {
+    sfdxProjectFolders.forEach(folder => {
       const sfdxTypeDesc = this.getSfdxTypeDescription(folder);
       if (sfdxTypeDesc == null) {
         if (folder !== 'objects') {
@@ -209,7 +208,7 @@ export default class ExecuteCheckProjectConsistency extends Command {
 
     // Special case of objects folder
     const sfdxObjectFolders = listFoldersFunc(this.inputFolder + '/objects');
-    sfdxObjectFolders.forEach((objectFolder) => {
+    sfdxObjectFolders.forEach(objectFolder => {
       if (this.chattyLogs) {
         console.log('Browsing object folder ' + objectFolder + ' ...');
       }
@@ -223,7 +222,7 @@ export default class ExecuteCheckProjectConsistency extends Command {
       }
       // Manage object sub-attributes
       const sfdxObjectSubFolders = listFoldersFunc(this.inputFolder + '/objects/' + objectFolder);
-      sfdxObjectSubFolders.forEach((sfdxObjectSubFolder) => {
+      sfdxObjectSubFolders.forEach(sfdxObjectSubFolder => {
         if (this.chattyLogs) {
           console.log('  Browsing object subfolder ' + sfdxObjectSubFolder + ' ...');
         }
@@ -240,7 +239,7 @@ export default class ExecuteCheckProjectConsistency extends Command {
         const subItemList = [];
 
         const subfolderFiles = readdirSync(this.inputFolder + '/objects/' + objectFolder + '/' + sfdxObjectSubFolder);
-        subfolderFiles.forEach((element) => {
+        subfolderFiles.forEach(element => {
           // Build item name
           const fpath = element.replace(/\\/g, '/');
           let fileName = fpath.substring(fpath.lastIndexOf('/') + 1);
@@ -298,7 +297,7 @@ export default class ExecuteCheckProjectConsistency extends Command {
     // @ts-ignore
     const descAllObjectProperties = metadataUtils.describeObjectProperties();
     let objectPropDesc = null;
-    descAllObjectProperties.forEach((element) => {
+    descAllObjectProperties.forEach(element => {
       if (element.objectXmlPropName === sfdxObjectPropertyFolder || element.sfdxFolderName === sfdxObjectPropertyFolder) {
         objectPropDesc = element;
       }
@@ -313,7 +312,7 @@ export default class ExecuteCheckProjectConsistency extends Command {
 
   public getListObjValues(listObj) {
     const res = [];
-    listObj.forEach((element) => {
+    listObj.forEach(element => {
       res.push(Object.values(element)[0]);
     });
     return res;

@@ -1,9 +1,9 @@
 import { Command, flags } from '@oclif/command';
+import * as cliProgress from 'cli-progress';
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
-import * as xml2js from 'xml2js';
 import * as util from 'util';
-import * as cliProgress from 'cli-progress';
+import * as xml2js from 'xml2js';
 import EssentialsUtils = require('../../common/essentials-utils');
 import metadataUtils = require('../../common/metadata-utils');
 
@@ -40,7 +40,7 @@ export default class ExecuteFilterMetadatas extends Command {
   public async run() {
     const elapseStart = Date.now();
     // tslint:disable-next-line:no-shadowed-variable
-    const { args, flags } = this.parse(ExecuteFilterMetadatas);
+    const { flags } = this.parse(ExecuteFilterMetadatas);
 
     // Get input arguments or default values
     this.packageXmlFile = flags.packagexml;
@@ -191,9 +191,9 @@ export default class ExecuteFilterMetadatas extends Command {
         // Create member folder in output folder
         fs.mkdirSync(typeOutputFolder);
         // Iterate all metadata types members (ApexClass,ApexComponent,etc...)
-        members.forEach((member) => {
+        members.forEach(member => {
           // Iterate all possible extensions ( '' for same file/folder name, '.cls' for ApexClass, etc ...)
-          metadataDesc.nameSuffixList.forEach((nameSuffix) => {
+          metadataDesc.nameSuffixList.forEach(nameSuffix => {
             // If input file/folder exists, copy it in output folder
             const sourceFile = typeInputFolder + '/' + member + nameSuffix;
             if (fs.existsSync(sourceFile)) {
@@ -218,7 +218,7 @@ export default class ExecuteFilterMetadatas extends Command {
       this.logIfVerbose(`-- Warning: no ${metadataType} in package.xml`);
       return;
     }
-    members.forEach((member) => {
+    members.forEach(member => {
       const sobjectName = member.split('.')[0];
       const sobjectInfo = this.sobjectCollectedInfo[sobjectName] || {};
       if (metadataType !== 'CustomObject' && member.split('.')[1] != null) {
@@ -237,7 +237,7 @@ export default class ExecuteFilterMetadatas extends Command {
       this.logIfVerbose(`-- Warning: no ${metadataType} in package.xml`);
       return;
     }
-    members.forEach((member) => {
+    members.forEach(member => {
       this.translatedLanguageList.push(member);
     });
     this.logIfVerbose('- collected language list:' + this.translatedLanguageList.toString());
@@ -260,7 +260,7 @@ export default class ExecuteFilterMetadatas extends Command {
           this.logIfVerbose('-- including all labels ');
         } else {
           let pos = 0;
-          parsedObjectFile['CustomLabels']['labels'].forEach((itemDscrptn) => {
+          parsedObjectFile['CustomLabels']['labels'].forEach(itemDscrptn => {
             let itemName = itemDscrptn['fullName'];
             if (Array.isArray(itemName)) {
               itemName = itemName[0];
@@ -311,7 +311,7 @@ export default class ExecuteFilterMetadatas extends Command {
     // Process all SObjects
     const objectPromises = [];
 
-    Object.keys(this.sobjectCollectedInfo).forEach((objectName) => {
+    Object.keys(this.sobjectCollectedInfo).forEach(objectName => {
       const objectPromise = new Promise((resolve, reject) => {
         if (!this.verbose && this.multibar.terminal.isTTY()) {
           this.multibars.copyImpactedObjects.update(null, { file: objectName });
@@ -351,7 +351,7 @@ export default class ExecuteFilterMetadatas extends Command {
         // Manage objectTranslations
         if (this.translatedLanguageList.length > 0) {
           this.logIfVerbose('- processing SObject translation for ' + objectName);
-          this.translatedLanguageList.forEach((translationCode) => {
+          this.translatedLanguageList.forEach(translationCode => {
             const inputObjectTranslationFileName = this.inputFolder + '/objectTranslations/' + objectName + '-' + translationCode + '.objectTranslation';
             // Check objectTranslation file exists for this language
             if (!fs.existsSync(inputObjectTranslationFileName)) {
@@ -400,7 +400,7 @@ export default class ExecuteFilterMetadatas extends Command {
   public filterSObjectFile(parsedObjectFile, objectName, objectContentToKeep) {
     // @ts-ignore
     const objectFilteringProperties = metadataUtils.describeObjectProperties();
-    objectFilteringProperties.forEach((objectFilterProp) => {
+    objectFilteringProperties.forEach(objectFilterProp => {
       // Filter fields
       const objectXmlPropName = objectFilterProp['objectXmlPropName'];
       const packageXmlPropName = objectFilterProp['packageXmlPropName'];
@@ -412,7 +412,7 @@ export default class ExecuteFilterMetadatas extends Command {
           this.logIfVerbose('/!\ WARNING: can not filter ' + objectXmlPropName + ' : not found');
         } else {
           let pos = 0;
-          parsedObjectFile['CustomObject'][objectXmlPropName].forEach((itemDscrptn) => {
+          parsedObjectFile['CustomObject'][objectXmlPropName].forEach(itemDscrptn => {
             const itemName = itemDscrptn[nameProperty];
             if (itemName.filter((element: string) => compareList.includes(element)).length === 0) {
               this.logIfVerbose(`---- removed ${packageXmlPropName} ` + itemDscrptn[nameProperty]);
@@ -433,7 +433,7 @@ export default class ExecuteFilterMetadatas extends Command {
   public filterSObjectTranslationFile(parsedObjectFile, objectName, objectContentToKeep) {
     // @ts-ignore
     const objectFilteringProperties = metadataUtils.describeObjectProperties();
-    objectFilteringProperties.forEach((objectFilterProp) => {
+    objectFilteringProperties.forEach(objectFilterProp => {
       // Filter fields,layouts,businessProcesses, listView,WebLink
       const objectXmlPropName = objectFilterProp['objectXmlPropName'];
       const packageXmlPropName = objectFilterProp['packageXmlPropName'];
@@ -445,7 +445,7 @@ export default class ExecuteFilterMetadatas extends Command {
           this.logIfVerbose('/!\ can not filter translation ' + objectXmlPropName + ' : not found');
         } else {
           let pos = 0;
-          parsedObjectFile['CustomObjectTranslation'][objectXmlPropName].forEach((itemDscrptn) => {
+          parsedObjectFile['CustomObjectTranslation'][objectXmlPropName].forEach(itemDscrptn => {
             const itemName = itemDscrptn[nameProperty];
             if (itemName.filter((element: string) => compareList.includes(element)).length === 0) {
               this.logIfVerbose(`---- removed translation ${packageXmlPropName} ` + itemDscrptn[nameProperty]);

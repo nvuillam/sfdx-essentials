@@ -2,11 +2,10 @@ import { Command, flags } from '@oclif/command';
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import * as glob from 'glob';
+import * as xmlFormatter from 'xml-formatter';
 import * as xml2js from 'xml2js';
 import * as builder from 'xmlbuilder';
-import * as xmlFormatter from 'xml-formatter';
 import metadataUtils = require('../../common/metadata-utils');
-import { FILE } from 'dns';
 
 export default class ExecuteGeneratePermissionSets extends Command {
     public static description = '';
@@ -43,7 +42,7 @@ export default class ExecuteGeneratePermissionSets extends Command {
     public async run() {
 
         // tslint:disable-next-line:no-shadowed-variable
-        const { args, flags } = this.parse(ExecuteGeneratePermissionSets);
+        const { flags } = this.parse(ExecuteGeneratePermissionSets);
 
         // Get input arguments or default values
         this.configFile = flags.configfile;
@@ -109,7 +108,7 @@ export default class ExecuteGeneratePermissionSets extends Command {
                     }
                     const outputFilename = this.outputFolder + '/' + configName + '.permissionset-meta.xml';
                     const formattedPsXml = xmlFormatter(permissionSetsXmlElements, { collapseContent: true });
-                    fs.writeFile(outputFilename, formattedPsXml, (err3) => {
+                    fs.writeFile(outputFilename, formattedPsXml, err3 => {
                         if (!err3) {
                             console.log('      - ' + outputFilename);
                             resolve();
@@ -164,13 +163,13 @@ export default class ExecuteGeneratePermissionSets extends Command {
         for (const configName in filterConfig) {
             if (filterConfig.hasOwnProperty(configName)) {
                 const configItem = filterConfig[configName];
-                const configNameExt = (this.nameSuffix) ? configName + this.nameSuffix : configName ;
-                const descriptionExt = (this.nameSuffix) ? configItem.description + '(' + this.nameSuffix + ')' : configItem.description ;
+                const configNameExt = (this.nameSuffix) ? configName + this.nameSuffix : configName;
+                const descriptionExt = (this.nameSuffix) ? configItem.description + '(' + this.nameSuffix + ')' : configItem.description;
                 tableLog.push({
-                    'Order': order,
-                    'Name': configNameExt,
+                    Order: order,
+                    Name: configNameExt,
                     'Extended from': (configItem.extends) ? configItem.extends : '',
-                    'Description': descriptionExt
+                    Description: descriptionExt
                 });
                 order++;
                 if (filterConfig[configName].isTemplate) {

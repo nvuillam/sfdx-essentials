@@ -1,7 +1,7 @@
 import Command, { flags } from '@oclif/command';
+import * as cliProgress from 'cli-progress';
 import * as fs from 'fs';
 import * as glob from 'glob';
-import * as cliProgress from 'cli-progress';
 import EssentialsUtils = require('../../common/essentials-utils');
 
 export default class ExecuteUncomment extends Command {
@@ -32,7 +32,7 @@ export default class ExecuteUncomment extends Command {
 
     // args
     // tslint:disable-next-line:no-shadowed-variable
-    const { args, flags } = this.parse(ExecuteUncomment);
+    const { flags } = this.parse(ExecuteUncomment);
 
     this.folder = flags.folder || '.';
     this.uncommentKey = flags.uncommentKey || 'SFDX_ESSENTIALS_UNCOMMENT';
@@ -61,7 +61,7 @@ export default class ExecuteUncomment extends Command {
     }
 
     // Replace commented lines in each class
-    customApexClassFileNameList.forEach((customApexClassFileName) => {
+    customApexClassFileNameList.forEach(customApexClassFileName => {
       this.processFile(customApexClassFileName);
       if (!this.verbose && this.progressBar.terminal.isTTY()) {
         this.progressBar.increment();
@@ -69,7 +69,7 @@ export default class ExecuteUncomment extends Command {
     });
 
     // Replace commented lines in each aura item
-    customAuraFileNameList.forEach((customAuraFileName) => {
+    customAuraFileNameList.forEach(customAuraFileName => {
       this.processFile(customAuraFileName);
       if (!this.verbose && this.progressBar.terminal.isTTY()) {
         this.progressBar.increment();
@@ -101,7 +101,7 @@ export default class ExecuteUncomment extends Command {
     // Process file lines one by one
     let updated = false;
     let updatedFileContent = '';
-    arrayFileLines.forEach((line) => {
+    arrayFileLines.forEach(line => {
       // Uncomment if SFDX_ESSENTIALS_UNCOMMENT is contained in a commented line (can be overriden sending uncommentKey argument)
       if (line.includes(this.uncommentKey)) {
         line = line.replace('//', '').replace(this.uncommentKey, '// ' + this.uncommentKey + ' uncommented by sfdx essentials:uncomment (https://github.com/nvuillam/sfdx-essentials)');
