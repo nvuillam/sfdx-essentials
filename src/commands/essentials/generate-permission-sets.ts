@@ -72,19 +72,21 @@ export default class ExecuteGeneratePermissionSets extends Command {
                 const itemPromise = new Promise(async (resolve, reject) => {
 
                     // Complete definition
-                    let filterConfigNameJSONArray = filterConfig[configName];
-                    filterConfigNameJSONArray = this.mergeExtendDependencies(filterConfigNameJSONArray, filterConfig, configName);
-                    if (filterConfigNameJSONArray.packageXMLTypeList.findIndex((item: any) => (item.typeName === 'CustomField')) > -1) {
-                        filterConfigNameJSONArray = await this.excludeCustomFields(filterConfigNameJSONArray);
+                    let filterConfigItem = filterConfig[configName];
+                    filterConfigItem = this.mergeExtendDependencies(filterConfigItem, filterConfig, configName);
+                    if (filterConfigItem.packageXMLTypeList.findIndex((item: any) => (item.typeName === 'CustomField')) > -1) {
+                        filterConfigItem = await this.excludeCustomFields(filterConfigItem);
                     }
-                    let packageXMLTypeJSONArray = filterConfigNameJSONArray.packageXMLTypeList;
+                    // Add standard fields
+
+                    let packageXMLTypeJSONArray = filterConfigItem.packageXMLTypeList;
                     let packageXMLTypesConfigArray = [];
                     for (const packageXMLTypeJSON of packageXMLTypeJSONArray) {
                         packageXMLTypesConfigArray.push(packageXMLTypeJSON.typeName);
                     }
 
                     if (this.verbose) {
-                        console.log(`Generating ${configName} with computed config: \n` + JSON.stringify(filterConfigNameJSONArray, null, 2));
+                        console.log(`Generating ${configName} with computed config: \n` + JSON.stringify(filterConfigItem, null, 2));
                     }
 
                     // Build permission sets for each types (multiple) from packageXMLTypeList (JSON configuration file)
@@ -92,10 +94,10 @@ export default class ExecuteGeneratePermissionSets extends Command {
                     let permissionSetsMultipleXmlElement = '';
                     let permissionSetsSingleXmlElement = '';
                     const packageXmlTypes = packageXml.Package.types;
-                    permissionSetsMultipleXmlElement = this.filterPackageXmlTypes(packageXmlTypes, packageXMLTypesConfigArray, filterConfigNameJSONArray);
+                    permissionSetsMultipleXmlElement = this.filterPackageXmlTypes(packageXmlTypes, packageXMLTypesConfigArray, filterConfigItem);
 
                     // Build permission sets for each types (single)
-                    permissionSetsSingleXmlElement = this.buildSinglePermissionSetXML(filterConfigNameJSONArray);
+                    permissionSetsSingleXmlElement = this.buildSinglePermissionSetXML(filterConfigItem);
 
                     // Build permission sets (extended, multiple & single)
                     permissionSetsXmlElements += permissionSetsMultipleXmlElement;
@@ -248,10 +250,10 @@ export default class ExecuteGeneratePermissionSets extends Command {
     }
 
     // Build permission set information by type for multiple element
-    public buildMultiplePermissionSetXML({ packageXMLTypeConfigJSON, typeMember }: { packageXMLTypeConfigJSON: any; typeMember: string; }) {
+    public buildMultiplePermissionSetXML({ packageXMLTypeConfig, typeMember }: { packageXMLTypeConfig: any; typeMember: string; }) {
 
-        let typeName = packageXMLTypeConfigJSON.typeName;
-        let permissionSetElementJSONArray = packageXMLTypeConfigJSON.permissionSetsElementList;
+        let typeName = packageXMLTypeConfig.typeName;
+        let permissionSetElementJSONArray = packageXMLTypeConfig.permissionSetsElementList;
         let permissionSetsXmlElement: any;
         let permissionSetsXMLElmementName: any;
         let permissionSetXMLMemberName: any;
@@ -274,19 +276,24 @@ export default class ExecuteGeneratePermissionSets extends Command {
         return permissionSetsXmlElement;
     }
 
-    public filterPackageXmlTypes(packageXmlTypes: any, packageXMLTypesConfigArray: any, filterConfigNameJSONArray: any) {
+    // Process filtering and additional elements
+    public filterPackageXmlTypes(packageXmlTypes: any, packageXMLTypesAll: any, permissionSetDefinition: any) {
         let permissionSetsXmlElement = '';
         for (const packageXmlType of packageXmlTypes) {
 
             const packageXmlTypesName = packageXmlType.name[0];
 
-            if (packageXMLTypesConfigArray.includes(packageXmlTypesName) && filterConfigNameJSONArray.packageXMLTypeList.length > 0) {
+            if (packageXMLTypesAll.includes(packageXmlTypesName) && permissionSetDefinition.packageXMLTypeList.length > 0) {
 
-                const indexOfType = packageXMLTypesConfigArray.indexOf(packageXmlTypesName);
-                const packageXMLTypeConfigJSON = filterConfigNameJSONArray.packageXMLTypeList[indexOfType];
-                const packageXmlMembers = packageXmlType.members;
-                const permissionSetIncludedFilterArray = packageXMLTypeConfigJSON.includedFilterList || ['(.*)']; // Default is regex "all"
-                const permissionSetExcludedFilterArray = packageXMLTypeConfigJSON.excludedFilterList || []; // Default is no exclusion
+                const indexOfType = packageXMLTypesAll.indexOf(packageXmlTypesName);
+                const packageXMLTypeConfig = permissionSetDefinition.packageXMLTypeList[indexOfType];
+                let packageXmlMembers = packageXmlType.members;
+                // Add additional elements if defined
+                if (packageXMLTypeConfig.additionalElements) {
+                    packageXmlMembers = packageXmlMembers.concat(packageXMLTypeConfig.additionalElements).sort();
+                }
+                const permissionSetIncludedFilterArray = packageXMLTypeConfig.includedFilterList || ['(.*)']; // Default is regex "all"
+                const permissionSetExcludedFilterArray = packageXMLTypeConfig.excludedFilterList || []; // Default is no exclusion
 
                 for (let packageXmlMember of packageXmlMembers) {
 
@@ -330,7 +337,7 @@ export default class ExecuteGeneratePermissionSets extends Command {
 
                         // Test classes are excluded and also type name that are not described in describeMetadata (metadata-utils/index.ts)
                         if (permissionSetsXMLElmementName !== undefined) {
-                            permissionSetsXmlElement += this.buildMultiplePermissionSetXML({ packageXMLTypeConfigJSON, typeMember: packageXmlMember });
+                            permissionSetsXmlElement += this.buildMultiplePermissionSetXML({ packageXMLTypeConfig, typeMember: packageXmlMember });
                         }
                     }
                 }

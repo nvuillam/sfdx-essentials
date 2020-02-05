@@ -50,6 +50,11 @@
 				],
 				"includedFilterList": [
 					"(.*)"
+				],
+				"additionalElements": [
+					"Account.Name",
+					"Account.LastName",
+					"Account.FirstName"
 				]
 			},
 			{
@@ -65,6 +70,9 @@
 				],
 				"includedFilterList": [
 					"(.*)"
+				],
+				"additionalElements": [
+					"Account"
 				]
 			},
 			{
@@ -87,7 +95,7 @@
 	"InsuranceAdmin": {
 		"label": "DXC OmniChannel Administrator user",
 		"description": "DXC Omnichannel CRM Administrator access. Manage acces to administration components and views",
-		"hasActivationRequired": true,
+		"hasActivationRequired": false,
 		"extends": "InsuranceBase",
 		"packageXMLTypeList": [
 			{
@@ -123,6 +131,11 @@
 				],
 				"includedFilterList": [
 					"(.*)"
+				],
+				"additionalElements": [
+					"Account.Name",
+					"Account.LastName",
+					"Account.FirstName"
 				]
 			},
 			{
@@ -158,6 +171,9 @@
 				],
 				"includedFilterList": [
 					"(.*)"
+				],
+				"additionalElements": [
+					"Account"
 				]
 			},
 			{
@@ -168,7 +184,7 @@
 					},
 					{
 						"elementName": "visibility",
-						"value": true
+						"value": "Visible"
 					}
 				],
 				"includedFilterList": [
