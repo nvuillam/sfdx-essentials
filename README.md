@@ -290,7 +290,7 @@ _See log example: [src/commands/essentials/examples/check-sfdx-project-consisten
 
 _See code: [src/commands/essentials/check-sfdx-project-consistency.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/check-sfdx-project-consistency.ts)_
 
-![Check SFDX project consistency log image](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/check-sfdx-project-consistency-log.png "Check SFDX project consistency log image")
+![Check SFDX project consistency log image](https://github.com/nvuillam/sfdx-essentials/raw/master/examples/check-sfdx-project-consistency-log.png "Check SFDX project consistency log image")
 
 ## `essentials:generate-permission-sets`
 
@@ -320,7 +320,7 @@ _See log example: [src/commands/essentials/examples/generate-permission-sets.log
 
 _See code: [src/commands/essentials/generate-permission-sets.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/generate-permission-sets.ts)_
 
-![Generate permission sets log image](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/generate-permission-sets-log.png "Generate permission sets log image")
+![Generate permission sets log image](https://github.com/nvuillam/sfdx-essentials/raw/master/examples/generate-permission-sets-log.png "Generate permission sets log image")
 
 ## `essentials:migrate-object-model`
 
