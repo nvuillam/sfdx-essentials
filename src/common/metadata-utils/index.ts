@@ -21,9 +21,10 @@ export class MetadataUtils {
       CustomApplication: { folder: 'applications', nameSuffixList: ['.app'], sfdxNameSuffixList: ['.app-meta.xml'], permissionSetTypeName: 'applicationVisibilities', permissionSetMemberName: 'application' },
       CustomLabel: { folder: 'labels', nameSuffixList: ['.labels'], sfdxNameSuffixList: ['.labels-meta.xml'] },
       CustomMetadata: { folder: 'customMetadata', nameSuffixList: ['.md'], sfdxNameSuffixList: ['.md-meta.xml'] },
-      CustomMetadataType: { permissionSetTypeName: 'customMetadataTypeAccesses', permissionSetMemberName: 'name' },
+      CustomMetadataType: { virtual: true, permissionSetTypeName: 'customMetadataTypeAccesses', permissionSetMemberName: 'name' },
       CustomSite: { folder: 'sites', nameSuffixList: ['.site'], sfdxNameSuffixList: ['.site-meta.xml'] },
       CustomObjectTranslation: { folder: 'objectTranslations', nameSuffixList: ['.objectTranslation'] }, // We use Translations to define the list of objectTranslations to filter & copy
+      CustomPlatformEvent: { virtual: true, permissionSetTypeName: 'objectPermissions', permissionSetMemberName: 'object' },
       CustomTab: { folder: 'tabs', nameSuffixList: ['.tab'], sfdxNameSuffixList: ['.tab-meta.xml'], permissionSetTypeName: 'tabSettings', permissionSetMemberName: 'tab' },
       Document: { folder: 'documents', nameSuffixList: ['', '-meta.xml'], sfdxNameSuffixList: ['.documentFolder-meta.xml', '.document-meta.xml', '.png'], metasInSubFolders: true },
       EmailTemplate: { folder: 'email', nameSuffixList: ['', '.email', '.email-meta.xml'], sfdxNameSuffixList: ['.email', '.email-meta.xml'], metasInSubFolders: true },

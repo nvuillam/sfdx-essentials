@@ -354,29 +354,41 @@ export default class ExecuteGeneratePermissionSets extends Command {
             // Custom Objects
             if (packageXmlType.name[0] === 'CustomObject') {
                 // Filter CustomObjects member list to remove Metadata objects
-                const packageXmlTypeMmbrObj = packageXmlType.members.filter((member: string) => !member.includes('__mdt'));
+                const packageXmlTypeMmbrObj = packageXmlType.members.filter((member: string) => !(member.includes('__mdt') || member.includes('__e')));
                 const packageXmlTypeMmbrMdt = packageXmlType.members.filter((member: string) => member.includes('__mdt'));
+                const packageXmlTypeMmbrEvt = packageXmlType.members.filter((member: string) => member.includes('__e'));
                 packageXmlType.members = packageXmlTypeMmbrObj;
                 packageXmlTypes[i] = packageXmlType;
 
                 // Add new 'virtual' packageXml item CustomMetadata
-                const packageXmlTypeMdt = {
-                    members: packageXmlTypeMmbrMdt,
-                    name: ['CustomMetadataType']
-                };
-                packageXmlTypes.push(packageXmlTypeMdt);
+                if (packageXmlTypeMmbrMdt.length > 0) {
+                    const packageXmlTypeMdt = {
+                        members: packageXmlTypeMmbrMdt,
+                        name: ['CustomMetadataType']
+                    };
+                    packageXmlTypes.push(packageXmlTypeMdt);
+                }
+
+                // Add new 'virtual' packageXml item CustomMetadata
+                if (packageXmlTypeMmbrEvt.length > 0) {
+                    const packageXmlTypeEvt = {
+                        members: packageXmlTypeMmbrEvt,
+                        name: ['CustomPlatformEvent']
+                    };
+                    packageXmlTypes.push(packageXmlTypeEvt);
+                }
             }
 
             // Custom Fields
             if (packageXmlType.name[0] === 'CustomField') {
                 // Filter CustomField members list to remove Metadata fields
-                const packageXmlTypeMmbrObj = packageXmlType.members.filter((member: string) => !member.includes('__mdt'));
-                packageXmlType.members = packageXmlTypeMmbrObj;
+                const packageXmlTypeMmbrObj = packageXmlType.members.filter((member: string) => !(member.includes('__mdt') || member.includes('__e')));
+                packageXmlType.members = packageXmlTypeMmbrObj.sort((a: any, b: any) => a.localeCompare(b)); // Sort
                 packageXmlTypes[i] = packageXmlType;
 
             }
         }
 
-        return packageXmlTypes;
+        return packageXmlTypes.sort((a: any, b: any) => a.name[0].localeCompare(b.name[0])); // Sort by name value;
     }
 }
