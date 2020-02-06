@@ -64,6 +64,7 @@ export default class ExecuteGeneratePermissionSets extends Command {
         const promises = [];
 
         const packageXml = await parser.parseStringPromise(fs.readFileSync(this.packageXmlFile));
+        const packageXmlTypes = this.separateCustomMetadatas(packageXml.Package.types);
 
         // Build permission set file for each item described in config file (use parallel promises for perfs)
         console.log(' Output files: ');
@@ -77,7 +78,6 @@ export default class ExecuteGeneratePermissionSets extends Command {
                     if (filterConfigItem.packageXMLTypeList.findIndex((item: any) => (item.typeName === 'CustomField')) > -1) {
                         filterConfigItem = await this.excludeCustomFields(filterConfigItem);
                     }
-                    // Add standard fields
 
                     let packageXMLTypeJSONArray = filterConfigItem.packageXMLTypeList;
                     let packageXMLTypesConfigArray = [];
@@ -93,7 +93,6 @@ export default class ExecuteGeneratePermissionSets extends Command {
                     let permissionSetsXmlElements = '<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">';
                     let permissionSetsMultipleXmlElement = '';
                     let permissionSetsSingleXmlElement = '';
-                    const packageXmlTypes = packageXml.Package.types;
                     permissionSetsMultipleXmlElement = this.filterPackageXmlTypes(packageXmlTypes, packageXMLTypesConfigArray, filterConfigItem);
 
                     // Build permission sets for each types (single)
@@ -345,5 +344,39 @@ export default class ExecuteGeneratePermissionSets extends Command {
         }
 
         return permissionSetsXmlElement;
+    }
+
+    // Separate custom metadatas from custom objects and custom fields
+    public separateCustomMetadatas(packageXmlTypes: any[]) {
+        for (let i = 0; i < packageXmlTypes.length; i++) {
+            const packageXmlType = packageXmlTypes[i];
+
+            // Custom Objects
+            if (packageXmlType.name[0] === 'CustomObject') {
+                // Filter CustomObjects member list to remove Metadata objects
+                const packageXmlTypeMmbrObj = packageXmlType.members.filter((member: string) => !member.includes('__mdt'));
+                const packageXmlTypeMmbrMdt = packageXmlType.members.filter((member: string) => member.includes('__mdt'));
+                packageXmlType.members = packageXmlTypeMmbrObj;
+                packageXmlTypes[i] = packageXmlType;
+
+                // Add new 'virtual' packageXml item CustomMetadata
+                const packageXmlTypeMdt = {
+                    members: packageXmlTypeMmbrMdt,
+                    name: ['CustomMetadataType']
+                };
+                packageXmlTypes.push(packageXmlTypeMdt);
+            }
+
+            // Custom Fields
+            if (packageXmlType.name[0] === 'CustomField') {
+                // Filter CustomField members list to remove Metadata fields
+                const packageXmlTypeMmbrObj = packageXmlType.members.filter((member: string) => !member.includes('__mdt'));
+                packageXmlType.members = packageXmlTypeMmbrObj;
+                packageXmlTypes[i] = packageXmlType;
+
+            }
+        }
+
+        return packageXmlTypes;
     }
 }
