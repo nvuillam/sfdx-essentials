@@ -1,4 +1,4 @@
-export class MetadataUtils {
+class MetadataUtils {
 
   // Describe packageXml <=> metadata folder correspondance
   public static describeMetadataTypes() {
@@ -118,4 +118,4 @@ export class MetadataUtils {
   }
 }
 
-module.exports = MetadataUtils;
+export { MetadataUtils };

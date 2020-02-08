@@ -5,7 +5,7 @@ import * as glob from 'glob';
 import * as xmlFormatter from 'xml-formatter';
 import * as xml2js from 'xml2js';
 import * as builder from 'xmlbuilder';
-import metadataUtils = require('../../common/metadata-utils');
+import { MetadataUtils } from '../../common/metadata-utils';
 
 export default class ExecuteGeneratePermissionSets extends Command {
     public static description = '';
@@ -36,7 +36,7 @@ export default class ExecuteGeneratePermissionSets extends Command {
     public summaryResult = { metadataTypes: {}, objects: [], objectsTranslations: [] };
 
     // @ts-ignore
-    public describeMetadataAll = metadataUtils.describeMetadataTypes();
+    public describeMetadataAll = MetadataUtils.describeMetadataTypes();
 
     // Runtime methods
     public async run() {

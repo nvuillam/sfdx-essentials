@@ -4,8 +4,8 @@ import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import * as util from 'util';
 import * as xml2js from 'xml2js';
-import EssentialsUtils = require('../../common/essentials-utils');
-import metadataUtils = require('../../common/metadata-utils');
+import { EssentialsUtils } from '../../common/essentials-utils';
+import { MetadataUtils } from '../../common/metadata-utils';
 
 export default class ExecuteFilterMetadatas extends Command {
   public static description = '';
@@ -287,7 +287,7 @@ export default class ExecuteFilterMetadatas extends Command {
   // get Metadatype description
   public getMetadataTypeDescription(mdType) {
     // @ts-ignore
-    const desc = metadataUtils.describeMetadataTypes()[mdType];
+    const desc = MetadataUtils.describeMetadataTypes()[mdType];
     return desc;
   }
 
@@ -399,7 +399,7 @@ export default class ExecuteFilterMetadatas extends Command {
   // Filter output XML of .object file
   public filterSObjectFile(parsedObjectFile, objectName, objectContentToKeep) {
     // @ts-ignore
-    const objectFilteringProperties = metadataUtils.describeObjectProperties();
+    const objectFilteringProperties = MetadataUtils.describeObjectProperties();
     objectFilteringProperties.forEach(objectFilterProp => {
       // Filter fields
       const objectXmlPropName = objectFilterProp['objectXmlPropName'];
@@ -432,7 +432,7 @@ export default class ExecuteFilterMetadatas extends Command {
   // Filter output XML of .object file
   public filterSObjectTranslationFile(parsedObjectFile, objectName, objectContentToKeep) {
     // @ts-ignore
-    const objectFilteringProperties = metadataUtils.describeObjectProperties();
+    const objectFilteringProperties = MetadataUtils.describeObjectProperties();
     objectFilteringProperties.forEach(objectFilterProp => {
       // Filter fields,layouts,businessProcesses, listView,WebLink
       const objectXmlPropName = objectFilterProp['objectXmlPropName'];

@@ -5,7 +5,7 @@ import * as fsExtra from 'fs-extra';
 import * as glob from 'glob';
 import * as rimraf from 'rimraf';
 import * as xml2js from 'xml2js';
-import EssentialsUtils = require('../../common/essentials-utils');
+import { EssentialsUtils } from '../../common/essentials-utils';
 
 export default class ExecuteMigrateObjectModel extends Command {
   public static description = '';

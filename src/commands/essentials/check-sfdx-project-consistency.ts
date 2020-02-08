@@ -2,8 +2,8 @@ import { Command, flags } from '@oclif/command';
 import * as arrayCompare from 'array-compare';
 import * as fs from 'fs';
 import * as util from 'util';
-import * as xml2js from 'xml2js';
-import metadataUtils = require('../../common/metadata-utils');
+import { EssentialsUtils } from '../../common/essentials-utils';
+import { MetadataUtils } from '../../common/metadata-utils';
 
 export default class ExecuteCheckProjectConsistency extends Command {
   public static description = '';
@@ -60,7 +60,11 @@ export default class ExecuteCheckProjectConsistency extends Command {
 
     // gather elements defined in package.xml files
     this.log(`\n\nAppending ${flags.packageXmlList} ...\n`);
-    await this.appendPackageXmlFilesContent();
+    this.allPackageXmlFilesTypes = await EssentialsUtils.appendPackageXmlFilesContent(this.packageXmlFileList, {
+      failIfError: this.failIfError,
+      logFlag: this.chattyLogs,
+      ignoreDuplicateTypes: this.ignoreDuplicateTypes
+    });
 
     // gather elements defined in SFDX project
     this.log(`\n\nBrowsing ${flags.packageXmlList} ...\n`);
@@ -78,55 +82,6 @@ export default class ExecuteCheckProjectConsistency extends Command {
 
     if (this.failIfError && this.cmdLog.scriptSuccess === false) {
       throw Error('SFDX Project consistency contains errors. Check logs for details');
-    }
-
-  }
-  // Read package.xml files and build concatenated list of items
-  public async appendPackageXmlFilesContent() {
-
-    const doublingItems = [];
-    // loop on packageXml files
-    for (const packageXmlFile of this.packageXmlFileList) {
-      const parser = new xml2js.Parser();
-      // read file content
-      const data = fs.readFileSync(packageXmlFile);
-      // parse xml content
-      const result: any = await parser.parseStringPromise(data);
-      if (this.chattyLogs) {
-        console.log(`Parsed ${packageXmlFile} :\n` + util.inspect(result, false, null));
-      }
-      let packageXmlMetadatasTypeLs: any[];
-      // get metadata types in parse result
-      try { packageXmlMetadatasTypeLs = result.Package.types; } catch { throw new Error('Unable to parse package Xml file ' + packageXmlFile); }
-
-      // Add metadata members in concatenation list of items & store doublings
-      for (const typePkg of packageXmlMetadatasTypeLs) {
-        const nameKey = typePkg.name[0];
-        if (this.allPackageXmlFilesTypes[nameKey] != null && typePkg.members != null) {
-          const compareRes = arrayCompare(typePkg.members, this.allPackageXmlFilesTypes[nameKey]);
-          if (compareRes.found.length > 0) {
-            if (!this.ignoreDuplicateTypes.includes(nameKey)) {
-              doublingItems.push(compareRes.found);
-              console.warn(`ERROR: ${nameKey} items are existing in several package.xml files:` + JSON.stringify(compareRes.found, null, 2));
-            } else {
-              console.warn(`WARNING: ${nameKey} items are existing in several package.xml files:` + JSON.stringify(compareRes.found, null, 2));
-            }
-          }
-          this.allPackageXmlFilesTypes[nameKey] = Array.from(new Set(this.allPackageXmlFilesTypes[nameKey].concat(typePkg.members)));
-        } else if (typePkg.members != null) {
-          this.allPackageXmlFilesTypes[nameKey] = Array.from(new Set(typePkg.members));
-        }
-      }
-    }
-    // Check doubling items if failIfError = true
-    if (this.failIfError === true && doublingItems.length > 0) {
-      throw Error('There are doubling items in package.xml files, please make them unique');
-    }
-
-    // Sort result & display in logs if requested
-    this.allPackageXmlFilesTypes = this.sortObject(this.allPackageXmlFilesTypes);
-    if (this.chattyLogs) {
-      console.log('Package.xml files concatenation results :\n' + util.inspect(this.allPackageXmlFilesTypes, false, null));
     }
 
   }
@@ -266,7 +221,7 @@ export default class ExecuteCheckProjectConsistency extends Command {
       });
 
     });
-    this.allSfdxFilesTypes = this.sortObject(this.allSfdxFilesTypes);
+    this.allSfdxFilesTypes = EssentialsUtils.sortObject(this.allSfdxFilesTypes);
     if (this.chattyLogs) {
       console.log('SFDX Project browsing results :\n' + util.inspect(this.allSfdxFilesTypes, false, null));
     }
@@ -275,7 +230,7 @@ export default class ExecuteCheckProjectConsistency extends Command {
   // get Metadatype description
   public getSfdxTypeDescription(sfdxTypeFolder: any) {
     // @ts-ignore
-    const descAll = metadataUtils.describeMetadataTypes();
+    const descAll = MetadataUtils.describeMetadataTypes();
     let typeDesc = null;
     for (const key in descAll) {
       if (descAll[key].folder === sfdxTypeFolder) {
@@ -294,20 +249,14 @@ export default class ExecuteCheckProjectConsistency extends Command {
 
   // get Metadatype description
   public getSfdxObjectPropertyDescription(sfdxObjectPropertyFolder) {
-    // @ts-ignore
-    const descAllObjectProperties = metadataUtils.describeObjectProperties();
+    const descAllObjectProperties = MetadataUtils.describeObjectProperties();
     let objectPropDesc = null;
-    descAllObjectProperties.forEach(element => {
+    descAllObjectProperties.forEach((element: any) => {
       if (element.objectXmlPropName === sfdxObjectPropertyFolder || element.sfdxFolderName === sfdxObjectPropertyFolder) {
         objectPropDesc = element;
       }
     });
     return objectPropDesc;
-  }
-
-  // Sort object for debug ( yeah yeah I know objects are not sortable , blah blah blah ^^ )
-  public sortObject(o) {
-    return Object.keys(o).sort().reduce((r, k) => (r[k] = o[k], r), {});
   }
 
   public getListObjValues(listObj) {
