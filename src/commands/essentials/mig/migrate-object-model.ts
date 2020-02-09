@@ -10,7 +10,9 @@ import { EssentialsUtils } from '../../../common/essentials-utils';
 export default class MigrateObjectModel extends Command {
   public static aliases = ['essentials:migrate-object-model'];
 
-  public static description = 'Use this command if you need to replace a SObject by another one in all your sfdx sources';
+  public static description = `Migrate sources from an object model to a new object model (See [Example configuration](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/migrate-object-model-config.json))
+
+Use this command if you need to replace a SObject by another one in all your sfdx sources`;
 
   public static examples = [
     '$ sfdx essentials:mig:migrate-object-model -c "./config/migrate-object-model-config.json"',
@@ -290,7 +292,7 @@ export default class MigrateObjectModel extends Command {
     }
     // Write new version of the file if updated
     if (initialArrayFileLines !== arrayFileLines) {
-      this.createOrUpdatefile(arrayFileLines, filePath);
+      await this.createOrUpdatefile(arrayFileLines, filePath);
     }
   }
 

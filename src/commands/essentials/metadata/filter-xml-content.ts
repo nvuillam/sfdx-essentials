@@ -3,11 +3,13 @@ import { Command, flags } from '@oclif/command';
 export default class MetadataFilterXmlContent extends Command {
   public static aliases = ['essentials:filter-xml-content'];
 
-  public static description = `When you perform deployments from one org to another, the features activated in the target org may not fit the content of the sfdx/metadata files extracted from the source org.
+  public static description = `Filter content of metadatas (XML) in order to be able to deploy only part of them on an org (See [Example configuration](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/filter-xml-content-config.json))
+
+When you perform deployments from one org to another, the features activated in the target org may not fit the content of the sfdx/metadata files extracted from the source org.
 
 You may need to filter some elements in the XML files, for example in the Profiles
 
-This script requires a filter-config.json file following this [example](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/filter-xml-content-config.json)`;
+This script requires a filter-config.json file`;
 
   public static examples = [
     'sfdx essentials:filter-xml-content -i "./mdapi_output"',

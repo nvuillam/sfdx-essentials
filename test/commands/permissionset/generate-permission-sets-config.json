@@ -1,0 +1,262 @@
+{
+	"InsuranceBase": {
+		"label": "Base permission set",
+		"description": "Base permission set",
+		"isTemplate": true,
+		"packageXMLTypeList": [
+			{
+				"typeName": "ApexClass",
+				"permissionSetsElementList": [
+					{
+						"elementName": "apexClass"
+					},
+					{
+						"elementName": "enabled",
+						"value": true
+					}
+				],
+				"includedFilterList": [
+					"(.*)"
+				],
+				"excludedFilterList": [
+					"(Test)"
+				]
+			},
+			{
+				"typeName": "ApexPage",
+				"permissionSetsElementList": [
+					{
+						"elementName": "pageAccesses"
+					},
+					{
+						"elementName": "enabled",
+						"value": true
+					}
+				],
+				"includedFilterList": [
+					"(.*)"
+				]
+			},
+			{
+				"typeName": "CustomField",
+				"permissionSetsElementList": [
+					{
+						"elementName": "field"
+					},
+					{
+						"elementName": "readable",
+						"value": true
+					}
+				],
+				"includedFilterList": [
+					"(.*)"
+				],
+				"additionalElements": [
+					"Account.Name",
+					"Account.LastName",
+					"Account.FirstName"
+				]
+			},
+			{
+				"typeName": "CustomObject",
+				"permissionSetsElementList": [
+					{
+						"elementName": "object"
+					},
+					{
+						"elementName": "allowRead",
+						"value": true
+					}
+				],
+				"includedFilterList": [
+					"(.*)"
+				],
+				"additionalElements": [
+					"Account"
+				]
+			},
+			{
+				"typeName": "RecordType",
+				"permissionSetsElementList": [
+					{
+						"elementName": "recordType"
+					},
+					{
+						"elementName": "visible",
+						"value": true
+					}
+				],
+				"includedFilterList": [
+					"(.*)"
+				]
+			}
+		]
+	},
+	"InsuranceAdmin": {
+		"label": "DXC OmniChannel Administrator user",
+		"description": "DXC Omnichannel CRM Administrator access. Manage acces to administration components and views",
+		"hasActivationRequired": false,
+		"extends": "InsuranceBase",
+		"packageXMLTypeList": [
+			{
+				"typeName": "ApexClass",
+				"permissionSetsElementList": [
+					{
+						"elementName": "apexClass"
+					},
+					{
+						"elementName": "enabled",
+						"value": true
+					}
+				],
+				"includedFilterList": [
+					"(.*)"
+				],
+				"excludedFilterList": []
+			},
+			{
+				"typeName": "CustomField",
+				"permissionSetsElementList": [
+					{
+						"elementName": "field"
+					},
+					{
+						"elementName": "editable",
+						"value": true
+					},
+					{
+						"elementName": "readable",
+						"value": true
+					}
+				],
+				"includedFilterList": [
+					"(.*)"
+				],
+				"additionalElements": [
+					"Account.Name",
+					"Account.LastName",
+					"Account.FirstName"
+				]
+			},
+			{
+				"typeName": "CustomObject",
+				"permissionSetsElementList": [
+					{
+						"elementName": "object"
+					},
+					{
+						"elementName": "allowCreate",
+						"value": true
+					},
+					{
+						"elementName": "allowDelete",
+						"value": true
+					},
+					{
+						"elementName": "allowEdit",
+						"value": true
+					},
+					{
+						"elementName": "allowRead",
+						"value": true
+					},
+					{
+						"elementName": "modifyAllRecords",
+						"value": true
+					},
+					{
+						"elementName": "viewAllRecords",
+						"value": true
+					}
+				],
+				"includedFilterList": [
+					"(.*)"
+				],
+				"additionalElements": [
+					"Account"
+				]
+			},
+			{
+				"typeName": "CustomTab",
+				"permissionSetsElementList": [
+					{
+						"elementName": "tab"
+					},
+					{
+						"elementName": "visibility",
+						"value": "Visible"
+					}
+				],
+				"includedFilterList": [
+					"(.*)"
+				]
+			},
+			{
+				"typeName": "CustomApplication",
+				"permissionSetsElementList": [
+					{
+						"elementName": "applicationVisibilities"
+					},
+					{
+						"elementName": "visible",
+						"value": true
+					}
+				],
+				"includedFilterList": [
+					"DXCO4SF_Admin"
+				]
+			}
+		]
+	},
+	"InsuranceCRM": {
+		"label": "CRM user",
+		"description": "DXC Omnichannel access for CRM user",
+		"hasActivationRequired": false,
+		"extends": "InsuranceBase",
+		"packageXMLTypeList": [
+			{
+				"typeName": "CustomApplication",
+				"permissionSetsElementList": [
+					{
+						"elementName": "applicationVisibilities"
+					},
+					{
+						"elementName": "visible",
+						"value": true
+					}
+				],
+				"includedFilterList": [
+					"DXCO4SF_Example"
+				]
+			}
+		]
+	},
+	"InsuranceDistributor": {
+		"label": "Distributor user",
+		"description": "DXC Omnichannel access for Distributor portal user",
+		"hasActivationRequired": false,
+		"extends": "InsuranceBase",
+		"packageXMLTypeList": []
+	},
+	"InsuranceInsured": {
+		"label": "Insured user",
+		"description": "DXC Omnichannel access for Insured portal user",
+		"hasActivationRequired": false,
+		"extends": "InsuranceBase",
+		"packageXMLTypeList": []
+	},
+	"InsuranceCompany": {
+		"label": "Company user",
+		"description": "DXC Omnichannel access for Company portal user",
+		"hasActivationRequired": false,
+		"extends": "InsuranceBase",
+		"packageXMLTypeList": []
+	},
+	"InsurancePublic": {
+		"label": "Public user",
+		"description": "DXC Omnichannel access for public user.",
+		"hasActivationRequired": false,
+		"extends": "InsuranceBase",
+		"packageXMLTypeList": []
+	}
+}

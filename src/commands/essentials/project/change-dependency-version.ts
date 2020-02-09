@@ -17,9 +17,9 @@ export default class ProjectChangeDependencyVersion extends Command {
    `;
 
   public static examples = [
-    '$ sfdx essentials:change-dependency-version -n FinServ -j 214 -m 7',
-    '$ sfdx essentials:change-dependency-version -n FinServ -r',
-    '$ sfdx essentials:change-dependency-version -a 47.0'
+    '$ sfdx essentials:project:change-dependency-version -n FinServ -j 214 -m 7',
+    '$ sfdx essentials:project:change-dependency-version -n FinServ -r',
+    '$ sfdx essentials:project:change-dependency-version -a 47.0'
   ];
 
   public static flags = {

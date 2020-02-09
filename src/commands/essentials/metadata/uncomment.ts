@@ -7,7 +7,9 @@ import { EssentialsUtils } from '../../../common/essentials-utils';
 export default class Uncomment extends Command {
   public static aliases = ['essentials:uncomment'];
 
-  public static description = `Uncomment desired lines just before making a deployment
+  public static description = `Uncomment lines in sfdx/md files (useful to manage @Deprecated annotations with managed packages)
+
+Uncomment desired lines just before making a deployment
 
 Once you flagged a packaged method as **@Deprecated** , you can not deploy it in an org not used for generating a managed package
 

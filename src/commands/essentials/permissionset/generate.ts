@@ -10,7 +10,7 @@ import { MetadataUtils } from '../../../common/metadata-utils';
 export default class PermissionSetGenerate extends Command {
     public static aliases = ['essentials:generate-permission-sets'];
 
-    public static description = 'Generate permission sets in XML format used for SFDX project from package.xml file depending on JSON configuration file';
+    public static description = 'Generate permission sets in XML format used for SFDX project from package.xml file depending on JSON configuration file (See [Example configuration](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/generate-permission-sets-config.json) and [Example log](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/generate-permission-sets.log)) ![Generate permission sets log image](https://github.com/nvuillam/sfdx-essentials/raw/master/examples/generate-permission-sets-log.png "Generate permission sets log image")';
 
     public static examples = [
         '$ sfdx essentials:permissionset:generate -c "./Config/generate-permission-sets.json" -p "./Config/packageXml/package_DevRoot_Managed.xml" -f "./Projects/DevRootSource/force-app/main/default" -o "./Projects/DevRootSource/force-app/main/default/permissionsets"',

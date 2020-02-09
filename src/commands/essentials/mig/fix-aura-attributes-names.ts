@@ -3,11 +3,13 @@ import { Command, flags } from '@oclif/command';
 export default class FixAuraAttributeNames extends Command {
   public static aliases = ['essentials:fix-lightning-attribute-names'];
 
-  public static description = `If you named a lightning attribute like a custom apex class, since Summer 18 you simply can not generate a managed package again.
+  public static description = `Replace reserved lightning attribute names in lightning components and apex classes
 
-  This command lists all custom apex classes and custom objects names , then replaces all their references in lightning components and also in apex classes with their camelCase version.
+If you named a lightning attribute like a custom apex class, since Summer 18 you simply can not generate a managed package again.
 
-  Ex : MyClass_x attribute would be renamed myClassX`;
+This command lists all custom apex classes and custom objects names , then replaces all their references in lightning components and also in apex classes with their camelCase version.
+
+Ex : MyClass_x attribute would be renamed myClassX`;
 
   public static examples = [
     'sfdx essentials:mig:fix-aura-attributes-names'
@@ -117,7 +119,7 @@ export default class FixAuraAttributeNames extends Command {
       }));
     });
 
-    Promise.all(replacementPromisesCmp).then(() => {
+    await Promise.all(replacementPromisesCmp).then(async () => {
       // Process replacements on apex classes
       const replacementPromisesApex = [];
       Object.keys(self.reservedAttributeNames).forEach(reservedAttributeName => {
@@ -137,7 +139,7 @@ export default class FixAuraAttributeNames extends Command {
       });
 
       // Log summary
-      Promise.all(replacementPromisesApex).then(() => {
+      await Promise.all(replacementPromisesApex).then(() => {
         Object.keys(self.reservedAttributeNames).forEach(reservedAttributeName => {
           if (self.reservedAttributeNames[reservedAttributeName].numberReplacements > 0) {
             self.reservedAttributeNamesUsed[reservedAttributeName] = self.reservedAttributeNames[reservedAttributeName];
