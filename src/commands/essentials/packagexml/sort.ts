@@ -1,6 +1,7 @@
 import { Command, flags } from '@oclif/command';
 import { promises as fsPromises } from 'fs';
 import * as glob from 'glob';
+import { types } from 'util';
 import * as xml2js from 'xml2js';
 
 export default class PackageXmlSort extends Command {
@@ -58,8 +59,16 @@ export default class PackageXmlSort extends Command {
         for (let i = 0; i < packageXmlData.Package.types.length; i++) {
             if (packageXmlData.Package.types[i].members) {
                 packageXmlData.Package.types[i].members = packageXmlData.Package.types[i].members.sort((a: string, b: string) => a.localeCompare(b));
+                // Remove strange useless property '_'
+                if (packageXmlData.Package.types[i]._) {
+                    delete packageXmlData.Package.types[i]._;
+                }
             }
         }
+
+        // Remove empty types
+        packageXmlData.Package.types = packageXmlData.Package.types.filter((type1: any) =>
+            type1.name && type1.name.length > 0 && type1.members && type1.members.length > 0);
 
         const builder = new xml2js.Builder();
         const orderedPackageXml = builder.buildObject(packageXmlData);
