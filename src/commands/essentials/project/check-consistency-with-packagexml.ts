@@ -2,10 +2,11 @@ import { Command, flags } from '@oclif/command';
 import * as arrayCompare from 'array-compare';
 import * as fs from 'fs';
 import * as util from 'util';
-import { EssentialsUtils } from '../../common/essentials-utils';
-import { MetadataUtils } from '../../common/metadata-utils';
+import { EssentialsUtils } from '../../../common/essentials-utils';
+import { MetadataUtils } from '../../../common/metadata-utils';
 
-export default class ExecuteCheckProjectConsistency extends Command {
+export default class CheckConsistencyWithPackageXml extends Command {
+
   public static description = '';
 
   public static examples = [];
@@ -22,6 +23,7 @@ export default class ExecuteCheckProjectConsistency extends Command {
     chatty: flags.boolean({ char: 'c', default: false, description: 'Chatty logs' }) as unknown as flags.IOptionFlag<boolean>,
     jsonLogging: flags.boolean({ char: 'j', default: false, description: 'JSON logs' }) as unknown as flags.IOptionFlag<boolean>
   };
+  public aliases = ['essentials:check-sfdx-project-consistency'];
 
   // Input params properties
   public packageXmlFileList: string[];
@@ -46,7 +48,7 @@ export default class ExecuteCheckProjectConsistency extends Command {
   // Runtime methods
   public async run() {
     // tslint:disable-next-line:no-shadowed-variable
-    const { flags } = this.parse(ExecuteCheckProjectConsistency);
+    const { flags } = this.parse(CheckConsistencyWithPackageXml);
 
     // Get input arguments or default values
     this.packageXmlFileList = flags.packageXmlList.split(',');

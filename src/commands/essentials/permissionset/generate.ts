@@ -5,9 +5,10 @@ import * as glob from 'glob';
 import * as xmlFormatter from 'xml-formatter';
 import * as xml2js from 'xml2js';
 import * as builder from 'xmlbuilder';
-import { MetadataUtils } from '../../common/metadata-utils';
+import { MetadataUtils } from '../../../common/metadata-utils';
 
-export default class ExecuteGeneratePermissionSets extends Command {
+export default class PermissionSetGenerate extends Command {
+    public static aliases = ['essentials:generate-permission-sets'];
     public static description = '';
     public static examples = [];
     public static args = [];
@@ -42,7 +43,7 @@ export default class ExecuteGeneratePermissionSets extends Command {
     public async run() {
 
         // tslint:disable-next-line:no-shadowed-variable
-        const { flags } = this.parse(ExecuteGeneratePermissionSets);
+        const { flags } = this.parse(PermissionSetGenerate);
 
         // Get input arguments or default values
         this.configFile = flags.configfile;

@@ -3,9 +3,11 @@ import * as cliProgress from 'cli-progress';
 import * as fs from 'fs';
 import * as glob from 'glob';
 import * as xml2js from 'xml2js';
-import EssentialsUtils = require('../../common/essentials-utils');
+import EssentialsUtils = require('../../../common/essentials-utils');
 
-export default class ExecuteChangeDependencyVersion extends Command {
+export default class ProjectChangeDependencyVersion extends Command {
+  public static aliases = ['essentials:change-dependency-version', 'essentials:change-api-version', 'essentials:project:change-api-version'];
+
   public static description = `
    `;
 
@@ -42,7 +44,7 @@ export default class ExecuteChangeDependencyVersion extends Command {
     const elapseStart = Date.now();
 
     // tslint:disable-next-line:no-shadowed-variable
-    const { flags } = this.parse(ExecuteChangeDependencyVersion);
+    const { flags } = this.parse(ProjectChangeDependencyVersion);
 
     // Get input arguments or default values
     this.namespace = flags.namespace;

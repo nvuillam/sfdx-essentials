@@ -2,9 +2,11 @@ import Command, { flags } from '@oclif/command';
 import * as cliProgress from 'cli-progress';
 import * as fs from 'fs';
 import * as glob from 'glob';
-import EssentialsUtils = require('../../common/essentials-utils');
+import { EssentialsUtils } from '../../../common/essentials-utils';
 
-export default class ExecuteUncomment extends Command {
+export default class Uncomment extends Command {
+  public static aliases = ['essentials:uncomment'];
+
   public static description = '';
 
   public static examples = [];
@@ -32,7 +34,7 @@ export default class ExecuteUncomment extends Command {
 
     // args
     // tslint:disable-next-line:no-shadowed-variable
-    const { flags } = this.parse(ExecuteUncomment);
+    const { flags } = this.parse(Uncomment);
 
     this.folder = flags.folder || '.';
     this.uncommentKey = flags.uncommentKey || 'SFDX_ESSENTIALS_UNCOMMENT';
@@ -40,7 +42,7 @@ export default class ExecuteUncomment extends Command {
       this.verbose = true;
     }
 
-    console.log('Starting sfdx essentials:uncomment with uncomment key "' + this.uncommentKey + '"');
+    console.log('Starting sfdx essentials:metadata:uncomment with uncomment key "' + this.uncommentKey + '"');
 
     // List apex classes
     const fetchClassesExpression = this.folder + '/classes/*.cls';

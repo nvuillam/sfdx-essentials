@@ -1,7 +1,6 @@
 import { Command, flags } from '@oclif/command';
 import { promises as fsPromises } from 'fs';
 import * as glob from 'glob';
-import { types } from 'util';
 import * as xml2js from 'xml2js';
 
 export default class PackageXmlSort extends Command {

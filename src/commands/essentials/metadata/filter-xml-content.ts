@@ -1,6 +1,8 @@
 import { Command, flags } from '@oclif/command';
 
-export default class ExecuteFilterXmlContent extends Command {
+export default class MetadataFilterXmlContent extends Command {
+  public static aliases = ['essentials:filter-xml-content'];
+
   public static description = '';
 
   public static examples = [];
@@ -32,7 +34,7 @@ export default class ExecuteFilterXmlContent extends Command {
   // Runtime methods
   public async run() {
     // tslint:disable-next-line:no-shadowed-variable
-    const { flags } = this.parse(ExecuteFilterXmlContent);
+    const { flags } = this.parse(MetadataFilterXmlContent);
 
     // Get input arguments or default values
     this.configFile = flags.configFile || './filter-config.json';

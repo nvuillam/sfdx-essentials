@@ -1,6 +1,8 @@
 import { Command, flags } from '@oclif/command';
 
-export default class ExecuteFixLightningAttrNames extends Command {
+export default class FixAuraAttributeNames extends Command {
+  public static aliases = ['essentials:fix-lightning-attribute-names'];
+
   public static description = '';
 
   public static examples = [];
@@ -30,7 +32,7 @@ export default class ExecuteFixLightningAttrNames extends Command {
   public async run() {
 
     // tslint:disable-next-line:no-shadowed-variable
-    const { flags } = this.parse(ExecuteFixLightningAttrNames);
+    const { flags } = this.parse(FixAuraAttributeNames);
 
     this.folder = flags.folder || '.';
 

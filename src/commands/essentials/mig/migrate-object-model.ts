@@ -5,9 +5,11 @@ import * as fsExtra from 'fs-extra';
 import * as glob from 'glob';
 import * as rimraf from 'rimraf';
 import * as xml2js from 'xml2js';
-import { EssentialsUtils } from '../../common/essentials-utils';
+import { EssentialsUtils } from '../../../common/essentials-utils';
 
-export default class ExecuteMigrateObjectModel extends Command {
+export default class MigrateObjectModel extends Command {
+  public static aliases = ['essentials:migrate-object-model'];
+
   public static description = '';
 
   public static examples = [];
@@ -57,7 +59,7 @@ export default class ExecuteMigrateObjectModel extends Command {
 
     const elapseStart = Date.now();
     // tslint:disable-next-line:no-shadowed-variable
-    const { flags } = this.parse(ExecuteMigrateObjectModel);
+    const { flags } = this.parse(MigrateObjectModel);
 
     this.inputFolder = flags.inputFolder || '.';
     this.configFile = flags.configFile;

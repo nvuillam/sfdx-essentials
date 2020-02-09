@@ -4,10 +4,12 @@ import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import * as util from 'util';
 import * as xml2js from 'xml2js';
-import { EssentialsUtils } from '../../common/essentials-utils';
-import { MetadataUtils } from '../../common/metadata-utils';
+import { EssentialsUtils } from '../../../common/essentials-utils';
+import { MetadataUtils } from '../../../common/metadata-utils';
 
-export default class ExecuteFilterMetadatas extends Command {
+export default class MetadataFilterFromPackageXml extends Command {
+  public static aliases = ['essentials:filter-metadatas'];
+
   public static description = '';
 
   public static examples = [];
@@ -40,7 +42,7 @@ export default class ExecuteFilterMetadatas extends Command {
   public async run() {
     const elapseStart = Date.now();
     // tslint:disable-next-line:no-shadowed-variable
-    const { flags } = this.parse(ExecuteFilterMetadatas);
+    const { flags } = this.parse(MetadataFilterFromPackageXml);
 
     // Get input arguments or default values
     this.packageXmlFile = flags.packagexml;
