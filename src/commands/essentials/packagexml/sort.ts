@@ -3,7 +3,10 @@ import { promises as fsPromises } from 'fs';
 import * as glob from 'glob';
 import * as xml2js from 'xml2js';
 
-export default class OrderPackageXml extends Command {
+export default class PackageXmlSort extends Command {
+
+    public static aliases = ['essentials:order-package-xml', 'essentials:packagexml:reorder'];
+
     public static description = '';
 
     public static examples = [];
@@ -23,7 +26,7 @@ export default class OrderPackageXml extends Command {
     // Runtime methods
     public async run() {
         // tslint:disable-next-line:no-shadowed-variable
-        const { flags } = this.parse(OrderPackageXml);
+        const { flags } = this.parse(PackageXmlSort);
 
         // Get input arguments or default values
         this.packageXmlFile = flags.packagexml;

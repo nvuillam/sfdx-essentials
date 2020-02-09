@@ -65,7 +65,7 @@ class EssentialsUtils {
                 if (allPackageXmlFilesTypes[nameKey] != null && typePkg.members != null) {
                     const compareRes = arrayCompare(typePkg.members, allPackageXmlFilesTypes[nameKey]);
                     if (compareRes.found.length > 0) {
-                        if (ignoreDuplicateTypes.includes(nameKey)) {
+                        if (!ignoreDuplicateTypes.includes(nameKey)) {
                             doublingItems.push(compareRes.found);
                             console.warn(`ERROR: ${nameKey} items are existing in several package.xml files:` + JSON.stringify(compareRes.found, null, 2));
                         } else {
