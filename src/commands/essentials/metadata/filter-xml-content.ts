@@ -3,9 +3,15 @@ import { Command, flags } from '@oclif/command';
 export default class MetadataFilterXmlContent extends Command {
   public static aliases = ['essentials:filter-xml-content'];
 
-  public static description = '';
+  public static description = `When you perform deployments from one org to another, the features activated in the target org may not fit the content of the sfdx/metadata files extracted from the source org.
 
-  public static examples = [];
+You may need to filter some elements in the XML files, for example in the Profiles
+
+This script requires a filter-config.json file following this [example](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/filter-xml-content-config.json)`;
+
+  public static examples = [
+    'sfdx essentials:filter-xml-content -i "./mdapi_output"',
+    'sfdx essentials:filter-xml-content -i "retrieveUnpackaged"'];
 
   public static flags = {
     // flag with a value (-n, --name=VALUE)

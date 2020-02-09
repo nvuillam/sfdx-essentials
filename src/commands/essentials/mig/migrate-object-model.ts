@@ -10,9 +10,12 @@ import { EssentialsUtils } from '../../../common/essentials-utils';
 export default class MigrateObjectModel extends Command {
   public static aliases = ['essentials:migrate-object-model'];
 
-  public static description = '';
+  public static description = 'Use this command if you need to replace a SObject by another one in all your sfdx sources';
 
-  public static examples = [];
+  public static examples = [
+    '$ sfdx essentials:mig:migrate-object-model -c "./config/migrate-object-model-config.json"',
+    '$ sfdx essentials:mig:migrate-object-model -c migration/config-to-oem.json -i Config/packageXml --fetchExpressionList "./package*.xml" --no-deleteFiles --no-deleteFilesExpr --no-copySfdxProjectFolder'
+  ];
 
   public static flags = {
     // flag with a value (-n, --name=VALUE)

@@ -7,9 +7,12 @@ export default class PackageXmlSort extends Command {
 
     public static aliases = ['essentials:order-package-xml', 'essentials:packagexml:reorder'];
 
-    public static description = '';
+    public static description = 'Developers have the bad habit to input package.xml files in a non-alphabetical order. Use this command to reorder alphabetically your package.xml files !';
 
-    public static examples = [];
+    public static examples = [
+        '$ sfdx essentials:packagexml:sort -p "./Config/packageXml/package.xml"',
+        '$ sfdx essentials:packagexml:sort -p "./Config/packageXml"'
+    ];
 
     public static flags = {
         // flag with a value (-n, --name=VALUE)

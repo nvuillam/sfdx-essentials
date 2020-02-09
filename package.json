@@ -58,11 +58,12 @@
   "license": "GPL-3.0-or-later",
   "oclif": {
     "commands": "./lib/commands",
+    "bin": "sfdx",
     "devPlugins": [
       "@oclif/plugin-help"
     ]
   },
-  "repository": "nvuillam/sfdx-essentials",
+  "repository": "https://github.com/nvuillam/sfdx-essentials",
   "scripts": {
     "lint": "tslint -c tslint.json 'src/**/*.ts' -t verbose",
     "lint:fix": "tslint -c tslint.json 'src/**/*.ts' --fix -t verbose",

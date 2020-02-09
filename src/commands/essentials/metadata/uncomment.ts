@@ -7,9 +7,26 @@ import { EssentialsUtils } from '../../../common/essentials-utils';
 export default class Uncomment extends Command {
   public static aliases = ['essentials:uncomment'];
 
-  public static description = '';
+  public static description = `Uncomment desired lines just before making a deployment
 
-  public static examples = [];
+Once you flagged a packaged method as **@Deprecated** , you can not deploy it in an org not used for generating a managed package
+
+Before :
+// @Deprecated SFDX_ESSENTIALS_UNCOMMENT
+global static List<OrgDebugOption__c> setDebugOption() {
+  return null;
+}
+
+After :
+@Deprecated // Uncommented by sfdx essentials:uncomment (https://github.com/nvuillam/sfdx-essentials)
+global static List<OrgDebugOption__c> setDebugOption() {
+  return null;
+}
+  `;
+
+  public static examples = [
+    '$ sfdx essentials:metadata:uncomment --folder "./Projects/DevRootSource/tmp/deployPackagingDxcDevFiltered" --uncommentKey "SFDX_ESSENTIALS_UNCOMMENT_DxcDev_"'
+  ];
 
   public static flags = {
     folder: flags.string({ char: 'f', description: 'SFDX project folder containing files' }),

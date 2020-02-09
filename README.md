@@ -16,19 +16,31 @@ Easy to integrate in a CD/CI process (Jenkins Pipeline,CircleCI...)
 
 # Command list
 
-| Command | Description |
-| ------------- | ------------- |
-| [essentials:change-dependency-version](#essentialschange-dependency-version) | **Replace other managed packages dependency version number** ( very useful when you build a managed package over another managed package, like Financial Services Cloud ) |
-| [essentials:check-sfdx-project-consistency](#essentialscheck-sfdx-project-consistency) | **Check consistency between a SFDX project files and package.xml files** |
-| [essentials:filter-metadatas](#essentialsfilter-metadatas) | **Filter metadatas generated from a SFDX Project** in order to be able to deploy only part of them on an org |
-| [essentials:filter-xml-content](#essentialsfilter-xml-content) | **Filter content of metadatas (XML)** in order to be able to deploy only part of them on an org |
-| [essentials:fix-lightning-attributes-names](#essentialsfix-lightning-attributes-names) | **Replace reserved lightning attribute names in lightning components and apex classes** ( if you named a lightning attribute like a custom apex class, since Summer 18 you simply can not generate a managed package again) |
-| [essentials:generate-permission-sets](#essentialsgenerate-permission-sets) | **Generate permission sets** from packageXml file depending JSON configuration file |
-| [essentials:migrate-object-model](#essentialsmigrate-object-model) | **Migrate sources from an object model to a new object model** |
-| [essentials:order-package-xml](#essentialsorder-package-xml) | **Reorder alphabetically the content of package.xml file(s)** |
-| [essentials:uncomment](#essentialsuncomment) | **Uncomment lines in sfdx/md files** (useful to manage @Deprecated annotations with managed packages) |
+## Metadata
 
-Please contribute :)
+| [essentials:metadata:filter-from-packagexml](#sfdx-essentialsmetadatafilter-from-packagexml) | **Filter metadatas generated from a SFDX Project** in order to be able to deploy only part of them on an org |
+| [essentials:metadata:filter-xml-content](#sfdx-essentialsmetadatafilter-xml-content) | **Filter content of metadatas (XML)** in order to be able to deploy only part of them on an org |
+| [sfdx essentials:metadata:uncomment](#sfdx-essentialsmetadatauncomment) | **Uncomment lines in sfdx/md files** (useful to manage @Deprecated annotations with managed packages) |
+
+## Migration
+
+| [essentials:mig:fix-aura-attributes-names](#sfdx-essentialsmigfix-aura-attributes-names) | **Replace reserved lightning attribute names in lightning components and apex classes** ( if you named a lightning attribute like a custom apex class, since Summer 18 you simply can not generate a managed package again) |
+| [essentials:mig:migrate-object-model](#sfdx-essentialsmigmigrate-object-model) | **Migrate sources from an object model to a new object model** |
+
+## Package.xml
+
+| [essentials:packagexml:append](#sfdx-essentialspackagexmlappend) | **Append content of package.xml files** |
+| [essentials:packagexml:sort](#sfdx-essentialspackagexmlsort) | **Reorder alphabetically the content of package.xml file(s)** |
+
+## Permission sets
+
+| [essentials:permissionset:generate](#sfdx-essentialspermissionsetgenerate) | **Generate permission sets** from packageXml file depending JSON configuration file |
+
+## SFDX Project
+
+| ------------- | ------------- |
+| [essentials:project:change-dependency-version](#sfdx-essentialsprojectchange-dependency-version) | **Replace other managed packages dependency version number** ( very useful when you build a managed package over another managed package, like Financial Services Cloud ) |
+| [essentials:project:check-consistency-with-packagexml](#sfdx-essentialsprojectcheck-consistency-with-packagexml) | **Check consistency between a SFDX project files and package.xml files** |
 
 # INSTALLATION
 
@@ -45,7 +57,7 @@ Please contribute :)
 
 # UPGRADE
 
-Its seems that sfdx plugins:update and sfdx update does not always work, in that case , uninstall then reinstall the plugin
+Its seems that `sfdx plugins:update` does not always work, in that case , uninstall then reinstall the plugin
 ```
     sfdx plugins:uninstall sfdx-essentials
     sfdx plugins:install sfdx-essentials
@@ -60,313 +72,388 @@ Contributions are very welcome, please run **npm run lint:fix** before making a 
 - Now your calls to sfdx essentials are performed on your local sources 
 - Once your code is ready, documented and linted, please make a pull request :)
 
-# COMMANDS
+# Commands
+<!-- commands -->
+* [`sfdx essentials:metadata:filter-from-packagexml`](#sfdx-essentialsmetadatafilter-from-packagexml)
+* [`sfdx essentials:metadata:filter-xml-content`](#sfdx-essentialsmetadatafilter-xml-content)
+* [`sfdx essentials:metadata:uncomment`](#sfdx-essentialsmetadatauncomment)
+* [`sfdx essentials:mig:fix-aura-attributes-names`](#sfdx-essentialsmigfix-aura-attributes-names)
+* [`sfdx essentials:mig:migrate-object-model`](#sfdx-essentialsmigmigrate-object-model)
+* [`sfdx essentials:packagexml:append`](#sfdx-essentialspackagexmlappend)
+* [`sfdx essentials:packagexml:sort`](#sfdx-essentialspackagexmlsort)
+* [`sfdx essentials:permissionset:generate`](#sfdx-essentialspermissionsetgenerate)
+* [`sfdx essentials:project:change-dependency-version`](#sfdx-essentialsprojectchange-dependency-version)
+* [`sfdx essentials:project:check-consistency-with-packagexml`](#sfdx-essentialsprojectcheck-consistency-with-packagexml)
 
-## `essentials:filter-metadatas`
+## `sfdx essentials:metadata:filter-from-packagexml`
 
 Allows to filter metadatas folder generated by sfdx force:source:convert , using your own package.xml file
 
-This can help if you need to deploy only part of the result of sfdx force:source:convert into a org, by filtering the result (usually in mdapi_output_dir) to keep only the items referenced in your own package.xml file
-
-WARNING: This version does not support all the metadata types yet, please contribute if you are in a hurry :)
-
 ```
 USAGE
-  $ sfdx essentials:filter-metadatas OPTIONS
+  $ sfdx essentials:metadata:filter-from-packagexml
 
 OPTIONS
   -i, --inputfolder=inputfolder    Input folder (default: "." )
   -o, --outputfolder=outputfolder  Output folder (default: filteredMetadatas)
   -p, --packagexml=packagexml      package.xml file path
+  -v, --verbose                    Verbose
 
 DESCRIPTION
-  
-     Package.xml types currently managed:
+  This can help if you need to deploy only part of the result of sfdx force:source:convert into a org, by filtering the 
+  result (usually in mdapi_output_dir) to keep only the items referenced in your own package.xml file
 
-     - ApexClass
-     - ApexComponent
-     - ApexPage
-     - ApexTrigger
-     - ApprovalProcess
-     - AuraDefinitionBundle
-     - AuthProvider
-     - BusinessProcess
-     - ContentAsset
-     - CustomApplication
-     - CustomField
-     - CustomLabel
-     - CustomMetadata
-     - CustomObject
-     - CustomObjectTranslation
-     - CustomSite
-     - CustomTab
-     - Document
-     - EmailTemplate
-     - EscalationRules
-     - FlexiPage
-     - Flow
-     - FieldSet
-     - GlobalValueSet
-     - GlobalValueSetTranslation
-     - HomePageLayout
-     - ListView
-     - LightningComponentBundle
-     - Layout
-     - NamedCredential
-     - Network
-     - NetworkBranding
-     - PermissionSet
-     - Profile
-     - Queue
-     - QuickAction
-     - RecordType
-     - RemoteSiteSetting
-     - Report
-     - SiteDotCom
-     - StandardValueSet
-     - StandardValueSetTranslation
-     - StaticResource
-     - Translations
-     - ValidationRule
-     - WebLink
-     - Workflow
+  WARNING: This version does not support all the metadata types yet, please contribute if you are in a hurry :)
 
-```
+  Package.xml types currently managed:
 
-_See [Metadata / SFDX Correspondance](https://github.com/nvuillam/sfdx-essentials/blob/master/src/common/metadata-utils/index.ts)_
+  - ApexClass
+  - ApexComponent
+  - ApexPage
+  - ApexTrigger
+  - ApprovalProcess
+  - AuraDefinitionBundle
+  - AuthProvider
+  - BusinessProcess
+  - ContentAsset
+  - CustomApplication
+  - CustomField
+  - CustomLabel
+  - CustomMetadata
+  - CustomObject
+  - CustomObjectTranslation
+  - CustomSite
+  - CustomTab
+  - Document
+  - EmailTemplate
+  - EscalationRules
+  - FlexiPage
+  - Flow
+  - FieldSet
+  - GlobalValueSet
+  - GlobalValueSetTranslation
+  - HomePageLayout
+  - ListView
+  - LightningComponentBundle
+  - Layout
+  - NamedCredential
+  - Network
+  - NetworkBranding
+  - PermissionSet
+  - Profile
+  - Queue
+  - QuickAction
+  - RecordType
+  - RemoteSiteSetting
+  - Report
+  - SiteDotCom
+  - StandardValueSet
+  - StandardValueSetTranslation
+  - StaticResource
+  - Translations
+  - ValidationRule
+  - WebLink
+  - Workflow
+
+ALIASES
+  $ sfdx essentials:filter-metadatas
 
 EXAMPLES
-
-```
-  $ sfdx essentials:filter-metadatas -p myPackage.xml
-
-  $ sfdx essentials:filter-metadatas -i md_api_output_dir -p myPackage.xml -o md_api_filtered_output_dir
-
+  $ sfdx essentials:metadata:filter-from-packagexml -p myPackage.xml
+  $ sfdx essentials:metadata:filter-from-packagexml -i md_api_output_dir -p myPackage.xml -o md_api_filtered_output_dir
   $ sfdx force:source:convert -d tmp/deployDemoQuali/
-  $ sfdx essentials:filter-metadatas -i tmp/deployDemoQuali/ -p myPackage.xml -o tmp/deployDemoQualiFiltered/
-  $ sfdx force:mdapi:deploy -d tmp/deployDemoQualiFiltered/ -w 60 -u DemoQuali
-
+  sfdx essentials:metadata:filter-from-packagexml -i tmp/deployDemoQuali/ -p myPackage.xml -o 
+  tmp/deployDemoQualiFiltered/
+  sfdx force:mdapi:deploy -d tmp/deployDemoQualiFiltered/ -w 60 -u DemoQuali
 ```
 
-_See code: [src/commands/essentials/filter-metadatas.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/filter-metadatas.ts)_
+_See code: [src\commands\essentials\metadata\filter-from-packagexml.ts](https://github.com/nvuillam/sfdx-essentials/blob/v1.6.5/src\commands\essentials\metadata\filter-from-packagexml.ts)_
 
-## `essentials:filter-xml-content`
+## `sfdx essentials:metadata:filter-xml-content`
 
 When you perform deployments from one org to another, the features activated in the target org may not fit the content of the sfdx/metadata files extracted from the source org.
 
-You may need to filter some elements in the XML files, for example in the Profiles
-
-This script requires a filter-config.json file following this example
-
 ```
 USAGE
-  $ sfdx essentials:filter-xml-content OPTIONS
+  $ sfdx essentials:metadata:filter-xml-content
 
 OPTIONS
+  -c, --configFile=configFile      Config JSON file path
   -i, --inputfolder=inputfolder    Input folder (default: "." )
-  -o, --outputfolder=outputfolder  Output folder (default: Input Folder + _xml_content_filtered)
-  -p, --configFile=configFile      JSON file containing configuration. Default: filter-config.json
+  -o, --outputfolder=outputfolder  Output folder (default: parentFolder + _xml_content_filtered)
 
-EXAMPLE
-  $ sfdx essentials:filter-xml-content -i "retrieveUnpackaged" 
+DESCRIPTION
+  You may need to filter some elements in the XML files, for example in the Profiles
 
+  This script requires a filter-config.json file following this 
+  [example](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/filter-xml-content-config.json)
+
+ALIASES
+  $ sfdx essentials:filter-xml-content
+
+EXAMPLES
+  sfdx essentials:filter-xml-content -i "./mdapi_output"
+  sfdx essentials:filter-xml-content -i "retrieveUnpackaged"
 ```
 
-_See JSON configuration example: [examples/filter-xml-content-config.json](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/filter-xml-content-config.json)_
+_See code: [src\commands\essentials\metadata\filter-xml-content.ts](https://github.com/nvuillam/sfdx-essentials/blob/v1.6.5/src\commands\essentials\metadata\filter-xml-content.ts)_
 
-_See code: [src/commands/essentials/filter-xml-content.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/filter-xml-content.ts)_
+## `sfdx essentials:metadata:uncomment`
 
-## `essentials:change-dependency-version`
-
-Allows to change an external package dependency version
-
-Can also :
-
-- remove package dependencies if --namespace and --remove arguments are sent 
-- update API version
+Uncomment desired lines just before making a deployment
 
 ```
 USAGE
-  $ sfdx essentials:change-dependency-version OPTIONS
+  $ sfdx essentials:metadata:uncomment
 
 OPTIONS
   -f, --folder=folder              SFDX project folder containing files
-  -j, --majorversion=majorversion  Major version
-  -m, --minorversion=minorversion  Minor version
-  -n, --namespace=namespace        Namespace of the managed package
-  -a, --apiversion=apiversion      API Version
-  -r, --remove                     Remove package dependency
+  -k, --uncommentKey=uncommentKey  Uncomment key (default: SFDX_ESSENTIALS_UNCOMMENT)
+  -v, --verbose                    Verbose
 
-EXAMPLES
-  $ sfdx essentials:change-dependency-version -n FinServ -j 214 -m 7
+DESCRIPTION
+  Once you flagged a packaged method as **@Deprecated** , you can not deploy it in an org not used for generating a 
+  managed package
 
-  $ sfdx essentials:change-dependency-version -n FinServ -r
+  Before :
+  // @Deprecated SFDX_ESSENTIALS_UNCOMMENT
+  global static List<OrgDebugOption__c> setDebugOption() {
+     return null;
+  }
 
-  $ sfdx essentials:change-dependency-version -a 47.0
+  After :
+  @Deprecated // Uncommented by sfdx essentials:uncomment (https://github.com/nvuillam/sfdx-essentials)
+  global static List<OrgDebugOption__c> setDebugOption() {
+     return null;
+  }
+
+ALIASES
+  $ sfdx essentials:uncomment
+
+EXAMPLE
+  $ sfdx essentials:metadata:uncomment --folder "./Projects/DevRootSource/tmp/deployPackagingDxcDevFiltered" 
+  --uncommentKey "SFDX_ESSENTIALS_UNCOMMENT_DxcDev_"
 ```
 
-_See code: [src/commands/essentials/change-dependency-version.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/change-dependency-version.ts)_
+_See code: [src\commands\essentials\metadata\uncomment.ts](https://github.com/nvuillam/sfdx-essentials/blob/v1.6.5/src\commands\essentials\metadata\uncomment.ts)_
 
-## `essentials:fix-lightning-attributes-names`
+## `sfdx essentials:mig:fix-aura-attributes-names`
 
 If you named a lightning attribute like a custom apex class, since Summer 18 you simply can not generate a managed package again.
 
-This command lists all custom apex classes and custom objects names , then replaces all their references in lightning components and also in apex classes with their camelCase version.
-
-Ex : MyClass_x attribute would be renamed myClassX
-
 ```
 USAGE
-  $ sfdx essentials:fix-lightning-attributes-names OPTIONS
+  $ sfdx essentials:mig:fix-aura-attributes-names
 
 OPTIONS
-  -f, --folder=folder              SFDX project folder containing files (usually 'force-app/main/default'). Default : '.'
+  -f, --folder=folder  SFDX project folder containing files
+
+DESCRIPTION
+  This command lists all custom apex classes and custom objects names , then replaces all their references in lightning 
+  components and also in apex classes with their camelCase version.
+
+     Ex : MyClass_x attribute would be renamed myClassX
+
+ALIASES
+  $ sfdx essentials:fix-lightning-attribute-names
 
 EXAMPLE
-  $ sfdx essentials:fix-lightning-attributes-names 
+  sfdx essentials:mig:fix-aura-attributes-names
 ```
 
-_See code: [src/commands/essentials/fix-lightning-attributes-names.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/fix-lightning-attributes-names.ts)_
+_See code: [src\commands\essentials\mig\fix-aura-attributes-names.ts](https://github.com/nvuillam/sfdx-essentials/blob/v1.6.5/src\commands\essentials\mig\fix-aura-attributes-names.ts)_
 
-## `essentials:uncomment`
-
-Once you flagged a packaged method as **@Deprecated** , you can not deploy it in an org not used for generating a managed package
-
-This commands allows to uncomment desired lines just before making a deployment
-
-Before :
-
-``` 
-// @Deprecated SFDX_ESSENTIALS_UNCOMMENT
-global static List<OrgDebugOption__c> setDebugOption() {
-	return null;
-}
-```
-
-After :
-
-```
-@Deprecated // Uncommented by sfdx essentials:uncomment (https://github.com/nvuillam/sfdx-essentials)
-global static List<OrgDebugOption__c> setDebugOption() {
-	return null;
-}
-```
-
-```
-USAGE
-  $ sfdx essentials:uncomment OPTIONS
-
-OPTIONS
-  -f, --folder=folder              SFDX project folder containing files (usually 'force-app/main/default'). Default : '.'
-  -k, --uncommentKey=someString              Uncomment key. Default : 'SFDX_ESSENTIALS_UNCOMMENT'
-
-
-EXAMPLE
-  $ sfdx essentials:uncomment --folder "./Projects/DevRootSource/tmp/deployPackagingDxcDevFiltered" --uncommentKey "SFDX_ESSENTIALS_UNCOMMENT_DxcDev_"
-```
-
-_See code: [src/commands/essentials/uncomment.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/uncomment.ts)_
-
-## `essentials:check-sfdx-project-consistency`
-
-Allows to compare the content of a SFDX and the content of one or several package.xml files ( append, if several )
-
-```
-USAGE
-  $ sfdx essentials:check-sfdx-project-consistency OPTIONS
-
-OPTIONS
-  -p, --packageXmlList=someString                   List of package.xml files path
-  -i, --inputfolder=someString                      SFDX Project folder . Default : '.'
-  -d, --ignoreDuplicateTypes=someString             List of types to ignore while checking for duplicates in package.xml files
-  -f, --failIfError                                 Script failing if errors are founds. Default: false
-  -c, --chatty                                      Chatty logs. Default: false
-  -j, --jsonLogging                                 JSON logs. Default: false                              
-
-EXAMPLE
-  $  sfdx essentials:check-sfdx-project-consistency -p "./Config/packageXml/package_DevRoot_Managed.xml,./Config/packageXml/package_DevRoot_xDemo.xml" -i "./Projects/DevRootSource/force-app/main/default" -d "Document,EmailTemplate" --failIfError
-```
-_See log example: [src/commands/essentials/examples/check-sfdx-project-consistency.log](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/check-sfdx-project-consistency.log)_
-
-_See code: [src/commands/essentials/check-sfdx-project-consistency.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/check-sfdx-project-consistency.ts)_
-
-![Check SFDX project consistency log image](https://github.com/nvuillam/sfdx-essentials/raw/master/examples/check-sfdx-project-consistency-log.png "Check SFDX project consistency log image")
-
-## `essentials:generate-permission-sets`
-
-Allows to generate permission sets in XML format used for SFDX project from package.xml file depending on JSON configuration file 
-
-```
-USAGE
-  $ sfdx essentials:generate-permission-sets OPTIONS
-
-OPTIONS
-  -c, --configFile=configFile              JSON configuration file that will be used in order to generate permission sets
-  -p, --packageXml=someString              package.xml file that will be used in order to generate permission sets
-  -f, --sfdxSourcesFolder=someString       SFDX Sources folder (used to filter required and masterDetail fields)
-  -s, --nameSuffix=someString              If provided, suffix string appended to file name, label and description of generated PS
-  -o, --outputfolder=someString            Output folder for PS files (default: '.')
-  -v, --verbose                            Display more logs           
-
-EXAMPLES
-  $  sfdx essentials:generate-permission-sets -c "./Config/generate-permission-sets.json" -p "./Config/packageXml/package_DevRoot_Managed.xml" -f "./Projects/DevRootSource/force-app/main/default" -o "./Projects/DevRootSource/force-app/main/default/permissionsets"
-
-  $  sfdx essentials:generate-permission-sets -c "./Config/generate-permission-sets.json" -p "./Config/packageXml/package_DevRoot_xDemo.xml" -f "./Projects/DevRootSource/force-app/main/default" --nameSuffix Custom -o "./Projects/DevRootSource/force-app/main/default/permissionsets"
-```
-
-_See JSON configuration example: [examples/generate-permission-sets-config.json](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/generate-permission-sets-config.json)_
-
-_See log example: [src/commands/essentials/examples/generate-permission-sets.log](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/generate-permission-sets.log)_
-
-_See code: [src/commands/essentials/generate-permission-sets.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/generate-permission-sets.ts)_
-
-![Generate permission sets log image](https://github.com/nvuillam/sfdx-essentials/raw/master/examples/generate-permission-sets-log.png "Generate permission sets log image")
-
-## `essentials:migrate-object-model`
+## `sfdx essentials:mig:migrate-object-model`
 
 Use this command if you need to replace a SObject by another one in all your sfdx sources
 
 ```
 USAGE
-  $ sfdx essentials:migrate-object-model OPTIONS
+  $ sfdx essentials:mig:migrate-object-model
 
 OPTIONS
-  -c, --configFile=configFile              JSON configuration file 
-  -i, --inputFolder=someString              Input folder (default: "." )
-  -f, --fetchExpressionList     Fetch expression list. Let default if you dont know. ex: /aura/**/*.js,./aura/**/*.cmp,./classes/*.cls,./objects/*/fields/*.xml,./objects/*/recordTypes/*.xml,./triggers/*.trigger,./permissionsets/*.xml,./profiles/*.xml,./staticresources/*.json'
-  -r, --replaceExpressions       Replace expressions using fetchExpressionList. default: true
-  -d, --deleteFiles     Delete files with deprecated references. default: true
-  -k, --deleteFilesExpr     Delete files matching expression. default: true
-  -s, --copySfdxProjectFolder   Copy sfdx project files after process. default: true
-  -v, --verbose   Verbose
+  -c, --configFile=configFile                    JSON config file
+  -d, --[no-]deleteFiles                         Delete files with deprecated references
+
+  -f, --fetchExpressionList=fetchExpressionList  Fetch expression list. Let default if you dont know. ex:
+                                                 /aura/**/*.js,./aura/**/*.cmp,./classes/*.cls,./objects/*/fields/*.xml,
+                                                 ./objects/*/recordTypes/*.xml,./triggers/*.trigger,./permissionsets/*.x
+                                                 ml,./profiles/*.xml,./staticresources/*.json
+
+  -i, --inputFolder=inputFolder                  Input folder (default: "." )
+
+  -k, --[no-]deleteFilesExpr                     Delete files matching expression
+
+  -r, --[no-]replaceExpressions                  Replace expressions using fetchExpressionList
+
+  -s, --[no-]copySfdxProjectFolder               Copy sfdx project files after process
+
+  -v, --verbose                                  Verbose
+
+ALIASES
+  $ sfdx essentials:migrate-object-model
 
 EXAMPLES
-  $ sfdx essentials:migrate-object-model -c "./config/migrate-object-model-config.json"
-
-  $ sfdx essentials:migrate-object-model -c migration/config-to-oem.json -i Config/packageXml --fetchExpressionList "./package*.xml" --no-deleteFiles --no-deleteFilesExpr --no-copySfdxProjectFolder
+  $ sfdx essentials:mig:migrate-object-model -c "./config/migrate-object-model-config.json"
+  $ sfdx essentials:mig:migrate-object-model -c migration/config-to-oem.json -i Config/packageXml --fetchExpressionList 
+  "./package*.xml" --no-deleteFiles --no-deleteFilesExpr --no-copySfdxProjectFolder
 ```
 
-_See JSON configuration example: [examples/migrate-object-model-config.json](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/migrate-object-model-config.json)_
+_See code: [src\commands\essentials\mig\migrate-object-model.ts](https://github.com/nvuillam/sfdx-essentials/blob/v1.6.5/src\commands\essentials\mig\migrate-object-model.ts)_
 
-_See code: [src/commands/essentials/migrate-object-model.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/migrate-object-model.ts)_
+## `sfdx essentials:packagexml:append`
 
-## `essentials:order-package-xml`
-
-Developers have the bad habit to input package.xml files in a non-alphabetical order. 
-
-Use this command to reorder alphabetically your package.xml files !
+Append content of a package.xml files into a single one
 
 ```
 USAGE
-  $ sfdx essentials:order-package-xml OPTIONS
+  $ sfdx essentials:packagexml:append
 
 OPTIONS
-  -p, --packagexml=folderOrFile                Path to package.xml file, or folder containing package.xml files ( *.xml are processed)
+  -o, --outputfile=outputfile    package.xml output file
+  -p, --packagexmls=packagexmls  package.xml files path (separated by commas)
+  -v, --verbose                  Verbose
 
-EXAMPLES
-  $ sfdx essentials:order-package-xml -p "./Config/packageXml/package.xml"
+DESCRIPTION
+  API version number of the result file will be the same than in the first package.xml file sent as argument
 
-  $ sfdx essentials:order-package-xml -p "./Config/packageXml"
+EXAMPLE
+  sfdx essentials:packagexml:append -p 
+  "./Config/packageXml/package_DevRoot_Managed.xml,./Config/packageXml/package_DevRoot_Demo.xml,./Config/packageXml/pack
+  age_DevRoot_Scratch.xml" -o "./Config/packageXml/package_for_new_scratch_org.xml"
 ```
 
-_See code: [src/commands/essentials/order-package-xml.ts](https://github.com/nvuillam/sfdx-essentials/blob/master/src/commands/essentials/order-package-xml.ts)_
+_See code: [src\commands\essentials\packagexml\append.ts](https://github.com/nvuillam/sfdx-essentials/blob/v1.6.5/src\commands\essentials\packagexml\append.ts)_
+
+## `sfdx essentials:packagexml:sort`
+
+Developers have the bad habit to input package.xml files in a non-alphabetical order. Use this command to reorder alphabetically your package.xml files !
+
+```
+USAGE
+  $ sfdx essentials:packagexml:sort
+
+OPTIONS
+  -p, --packagexml=packagexml  package.xml file path (or a folder containing package.xml files)
+
+ALIASES
+  $ sfdx essentials:order-package-xml
+  $ sfdx essentials:packagexml:reorder
+
+EXAMPLES
+  $ sfdx essentials:packagexml:sort -p "./Config/packageXml/package.xml"
+  $ sfdx essentials:packagexml:sort -p "./Config/packageXml"
+```
+
+_See code: [src\commands\essentials\packagexml\sort.ts](https://github.com/nvuillam/sfdx-essentials/blob/v1.6.5/src\commands\essentials\packagexml\sort.ts)_
+
+## `sfdx essentials:permissionset:generate`
+
+Generate permission sets in XML format used for SFDX project from package.xml file depending on JSON configuration file
+
+```
+USAGE
+  $ sfdx essentials:permissionset:generate
+
+OPTIONS
+  -c, --configfile=configfile                config.json file
+  -f, --sfdxSourcesFolder=sfdxSourcesFolder  SFDX Sources folder (used to filter required and masterDetail fields)
+  -o, --outputfolder=outputfolder            [default: .] Output folder (default: "." )
+  -p, --packagexml=packagexml                package.xml file path
+  -s, --nameSuffix=nameSuffix                Name suffix for generated permission sets
+  -v, --verbose                              Verbose
+
+ALIASES
+  $ sfdx essentials:generate-permission-sets
+
+EXAMPLES
+  $ sfdx essentials:permissionset:generate -c "./Config/generate-permission-sets.json" -p 
+  "./Config/packageXml/package_DevRoot_Managed.xml" -f "./Projects/DevRootSource/force-app/main/default" -o 
+  "./Projects/DevRootSource/force-app/main/default/permissionsets"
+  $ sfdx essentials:permissionset:generate -c "./Config/generate-permission-sets.json" -p 
+  "./Config/packageXml/package_DevRoot_xDemo.xml" -f "./Projects/DevRootSource/force-app/main/default" --nameSuffix 
+  Custom -o "./Projects/DevRootSource/force-app/main/default/permissionsets"
+```
+
+_See code: [src\commands\essentials\permissionset\generate.ts](https://github.com/nvuillam/sfdx-essentials/blob/v1.6.5/src\commands\essentials\permissionset\generate.ts)_
+
+## `sfdx essentials:project:change-dependency-version`
+
+Allows to change an external package dependency version, or update api version
+
+```
+USAGE
+  $ sfdx essentials:project:change-dependency-version
+
+OPTIONS
+  -a, --apiversion=apiversion      If sent, updates api version
+  -f, --folder=folder              SFDX project folder containing files
+  -j, --majorversion=majorversion  Major version
+  -m, --minorversion=minorversion  Minor version
+  -n, --namespace=namespace        Namespace of the managed package
+  -r, --remove                     Verbose
+  -v, --verbose                    Verbose
+
+DESCRIPTION
+  Can also :
+
+     - remove package dependencies if --namespace and --remove arguments are sent
+     - update API version
+
+ALIASES
+  $ sfdx essentials:change-dependency-version
+  $ sfdx essentials:change-api-version
+  $ sfdx essentials:project:change-api-version
+
+EXAMPLES
+  $ sfdx essentials:change-dependency-version -n FinServ -j 214 -m 7
+  $ sfdx essentials:change-dependency-version -n FinServ -r
+  $ sfdx essentials:change-dependency-version -a 47.0
+```
+
+_See code: [src\commands\essentials\project\change-dependency-version.ts](https://github.com/nvuillam/sfdx-essentials/blob/v1.6.5/src\commands\essentials\project\change-dependency-version.ts)_
+
+## `sfdx essentials:project:check-consistency-with-packagexml`
+
+Allows to compare the content of a SFDX and the content of one or several package.xml files ( append, if several )
+
+```
+USAGE
+  $ sfdx essentials:project:check-consistency-with-packagexml
+
+OPTIONS
+  -c, --chatty                                     Chatty logs
+
+  -d, --ignoreDuplicateTypes=ignoreDuplicateTypes  List of types to ignore while checking for duplicates in package.xml
+                                                   files
+
+  -f, --failIfError                                Script failing if errors are founds
+
+  -i, --inputfolder=inputfolder                    SFDX Project folder (default: "." )
+
+  -j, --jsonLogging                                JSON logs
+
+  -p, --packageXmlList=packageXmlList              List of package.xml files path
+
+DESCRIPTION
+  This will output a table with the number of elements :
+
+     - Existing in both SFDX Project files and package.xml file(s)
+     - Existing only in SFDX Project files
+     - Existing only in package.xml file(s)
+
+     ![Check SFDX project consistency log 
+  image](https://github.com/nvuillam/sfdx-essentials/raw/master/examples/check-sfdx-project-consistency-log.png "Check 
+  SFDX project consistency log image")
+
+ALIASES
+  $ sfdx essentials:check-sfdx-project-consistency
+
+EXAMPLE
+  $  sfdx essentials:check-sfdx-project-consistency -p 
+  "./Config/packageXml/package_DevRoot_Managed.xml,./Config/packageXml/package_DevRoot_xDemo.xml" -i 
+  "./Projects/DevRootSource/force-app/main/default" -d "Document,EmailTemplate" --failIfError
+```
+
+_See code: [src\commands\essentials\project\check-consistency-with-packagexml.ts](https://github.com/nvuillam/sfdx-essentials/blob/v1.6.5/src\commands\essentials\project\check-consistency-with-packagexml.ts)_
+<!-- commandsstop -->

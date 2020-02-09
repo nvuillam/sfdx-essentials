@@ -7,9 +7,21 @@ import { MetadataUtils } from '../../../common/metadata-utils';
 
 export default class CheckConsistencyWithPackageXml extends Command {
 
-  public static description = '';
+  public static aliases = ['essentials:check-sfdx-project-consistency'];
 
-  public static examples = [];
+  public static description = `Allows to compare the content of a SFDX and the content of one or several package.xml files ( append, if several )
+
+  This will output a table with the number of elements :
+
+  - Existing in both SFDX Project files and package.xml file(s)
+  - Existing only in SFDX Project files
+  - Existing only in package.xml file(s)
+
+  ![Check SFDX project consistency log image](https://github.com/nvuillam/sfdx-essentials/raw/master/examples/check-sfdx-project-consistency-log.png "Check SFDX project consistency log image")
+  `;
+
+  public static examples = [
+    '$  sfdx essentials:check-sfdx-project-consistency -p "./Config/packageXml/package_DevRoot_Managed.xml,./Config/packageXml/package_DevRoot_xDemo.xml" -i "./Projects/DevRootSource/force-app/main/default" -d "Document,EmailTemplate" --failIfError'];
 
   public static args = [];
 
@@ -23,7 +35,6 @@ export default class CheckConsistencyWithPackageXml extends Command {
     chatty: flags.boolean({ char: 'c', default: false, description: 'Chatty logs' }) as unknown as flags.IOptionFlag<boolean>,
     jsonLogging: flags.boolean({ char: 'j', default: false, description: 'JSON logs' }) as unknown as flags.IOptionFlag<boolean>
   };
-  public aliases = ['essentials:check-sfdx-project-consistency'];
 
   // Input params properties
   public packageXmlFileList: string[];
@@ -47,6 +58,9 @@ export default class CheckConsistencyWithPackageXml extends Command {
 
   // Runtime methods
   public async run() {
+
+    console.log(this.config);
+
     // tslint:disable-next-line:no-shadowed-variable
     const { flags } = this.parse(CheckConsistencyWithPackageXml);
 

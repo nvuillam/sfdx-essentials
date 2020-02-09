@@ -8,10 +8,18 @@ import EssentialsUtils = require('../../../common/essentials-utils');
 export default class ProjectChangeDependencyVersion extends Command {
   public static aliases = ['essentials:change-dependency-version', 'essentials:change-api-version', 'essentials:project:change-api-version'];
 
-  public static description = `
+  public static description = `Allows to change an external package dependency version, or update api version
+
+  Can also :
+
+  - remove package dependencies if --namespace and --remove arguments are sent
+  - update API version
    `;
 
   public static examples = [
+    '$ sfdx essentials:change-dependency-version -n FinServ -j 214 -m 7',
+    '$ sfdx essentials:change-dependency-version -n FinServ -r',
+    '$ sfdx essentials:change-dependency-version -a 47.0'
   ];
 
   public static flags = {

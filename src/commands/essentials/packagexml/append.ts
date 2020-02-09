@@ -2,9 +2,13 @@ import { Command, flags } from '@oclif/command';
 import { EssentialsUtils } from '../../../common/essentials-utils';
 
 export default class PackageXmlAppend extends Command {
-    public static description = '';
+    public static description = `Append content of a package.xml files into a single one
 
-    public static examples = [];
+API version number of the result file will be the same than in the first package.xml file sent as argument`;
+
+    public static examples = [
+        'sfdx essentials:packagexml:append -p "./Config/packageXml/package_DevRoot_Managed.xml,./Config/packageXml/package_DevRoot_Demo.xml,./Config/packageXml/package_DevRoot_Scratch.xml" -o "./Config/packageXml/package_for_new_scratch_org.xml"'
+    ];
 
     public static flags = {
         // flag with a value (-n, --name=VALUE)

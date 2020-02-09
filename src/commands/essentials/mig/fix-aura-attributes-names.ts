@@ -3,9 +3,15 @@ import { Command, flags } from '@oclif/command';
 export default class FixAuraAttributeNames extends Command {
   public static aliases = ['essentials:fix-lightning-attribute-names'];
 
-  public static description = '';
+  public static description = `If you named a lightning attribute like a custom apex class, since Summer 18 you simply can not generate a managed package again.
 
-  public static examples = [];
+  This command lists all custom apex classes and custom objects names , then replaces all their references in lightning components and also in apex classes with their camelCase version.
+
+  Ex : MyClass_x attribute would be renamed myClassX`;
+
+  public static examples = [
+    'sfdx essentials:mig:fix-aura-attributes-names'
+  ];
 
   public static flags = {
     folder: flags.string({ char: 'f', description: 'SFDX project folder containing files' })

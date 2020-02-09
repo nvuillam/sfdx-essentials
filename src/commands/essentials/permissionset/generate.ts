@@ -9,9 +9,16 @@ import { MetadataUtils } from '../../../common/metadata-utils';
 
 export default class PermissionSetGenerate extends Command {
     public static aliases = ['essentials:generate-permission-sets'];
-    public static description = '';
-    public static examples = [];
+
+    public static description = 'Generate permission sets in XML format used for SFDX project from package.xml file depending on JSON configuration file';
+
+    public static examples = [
+        '$ sfdx essentials:permissionset:generate -c "./Config/generate-permission-sets.json" -p "./Config/packageXml/package_DevRoot_Managed.xml" -f "./Projects/DevRootSource/force-app/main/default" -o "./Projects/DevRootSource/force-app/main/default/permissionsets"',
+        '$ sfdx essentials:permissionset:generate -c "./Config/generate-permission-sets.json" -p "./Config/packageXml/package_DevRoot_xDemo.xml" -f "./Projects/DevRootSource/force-app/main/default" --nameSuffix Custom -o "./Projects/DevRootSource/force-app/main/default/permissionsets"'
+    ];
+
     public static args = [];
+
     public static flags = {
         // Flag with a value (-n, --name=VALUE)
         configfile: flags.string({ char: 'c', description: 'config.json file' }),
