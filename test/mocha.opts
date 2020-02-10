@@ -1,5 +1,5 @@
 --require test/helpers/init.js
---require ts-node/register
+--require ts-node/register/type-check
 --require source-map-support/register
 --watch-extensions ts
 --recursive
