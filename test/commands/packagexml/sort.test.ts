@@ -11,7 +11,7 @@ describe('essentials:packagexml:sort', () => {
         });
 });
 
-describe('essentials:order-package-xml', () => {
+describe('(alias) essentials:order-package-xml', () => {
     test
         .stdout()
         .command(['essentials:order-package-xml',
@@ -22,7 +22,7 @@ describe('essentials:order-package-xml', () => {
         });
 });
 
-describe('essentials:packagexml:reorder', () => {
+describe('(alias) essentials:packagexml:reorder', () => {
     test
         .stdout()
         .command(['essentials:packagexml:reorder',

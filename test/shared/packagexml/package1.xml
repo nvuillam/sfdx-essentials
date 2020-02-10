@@ -117,7 +117,6 @@
   </types>
   <types>
     <members>Account.Distributor</members>
-    <members>Event.Insurance</members>
     <name>RecordType</name>
   </types>
   <types>
@@ -134,7 +133,6 @@
     <members>leafletGeosearch</members>
     <members>leafletProviders</members>
     <members>momentJS</members>
-    <members>MomentJS_allLocale</members>
     <name>StaticResource</name>
   </types>
   <types>

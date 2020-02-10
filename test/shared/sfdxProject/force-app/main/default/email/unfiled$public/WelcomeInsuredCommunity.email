@@ -1,0 +1,32 @@
+<messaging:emailTemplate subject="Welcome to DXC Omnichannel for Salesforce !" 
+                         recipientType="Contact" relatedToType="User" 
+                         language="{!relatedTo.LanguageLocaleKey}">
+        <messaging:htmlEmailBody >
+                <html>
+            <body>
+                <STYLE type="text/css">
+                    TH {font-size: 11px; font-face: arial;background: #CCCCCC; border-width: 1;  text-align: center } 
+                    TD  {font-size: 11px; font-face: verdana } 
+                    TABLE {border: solid #CCCCCC; border-width: 1}
+                    TR {border: solid #CCCCCC; border-width: 1}
+                </STYLE>
+                <font face="arial" size="2">
+ {!$Label.email_welcome_insured_1} {!recipient.FirstName}, <br/>
+<br/>
+{!$Label.email_welcome_insured_2} <br/>
+<br/>
+{!$Label.email_welcome_insured_3}<br/>
+<br/>
+{!$Label.email_welcome_insured_4} <br/>
+{!$Network.NetworkUrlForUserEmails} <br/>
+<br/>
+<!--{!$Label.email_welcome_insured_5} {!recipient.User.Username} <br/>
+<br/> -->
+Thanks, <br/>
+<br/>
+DXC.technology<br/>
+</font>
+</body>
+</html>
+    </messaging:htmlEmailBody> 
+</messaging:emailTemplate>

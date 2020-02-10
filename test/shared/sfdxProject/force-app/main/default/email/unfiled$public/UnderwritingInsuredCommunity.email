@@ -1,0 +1,48 @@
+<messaging:emailTemplate subject="Risk Review Questionnaire" recipientType="Contact" relatedToType="Questionnaire__c" language="en_US">
+    <messaging:htmlEmailBody >
+        <html>
+            <body>
+                <STYLE type="text/css">TH     {font-size: 11px; font-face: arial; background: #CCCCCC; border-width: 1; text-align: right} 
+                    TD     {font-size: 11px; font-face: verdana } 
+                    TABLE  {border: solid #CCCCCC; border-width: 1}
+                    TR     {border: solid #CCCCCC; border-width: 1}</STYLE>
+                <font face="arial" size="2">
+                    <img src="https://efficiency-flow-7014-dev-ed--c.cs85.content.force.com/servlet/servlet.ImageServer?id=0156E000000LbkK&oid=00D6E0000008usc&lastMod=1528722264000" width="100%" alt="Logo"/>
+                    <br/>
+                    <br/>
+                    <span>
+                        <div style="float: left; font-size: 12px; font-face: arial">
+                            <b>Date : </b>
+                        </div>
+                        <apex:outputText value="{0, date, dd/MM/yyyy HH:mm}">
+                            <apex:param value="{!relatedTo.CreatedDate}"/>
+                        </apex:outputText>
+                        <div style="float: right; font-size: 12px; font-face: arial">
+                            <b>{!$Label.Reference} N° : </b>{!relatedTo.Name}
+                        </div>
+                    </span>
+                    <br/>
+                    <br/>
+                    <br/>
+                     <div style="font-size: 12px; font-face: arial; border-width: 1; text-align: justify">{!$Label.Dear} {!relatedTo.InsuranceContract__r.Owner__r.FirstName},
+                        <br/>
+                        <br/>{!$Label.email_underwriting_1}
+                        <br/>
+                        <br/>{!$Label.email_welcome_insured_4}
+                        <a href="{!relatedTo.ExternalURI__c}">{!$Label.OnlineQuestionnaire}</a>
+                        <br/>
+                        <br/>{!$Label.ThankYou},
+                        <br/>DXC.technology {!$Label.for} COVEA
+                        <br/>
+                        <img src="https://efficiency-flow-7014-dev-ed--c.cs85.content.force.com/servlet/servlet.ImageServer?id=0156E000000Lblm&oid=00D6E0000008usc&lastMod=1528726339000" width="10%" alt="Logo"/>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <span face="arial" size="2" style="font-style:italic;font-size:10px;text-align:justify">DXC Technology Company -- This message is transmitted to you by or on behalf of DXC Technology Company or one of its affiliates. It is intended exclusively for the addressee. The substance of this message, along with any attachments, may contain proprietary, confidential or privileged information or information that is otherwise legally exempt from disclosure. Any unauthorized review, use, disclosure or distribution is prohibited. If you are not the intended recipient of this message, you are not authorized to read, print, retain, copy or disseminate any part of this message. If you have received this message in error, please destroy and delete all copies and notify the sender by return e-mail. Regardless of content, this e-mail shall not operate to bind DXC Technology Company or any of its affiliates to any order or other contract unless pursuant to explicit written agreement or government initiative expressly permitting the use of e-mail for such purpose.</span>
+                        <br/>
+                    </div>
+                </font>
+            </body>
+        </html>
+    </messaging:htmlEmailBody>
+</messaging:emailTemplate>

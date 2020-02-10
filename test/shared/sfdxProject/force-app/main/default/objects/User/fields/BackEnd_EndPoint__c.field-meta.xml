@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>BackEnd_EndPoint__c</fullName>
+    <description>DO NOT PACKAGE
+Flag targetting AIA endpoint to use</description>
+    <externalId>false</externalId>
+    <inlineHelpText>DO NOT PACKAGE
+Flag targetting AIA endpoint to use</inlineHelpText>
+    <label>AIA_EndPoint</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>V5Build</fullName>
+                <default>false</default>
+                <label>V5Build</label>
+            </value>
+            <value>
+                <fullName>V5Prod</fullName>
+                <default>false</default>
+                <label>V5Prod</label>
+            </value>
+            <value>
+                <fullName>AIA MMORA</fullName>
+                <default>false</default>
+                <label>AIA MMORA</label>
+            </value>
+            <value>
+                <fullName>V5Dev</fullName>
+                <default>false</default>
+                <label>V5Dev</label>
+            </value>
+            <value>
+                <fullName>DIAAS_API_Connect</fullName>
+                <default>false</default>
+                <label>DIAAS_API_Connect</label>
+            </value>
+            <value>
+                <fullName>V5Prod_DEMO4</fullName>
+                <default>false</default>
+                <label>V5Prod_DEMO4</label>
+            </value>
+            <value>
+                <fullName>OC4SF_DEMO_BPOC</fullName>
+                <default>false</default>
+                <label>OC4SF_DEMO_BPOC</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>
