@@ -1,4 +1,9 @@
 import { Command, flags } from '@oclif/command';
+import * as fs from 'fs';
+import * as fse from 'fs-extra';
+import * as path from 'path';
+import * as util from 'util';
+import * as xml2js from 'xml2js';
 
 export default class MetadataFilterXmlContent extends Command {
   public static aliases = ['essentials:filter-xml-content'];
@@ -30,12 +35,7 @@ This script requires a filter-config.json file`;
   public outputFolder;
 
   // Internal properties
-  public fs = require('fs');
-  public fse = require('fs-extra');
-  public xml2js = require('xml2js');
-  public util = require('util');
-  public path = require('path');
-  public metadataUtils = require('../../common/metadata-utils');
+
   public smmryUpdatedFiles = {};
   public smmryResult = { filterResults: {} };
 
@@ -47,36 +47,35 @@ This script requires a filter-config.json file`;
     // Get input arguments or default values
     this.configFile = flags.configFile || './filter-config.json';
     this.inputFolder = flags.inputfolder || '.';
-    this.outputFolder = flags.outputfolder || './' + this.path.dirname(this.inputFolder) + '/' + this.path.basename(this.inputFolder) + '_xml_content_filtered';
+    this.outputFolder = flags.outputfolder || './' + path.dirname(this.inputFolder) + '/' + path.basename(this.inputFolder) + '_xml_content_filtered';
     this.log(`Initialize XML content filtering of ${this.inputFolder} ,using ${this.configFile} , into ${this.outputFolder}`);
 
     // Read json config file
-    const filterConfig = this.fse.readJsonSync(this.configFile);
+    const filterConfig = fse.readJsonSync(this.configFile);
     console.log('Config file content:');
-    console.log(this.util.inspect(filterConfig, false, null));
+    console.log(util.inspect(filterConfig, false, null));
 
     // Create output folder/empty it if existing
-    if (this.fs.existsSync(this.outputFolder)) {
+    if (fs.existsSync(this.outputFolder)) {
       console.log('Empty output folder ' + this.outputFolder);
-      this.fse.emptyDirSync(this.outputFolder);
+      fse.emptyDirSync(this.outputFolder);
     } else {
       console.log('Create output folder ' + this.outputFolder);
-      this.fs.mkdirSync(this.outputFolder);
+      fs.mkdirSync(this.outputFolder);
     }
 
     // Copy input folder to output folder
     console.log('Copy in output folder ' + this.outputFolder);
-    this.fse.copySync(this.inputFolder, this.outputFolder);
+    fse.copySync(this.inputFolder, this.outputFolder);
 
     // Browse filters
-    const self = this;
     filterConfig.filters.forEach(filter => {
       console.log(filter.name + ' (' + filter.description + ')');
       // Browse filter folders
       filter.folders.forEach(filterFolder => {
 
         // Browse folder files
-        const folderFiles = self.fs.readdirSync(self.outputFolder + '/' + filterFolder);
+        const folderFiles = fs.readdirSync(this.outputFolder + '/' + filterFolder);
         folderFiles.forEach(file => {
           // Build file name
           const fpath = file.replace(/\\/g, '/');
@@ -84,9 +83,9 @@ This script requires a filter-config.json file`;
           filter.file_extensions.forEach(filterFileExt => {
             if (browsedFileExtension === filterFileExt) {
               // Found a matching file, process it
-              const fullFilePath = self.outputFolder + '/' + filterFolder + '/' + fpath;
+              const fullFilePath = this.outputFolder + '/' + filterFolder + '/' + fpath;
               console.log('- ' + fullFilePath);
-              self.filterXmlFromFile(filter, fullFilePath);
+              this.filterXmlFromFile(filter, fullFilePath);
             }
           });
         });
@@ -103,18 +102,17 @@ This script requires a filter-config.json file`;
 
   // Filter XML content of the file
   public filterXmlFromFile(filter, file) {
-    const parser = new this.xml2js.Parser();
-    const builder = new this.xml2js.Builder();
-    const self = this;
-    const data = this.fs.readFileSync(file);
+    const parser = new xml2js.Parser();
+    const builder = new xml2js.Builder();
+    const data = fs.readFileSync(file);
     parser.parseString(data, (err2, fileXmlContent) => {
-      console.log('Parsed XML \n' + self.util.inspect(fileXmlContent, false, null));
+      console.log('Parsed XML \n' + util.inspect(fileXmlContent, false, null));
       Object.keys(fileXmlContent).forEach(eltKey => {
-        fileXmlContent[eltKey] = self.filterElement(fileXmlContent[eltKey], filter, file);
+        fileXmlContent[eltKey] = this.filterElement(fileXmlContent[eltKey], filter, file);
       });
-      if (self.smmryUpdatedFiles[file] != null && self.smmryUpdatedFiles[file].updated === true) {
+      if (this.smmryUpdatedFiles[file] != null && this.smmryUpdatedFiles[file].updated === true) {
         const updatedObjectXml = builder.buildObject(fileXmlContent);
-        self.fs.writeFileSync(file, updatedObjectXml);
+        fs.writeFileSync(file, updatedObjectXml);
         console.log('Updated ' + file);
       }
     });

@@ -45,12 +45,12 @@ describe('essentials:project:change-dependency-version (change api version)', ()
 describe('(alias) essentials:change-dependency-version (change api version)', () => {
     test
         .stdout()
-        .command(['essentials:project:change-dependency-version',
+        .command(['essentials:change-dependency-version',
             '-f', 'test/shared/sfdxProject/force-app/main/default',
             '-a', '46.0'
         ]
         )
-        .it('runs essentials:project:change-dependency-version (change api version)', (ctx) => {
+        .it('runs essentials:change-dependency-version (change api version)', (ctx) => {
             expect(ctx.stdout).to.contain('Updated');
         });
 });

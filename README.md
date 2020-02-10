@@ -74,7 +74,7 @@ Its seems that `sfdx plugins:update` does not always work, in that case , uninst
 
 # CONTRIBUTE
 
-Contributions are very welcome, please run **npm run lint:fix** before making a new PR
+Contributions are very welcome, please run **npm run lint:fix** and **npm run test** before making a new PR
 
 - Fork the repo and clone it on your computer
 - To [debug](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_plugins.meta/sfdx_cli_plugins/cli_plugins_debug.htm), run  ``` $ sfdx plugins:link ``` or use  ``` $ NODE_OPTIONS=--inspect-brk bin/run yourcommand ```
