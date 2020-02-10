@@ -58,6 +58,7 @@ export default class PackageXmlSort extends Command {
         packageXmlData.Package.types = packageXmlData.Package.types.sort((a: any, b: any) => a.name[0].localeCompare(b.name[0]));
 
         // Reorder items of each type
+        // tslint:disable-next-line:prefer-for-of
         for (let i = 0; i < packageXmlData.Package.types.length; i++) {
             if (packageXmlData.Package.types[i].members) {
                 packageXmlData.Package.types[i].members = packageXmlData.Package.types[i].members.sort((a: string, b: string) => a.localeCompare(b));

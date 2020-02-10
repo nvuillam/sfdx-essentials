@@ -3,7 +3,7 @@ import * as cliProgress from 'cli-progress';
 import * as fs from 'fs';
 import * as glob from 'glob';
 import * as xml2js from 'xml2js';
-import EssentialsUtils = require('../../../common/essentials-utils');
+import { EssentialsUtils } from '../../../common/essentials-utils';
 
 export default class ProjectChangeDependencyVersion extends Command {
   public static aliases = ['essentials:change-dependency-version', 'essentials:change-api-version', 'essentials:project:change-api-version'];
@@ -74,7 +74,7 @@ export default class ProjectChangeDependencyVersion extends Command {
     }
 
     // Read files
-    const fileList = glob.sync('**/*.xml');
+    const fileList = glob.sync(this.folder + '/**/*.xml');
 
     // Progress bar
     // @ts-ignore

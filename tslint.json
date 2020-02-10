@@ -11,12 +11,6 @@
     "no-unsafe-any": {
       "severity": "off"
     },
-    "no-unused-variable": [
-      true,
-      {
-        "ignore-pattern": "^_"
-      }
-    ],
     "prefer-const": [
       "error",
       {

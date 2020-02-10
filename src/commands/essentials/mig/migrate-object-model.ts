@@ -305,6 +305,7 @@ Use this command if you need to replace a SObject by another one in all your sfd
     parser.parseString(data, async (err2, fileXmlContent) => {
       if (fileXmlContent) {
         for (const eltKey of Object.keys(fileXmlContent)) {
+          // tslint:disable-next-line:prefer-for-of
           for (let i = 0; i < replaceField.length; i++) {
             if (fileXmlContent[eltKey].referenceTo && fileXmlContent[eltKey].referenceTo[0] && fileXmlContent[eltKey].referenceTo[0] === replaceField[i].previousObject) {
               fileXmlContent[eltKey].referenceTo[0] = replaceField[i].newObject;
@@ -618,6 +619,7 @@ Use this command if you need to replace a SObject by another one in all your sfd
         const parser = new xml2js.Parser();
         parser.parseString(data, (err2, fileXmlContent) => {
           if (fileXmlContent) {
+            // tslint:disable-next-line:prefer-for-of
             for (let i = 0; i < Object.keys(fileXmlContent).length; i++) {
               const eltKey = Object.keys(fileXmlContent)[i];
               if (fileXmlContent[eltKey].referenceTo && fileXmlContent[eltKey].referenceTo[0] && fileXmlContent[eltKey].referenceTo[0].includes(objectToDelete.prefixe)) {
@@ -641,11 +643,14 @@ Use this command if you need to replace a SObject by another one in all your sfd
 
         parser.parseString(data, (err2, fileXmlContent) => {
           if (fileXmlContent['Layout']['layoutSections']) {
+            // tslint:disable-next-line:prefer-for-of
             for (let i = 0; i < fileXmlContent['Layout']['layoutSections'].length; i++) {
               const layoutSections = fileXmlContent['Layout']['layoutSections'][i];
               if (layoutSections['layoutColumns']) {
+                // tslint:disable-next-line:prefer-for-of
                 for (let j = 0; j < layoutSections['layoutColumns'].length; j++) {
                   if (layoutSections['layoutColumns'][j]['layoutItems']) {
+                    // tslint:disable-next-line:prefer-for-of
                     for (let k = 0; k < layoutSections['layoutColumns'][j]['layoutItems'].length; k++) {
                       if (layoutSections['layoutColumns'][j]['layoutItems'][k]['field'] && (layoutSections['layoutColumns'][j]['layoutItems'][k]['field'][0].includes(objectToDelete.prefixe) || layoutSections['layoutColumns'][j]['layoutItems'][k]['field'][0].includes('FinancialAccount__c'))) {
                         if (fs.existsSync(file)) {
@@ -665,9 +670,11 @@ Use this command if you need to replace a SObject by another one in all your sfd
             }
           }
           if (fileXmlContent['Layout']['platformActionList']) {
+            // tslint:disable-next-line:prefer-for-of
             for (let i = 0; i < fileXmlContent['Layout']['platformActionList'].length; i++) {
               const platformActionList = fileXmlContent['Layout']['platformActionList'][i];
               if (platformActionList['platformActionListItems']) {
+                // tslint:disable-next-line:prefer-for-of
                 for (let k = 0; k < platformActionList['platformActionListItems'].length; k++) {
                   if (platformActionList['platformActionListItems'][k]['actionName'] && platformActionList['platformActionListItems'][k]['actionName'][0].includes(objectToDelete.prefixe)) {
                     if (fs.existsSync(file)) {

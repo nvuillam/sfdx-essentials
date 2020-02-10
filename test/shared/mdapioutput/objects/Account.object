@@ -414,28 +414,6 @@
             </values>
         </picklistValues>
     </recordTypes>
-    <webLinks>
-        <fullName>New_Quote2</fullName>
-        <availability>online</availability>
-        <displayType>button</displayType>
-        <height>600</height>
-        <linkType>page</linkType>
-        <masterLabel>New Quote2</masterLabel>
-        <openType>sidebar</openType>
-        <page>vfAppCloudIrmIncluderNewQuote</page>
-        <protected>false</protected>
-    </webLinks>
-    <webLinks>
-        <fullName>New_Quote3</fullName>
-        <availability>online</availability>
-        <displayType>button</displayType>
-        <height>600</height>
-        <linkType>page</linkType>
-        <masterLabel>New Quote3</masterLabel>
-        <openType>sidebar</openType>
-        <page>vfAppCloudIrmIncluderNewQuote</page>
-        <protected>false</protected>
-    </webLinks>
     <listViews>
         <fullName>MyAccounts</fullName>
         <columns>ACCOUNT.NAME</columns>

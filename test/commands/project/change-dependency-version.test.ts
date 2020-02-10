@@ -11,7 +11,7 @@ describe('essentials:project:change-dependency-version', () => {
         ]
         )
         .it('runs essentials:project:change-dependency-version', (ctx) => {
-            expect(ctx.stdout).to.contain('');
+            expect(ctx.stdout).to.contain('Updated');
         });
 });
 
@@ -25,7 +25,7 @@ describe('essentials:project:change-dependency-version (remove package dependenc
         ]
         )
         .it('runs essentials:project:change-dependency-version (remove package dependency)', (ctx) => {
-            expect(ctx.stdout).to.contain('');
+            expect(ctx.stdout).to.contain('Updated');
         });
 });
 
@@ -33,11 +33,12 @@ describe('essentials:project:change-dependency-version (change api version)', ()
     test
         .stdout()
         .command(['essentials:project:change-dependency-version',
+            '-f', 'test/shared/sfdxProject/force-app/main/default',
             '-a', '46.0'
         ]
         )
         .it('runs essentials:project:change-dependency-version (change api version)', (ctx) => {
-            expect(ctx.stdout).to.contain('');
+            expect(ctx.stdout).to.contain('Updated');
         });
 });
 
@@ -45,10 +46,11 @@ describe('(alias) essentials:change-dependency-version (change api version)', ()
     test
         .stdout()
         .command(['essentials:project:change-dependency-version',
+            '-f', 'test/shared/sfdxProject/force-app/main/default',
             '-a', '46.0'
         ]
         )
         .it('runs essentials:project:change-dependency-version (change api version)', (ctx) => {
-            expect(ctx.stdout).to.contain('');
+            expect(ctx.stdout).to.contain('Updated');
         });
 });

@@ -3,58 +3,8 @@
     <networkAccess>
         <ipRanges>
             <description>DXC Paris Carpe Diem</description>
-            <end>20.138.247.64</end>
-            <start>20.138.247.64</start>
-        </ipRanges>
-        <ipRanges>
-            <description>DXC Paris Carpe Diem (Guest)</description>
-            <end>20.133.8.148</end>
-            <start>20.133.8.148</start>
-        </ipRanges>        
-        <ipRanges>
-            <description>Hardis Lyon</description>
-            <end>90.85.234.253</end>
-            <start>90.85.234.253</start>
-        </ipRanges>
-        <ipRanges>
-            <description>Jenkins Server</description>
-            <end>172.31.33.161</end>
-            <start>172.31.33.161</start>
-        </ipRanges>
-        <ipRanges>
-            <description>Jenkins Server 2 (Ireland)</description>
-            <end>52.17.234.115</end>
-            <start>52.17.234.115</start>
-        </ipRanges>
-        <ipRanges>
-            <description>Jenkins Slave PDXC</description>
-            <end>184.73.57.78</end>
-            <start>184.73.57.78</start>
-        </ipRanges>
-        <ipRanges>
-            <description>NicoT Home</description>
-            <end>176.187.111.85</end>
-            <start>176.187.111.85</start>
-        </ipRanges>
-        <ipRanges>
-            <description>NicoV Home</description>
-            <end>82.232.39.230</end>
-            <start>82.232.39.230</start>
-        </ipRanges>
-        <ipRanges>
-            <description>Petri Home</description>
-            <end>88.191.117.93</end>
-            <start>88.191.117.93</start>
-        </ipRanges>
-        <ipRanges>
-           <description>Marie Home</description>
-           <end>92.137.90.50</end>
-           <start>92.137.90.50</start>
-        </ipRanges>
-         <ipRanges>
-           <description>Nikolay Work</description>
-           <end>92.247.44.198</end>
-           <start>92.247.44.198</start>
+            <end>20.139.247.22</end>
+            <start>20.139.247.22</start>
         </ipRanges>
     </networkAccess>
     <passwordPolicies>

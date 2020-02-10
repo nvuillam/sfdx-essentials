@@ -40,19 +40,6 @@
     <members>Salesforce1_Branding_Resources/logox1_1_1_png</members>
   </types>
   <types>
-    <name>EmailTemplate</name>
-    <members>unfiled$public/CommunityChangePasswordEmailTemplate</members>
-    <members>unfiled$public/CommunityForgotPasswordEmailTemplate</members>
-    <members>unfiled$public/CommunityWelcomeEmailTemplate</members>
-    <members>unfiled$public/UnderwritingInsuredCommunity</members>
-    <members>unfiled$public/WelcomeInsuredCommunity</members>
-  </types>
-  <types>
-    <name>FlexiPage</name>
-    <members>DXC_OmniChannel_Administration_UtilityBar</members>
-    <members>DXC_OmniChannel_UtilityBar</members>
-  </types>
-  <types>
     <name>GlobalValueSet</name>
     <members>Context</members>
     <members>Countries</members>
@@ -83,26 +70,6 @@
     <members>AppLoadedCSS__mdt-Loaded CSS Layout</members>
   </types>
   <types>
-    <name>NamedCredential</name>
-    <members>NC_DIAAS_DEMO</members>
-    <members>NamedCredAIASOAPOC4SF_DEMO_Beta</members>
-    <members>NamedCredAIASOAPOC4SF_DEMO_Prod</members>
-    <members>NamedCredAllfinanzComIF01</members>
-    <members>NamedCredAllfinanzComIF02</members>
-  </types>
-  <types>
-    <name>NetworkBranding</name>
-    <members>cbCompany</members>
-    <members>cbPublic</members>
-  </types>
-  <types>
-    <name>Network</name>
-    <members>Company</members>
-    <members>Distributor</members>
-    <members>Insured</members>
-    <members>Public</members>
-  </types>
-  <types>
     <name>CustomObject</name>
     <members>Account</members>
     <members>AppLoadedCSS__mdt</members>
@@ -120,10 +87,6 @@
     <members>AppLoadedCSS__mdt.LoadingOrder__c</members>
     <members>AppLoadedCSS__mdt.Resource__c</members>
     <members>AppLoadedCSS__mdt.UserTheme__c</members>
-    <members>User.BackEnd_EndPoint__c</members>
-    <members>User.DistributorIdentifier__c</members>
-    <members>User.IsDemoCTI_Active__c</members>
-    <members>User.OpenID__c</members>
     <members>User.Theme__c</members>
     <members>User.URI__c</members>
     <members>User.WebAppProfiles__c</members>
@@ -139,11 +102,6 @@
   <types>
     <name>RecordType</name>
     <members>Account.Distributor</members>
-  </types>
-  <types>
-    <name>WebLink</name>
-    <members>Account.New_Quote2</members>
-    <members>Account.New_Quote3</members>
   </types>
   <types>
     <name>CustomObjectTranslation</name>
@@ -169,53 +127,15 @@
     <members>InsurancePublicCustomDemo</members>
   </types>
   <types>
-    <name>Profile</name>
-    <members>Admin</members>
-  </types>
-  <types>
     <name>QuickAction</name>
     <members>Account.Insurance_Contract</members>
     <members>Account.Insurance_Quote</members>
-  </types>
-  <types>
-    <name>RemoteSiteSetting</name>
-    <members>AIAORGREST</members>
-    <members>AIAV5Build</members>
-    <members>AIAV5Dev</members>
-    <members>DIAAS_Insurance</members>
-    <members>DocuSignDemo</members>
-    <members>Fundshop</members>
-    <members>FundshopAlt</members>
-    <members>GTAIA_SaaS_Omni</members>
-    <members>IntegralRSS</members>
-    <members>IntegralRSS1</members>
-    <members>IntegralRSS2</members>
-    <members>MapsGoogle</members>
-    <members>OC4SF_DEMO_Beta</members>
-    <members>OC4SF_DEMO_POC</members>
-    <members>OC4SF_DEMO_Prod</members>
-    <members>OpenStreetMap</members>
-    <members>RS_DIAAS</members>
-    <members>RegCheck</members>
-    <members>SleepRemoteSite</members>
-    <members>c_mdapi</members>
-  </types>
-  <types>
-    <name>Role</name>
-    <members>OC4SFSampleRole</members>
   </types>
   <types>
     <name>Settings</name>
     <members>Account</members>
     <members>Address</members>
     <members>Security</members>
-  </types>
-  <types>
-    <name>CustomSite</name>
-    <members>Company2</members>
-    <members>Distributor2</members>
-    <members>Insured2</members>
-    <members>Public</members>
   </types>
   <types>
     <name>StandardValueSet</name>
@@ -228,7 +148,6 @@
   </types>
   <types>
     <name>StaticResource</name>
-    <members>MomentJS_allLocale</members>
     <members>leaflet</members>
     <members>leafletGeosearch</members>
     <members>leafletProviders</members>
