@@ -4,7 +4,7 @@
     node-latest: &test
       docker:
         - image: node:latest
-      working_directory: ~/cli
+      working_directory: ~/repo
       steps:
         - checkout
         - restore_cache: &restore_cache
