@@ -8,3 +8,5 @@
 node_modules
 
 test/tmp/
+
+.nyc_output/
