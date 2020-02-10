@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Allows to select which additional CSS are loaded by the WebApp  (tech: ltngRequireWebApp component)</description>
+    <label>Loaded CSS</label>
+    <pluralLabel>Loaded CSS</pluralLabel>
+    <visibility>Public</visibility>
+    <fields>
+        <fullName>CssPath__c</fullName>
+        <description>Path of the css file inside the Resource
+Example: /resource/css/irm-style-clientName.css</description>
+        <externalId>false</externalId>
+        <fieldManageability>SubscriberControlled</fieldManageability>
+        <inlineHelpText>Path of the css file inside the Resource
+Example: /resource/css/irm-style-clientName.css</inlineHelpText>
+        <label>CssPath</label>
+        <length>200</length>
+        <required>true</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>IsActive__c</fullName>
+        <defaultValue>true</defaultValue>
+        <description>Activated or not</description>
+        <externalId>false</externalId>
+        <fieldManageability>SubscriberControlled</fieldManageability>
+        <inlineHelpText>Activated or not</inlineHelpText>
+        <label>IsActive</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>LoadingOrder__c</fullName>
+        <description>Order used to load the css file</description>
+        <externalId>false</externalId>
+        <fieldManageability>SubscriberControlled</fieldManageability>
+        <inlineHelpText>Order used to load the css file</inlineHelpText>
+        <label>LoadingOrder</label>
+        <precision>4</precision>
+        <required>true</required>
+        <scale>0</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Resource__c</fullName>
+        <description>Developer name of the static resource where the css file to load is</description>
+        <externalId>false</externalId>
+        <fieldManageability>SubscriberControlled</fieldManageability>
+        <inlineHelpText>Developer name of the static resource where the css file to load is</inlineHelpText>
+        <label>Resource</label>
+        <length>50</length>
+        <required>true</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>UserTheme__c</fullName>
+        <description>User theme matching this CSS to load ( update user information to set it )</description>
+        <externalId>false</externalId>
+        <fieldManageability>SubscriberControlled</fieldManageability>
+        <inlineHelpText>User theme matching this CSS to load ( update user information to set it )</inlineHelpText>
+        <label>UserTheme</label>
+        <required>true</required>
+        <type>Picklist</type>
+        <valueSet>
+            <restricted>true</restricted>
+            <valueSetDefinition>
+                <sorted>true</sorted>
+                <value>
+                    <fullName>All</fullName>
+                    <default>true</default>
+                    <label>All</label>
+                </value>
+                <value>
+                    <fullName>Base</fullName>
+                    <default>false</default>
+                    <label>Base</label>
+                </value>
+                <value>
+                    <fullName>BaseBlue</fullName>
+                    <default>false</default>
+                    <label>BaseBlue</label>
+                </value>
+                <value>
+                    <fullName>BaseBlueLight</fullName>
+                    <default>false</default>
+                    <label>BaseBlueLight</label>
+                </value>
+                <value>
+                    <fullName>BaseDXC</fullName>
+                    <default>false</default>
+                    <label>BaseDXC</label>
+                </value>
+                <value>
+                    <fullName>BaseFlat</fullName>
+                    <default>false</default>
+                    <label>BaseFlat</label>
+                </value>
+                <value>
+                    <fullName>BaseGreen</fullName>
+                    <default>false</default>
+                    <label>BaseGreen</label>
+                </value>
+                <value>
+                    <fullName>BaseGreenLight</fullName>
+                    <default>false</default>
+                    <label>BaseGreenLight</label>
+                </value>
+                <value>
+                    <fullName>BaseKhaki</fullName>
+                    <default>false</default>
+                    <label>BaseKhaki</label>
+                </value>
+                <value>
+                    <fullName>Default</fullName>
+                    <default>false</default>
+                    <label>Default</label>
+                </value>
+                <value>
+                    <fullName>Demo</fullName>
+                    <default>false</default>
+                    <label>Demo</label>
+                </value>
+                <value>
+                    <fullName>DXC</fullName>
+                    <default>false</default>
+                    <label>DXC</label>
+                </value>
+                <value>
+                    <fullName>Flat</fullName>
+                    <default>false</default>
+                    <label>Flat</label>
+                </value>
+                <value>
+                    <fullName>Lelamanul</fullName>
+                    <default>false</default>
+                    <label>Lelamanul</label>
+                </value>
+                <value>
+                    <fullName>Material</fullName>
+                    <default>false</default>
+                    <label>Material</label>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+</CustomObject>

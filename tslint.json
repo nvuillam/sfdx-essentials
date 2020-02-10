@@ -6,17 +6,11 @@
       "check-space"
     ],
     "no-any": {
-      "severity": "warning"
+      "severity": "off"
     },
     "no-unsafe-any": {
-      "severity": "warning"
+      "severity": "off"
     },
-    "no-unused-variable": [
-      true,
-      {
-        "ignore-pattern": "^_"
-      }
-    ],
     "prefer-const": [
       "error",
       {

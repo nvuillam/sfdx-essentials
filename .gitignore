@@ -6,3 +6,7 @@
 /package-lock.json
 /tmp
 node_modules
+
+test/tmp/
+
+.nyc_output/

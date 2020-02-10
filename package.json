@@ -1,7 +1,7 @@
 {
   "name": "sfdx-essentials",
   "description": "Toolbox for Salesforce DX to provide some very helpful additional features to base sfdx commands.",
-  "version": "1.6.5",
+  "version": "2.0.1",
   "author": "NicolasVuillamy @nvuillam",
   "bugs": "https://github.com/nvuillam/sfdx-essentials/issues",
   "dependencies": {
@@ -38,6 +38,7 @@
     "chai": "^4.2.0",
     "globby": "^11.0.0",
     "mocha": "7.0.1",
+    "nyc": "^13",
     "sinon": "8.1.1",
     "ts-node": "8.6.2",
     "tslib": "^1.10.0",
@@ -58,11 +59,12 @@
   "license": "GPL-3.0-or-later",
   "oclif": {
     "commands": "./lib/commands",
+    "bin": "sfdx",
     "devPlugins": [
       "@oclif/plugin-help"
     ]
   },
-  "repository": "nvuillam/sfdx-essentials",
+  "repository": "https://github.com/nvuillam/sfdx-essentials",
   "scripts": {
     "lint": "tslint -c tslint.json 'src/**/*.ts' -t verbose",
     "lint:fix": "tslint -c tslint.json 'src/**/*.ts' --fix -t verbose",
@@ -70,7 +72,7 @@
     "posttest": "tsc -p test --noEmit && tslint -p test -t stylish",
     "prepack": "rm -rf lib && tsc && oclif-dev manifest && oclif-dev readme",
     "prepare": "rm -rf lib && tsc && oclif-dev manifest && oclif-dev readme",
-    "test": "mocha --forbid-only \"test/**/*.test.ts\"",
+    "test": "nyc mocha --forbid-only \"test/**/*.test.ts\"",
     "version": "oclif-dev readme && git add README.md"
   }
 }
