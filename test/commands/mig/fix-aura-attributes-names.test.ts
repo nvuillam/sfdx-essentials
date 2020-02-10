@@ -4,7 +4,7 @@ describe('essentials:mig:fix-aura-attributes-names', () => {
     test
         .stdout()
         .command(['essentials:mig:fix-aura-attributes-names',
-            '-f', 'test/shared/sfdxProject/force-app/main/default'
+            '-f', './test/shared/sfdxProject/force-app/main/default'
         ]
         )
         .it('essentials:mig:fix-aura-attributes-names', (ctx) => {
@@ -16,7 +16,7 @@ describe('(alias) essentials:fix-lightning-attribute-names', () => {
     test
         .stdout()
         .command(['essentials:fix-lightning-attribute-names',
-            '-f', 'test/shared/sfdxProject/force-app/main/default'
+            '-f', './test/shared/sfdxProject/force-app/main/default'
         ]
         )
         .it('essentials:fix-lightning-attribute-names', (ctx) => {

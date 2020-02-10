@@ -4,8 +4,8 @@ describe('essentials:project:check-consistency-with-packagexml', () => {
     test
         .stdout()
         .command(['essentials:project:check-consistency-with-packagexml',
-            '-i', 'test/shared/sfdxProject/force-app/main/default',
-            '-p', 'test/shared/packagexml/package1.xml,test/shared/packagexml/package2.xml',
+            '-i', './test/shared/sfdxProject/force-app/main/default',
+            '-p', './test/shared/packagexml/package1.xml,test/shared/packagexml/package2.xml',
             '-d', 'Document,EmailTemplate',
             '--failIfError'
         ]
@@ -19,8 +19,8 @@ describe('(alias) essentials:check-sfdx-project-consistency', () => {
     test
         .stdout()
         .command(['essentials:check-sfdx-project-consistency',
-            '-i', 'test/shared/sfdxProject/force-app/main/default',
-            '-p', 'test/shared/packagexml/package1.xml,test/shared/packagexml/package2.xml',
+            '-i', './test/shared/sfdxProject/force-app/main/default',
+            '-p', './test/shared/packagexml/package1.xml,test/shared/packagexml/package2.xml',
             '-d', 'Document,EmailTemplate',
             '--failIfError'
         ]
