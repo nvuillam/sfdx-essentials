@@ -1,0 +1,52 @@
+{
+   "objects": [
+      {
+         "newLabel": "Account",
+         "fieldsMapping": [
+            {
+               "previousField": "FinServ__TotalInsurancePrimaryOwner__c",
+               "newField": "TotalInsurancePrimaryOwner__c"
+            }
+         ]
+      }
+   ],
+   "objectToDelete": {
+      "prefixe": "FinServ__",
+      "fetchExpressionList": [
+         "./flexipages/Client*",
+         "./flexipages/Contact_Record*",
+         "./flexipages/Customer*",
+         "./flexipages/Insurance_Quote*",
+         "./flexipages/Membership*",
+         "./flexipages/Test*",
+         "./layouts/Lead*",
+         "./objects/*/compactLayouts/*",
+         "./objects/Lead",
+         "./reports/*"
+      ]
+   },
+   "globalConfig": {
+      "aroundCharReplaceObjectListOverride": [
+         {
+            "name": "simpleQuote",
+            "before": "'",
+            "after": "'",
+            "replacementPrefix": "ns.add(",
+            "replacementSuffix": ")",
+            "affecteditems": "cls"
+         }
+      ],
+      "aroundCharReplaceFieldListOverride": [
+         {
+            "name": "simpleQuote",
+            "before": "'",
+            "after": "'",
+            "replacementPrefix": "ns.add(",
+            "replacementSuffix": ")",
+            "affecteditems": "cls"
+         }
+      ],
+      "regexEpressionBeforeElement": "(?<!Label)(?<!Label.c)(?<!System)(?<!tsk)(?<!response)",
+      "regexEpressionAfterElement": "(?!forName)"
+   }
+}

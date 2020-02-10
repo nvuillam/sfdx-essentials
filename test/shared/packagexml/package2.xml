@@ -23,12 +23,12 @@
     <name>Document</name>
   </types>
   <types>
-    <members>InsuranceAdminCustom</members>
-    <members>InsuranceCompanyCustom</members>
-    <members>InsuranceCRMCustom</members>
-    <members>InsuranceDistributorCustom</members>
-    <members>InsuranceInsuredCustom</members>
-    <members>InsurancePublicCustom</members>
+    <members>InsuranceAdminCustomDemo</members>
+    <members>InsuranceCompanyCustomDemo</members>
+    <members>InsuranceCRMCustomDemo</members>
+    <members>InsuranceDistributorCustomDemo</members>
+    <members>InsuranceInsuredCustomDemo</members>
+    <members>InsurancePublicCustomDemo</members>
     <name>PermissionSet</name>
   </types>
   <types>

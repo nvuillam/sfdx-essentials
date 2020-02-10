@@ -22,6 +22,7 @@ export default class ProjectChangeDependencyVersion extends Command {
     '$ sfdx essentials:project:change-dependency-version -a 47.0'
   ];
 
+  // @ts-ignore
   public static flags = {
     // flag with a value (-n, --name=VALUE)
     namespace: flags.string({ char: 'n', description: 'Namespace of the managed package' }),

@@ -55,6 +55,7 @@
     <name>CustomMetadata</name>
   </types>
   <types>
+    <members>AppLoadedCSS__mdt</members>
     <members>WebAppInitCacheData__c</members>
     <name>CustomObject</name>
   </types>
@@ -118,6 +119,12 @@
   <types>
     <members>Account.Distributor</members>
     <name>RecordType</name>
+  </types>
+  <types>
+    <members>Account</members>
+    <members>Address</members>
+    <members>Security</members>
+    <name>Settings</name>
   </types>
   <types>
     <members>CaseStatus</members>

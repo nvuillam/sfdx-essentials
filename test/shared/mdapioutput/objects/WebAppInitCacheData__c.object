@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customSettingsType>List</customSettingsType>
+    <description>List of items to load at startup of DXC OmniChannel for Salesforce</description>
+    <enableFeeds>false</enableFeeds>
+    <label>WebAppInitCacheData</label>
+    <visibility>Public</visibility>
+    <fields>
+        <fullName>Reference__c</fullName>
+        <description>Reference of the item to load at WebApp startup</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Reference of the item to load at WebApp startup</inlineHelpText>
+        <label>Reference</label>
+        <length>200</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Type__c</fullName>
+        <description>Type of cache to load. Picklist or CustomLabel</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Picklist or CustomLabel</inlineHelpText>
+        <label>Type</label>
+        <length>15</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+</CustomObject>
