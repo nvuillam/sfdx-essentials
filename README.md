@@ -20,6 +20,8 @@ Toolbox for Salesforce DX to provide some very helpful additional features to ba
 
 Easy to integrate in a CD/CI process (Jenkins Pipeline,CircleCI...)
 
+See [CHANGELOG](https://github.com/nvuillam/sfdx-essentials/blob/master/CHANGELOG.md)
+
 # Command list
 
 ## Metadata
