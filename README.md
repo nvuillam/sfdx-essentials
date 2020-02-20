@@ -6,9 +6,10 @@ Salesforce DX Essentials
 [![CircleCI](https://circleci.com/gh/nvuillam/sfdx-essentials/tree/master.svg?style=shield)](https://circleci.com/gh/nvuillam/sfdx-essentials/tree/master)
 [![codecov](https://codecov.io/gh/nvuillam/sfdx-essentials/branch/master/graph/badge.svg)](https://codecov.io/gh/nvuillam/sfdx-essentials)
 [![GitHub contributors](https://img.shields.io/github/contributors/nvuillam/sfdx-essentials.svg)](https://gitHub.com/nvuillam/sfdx-essentials/graphs/contributors/)
-[![GitHub stars](https://img.shields.io/github/stars/nvuillam/sfdx-essentials?style=social&label=Star&maxAge=2592000)](https://GitHub.com/nvuillam/sfdx-essentials/stargazers/)
+[![GitHub stars](https://img.shields.io/github/stars/nvuillam/sfdx-essentials?label=Star&maxAge=2592000)](https://GitHub.com/nvuillam/sfdx-essentials/stargazers/)
 [![License](https://img.shields.io/npm/l/sfdx-essentials.svg)](https://github.com/nvuillam/sfdx-essentials/blob/master/package.json) 
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+[![HitCount](https://hits.dwyl.com/nvuillam/sfdx-essentials.svg)](https://hits.dwyl.com/nvuillam/sfdx-essentials)
 [![Say Thanks!](https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg)](https://saythanks.io/to/nicolas.vuillamy@gmail.com)
 
 # PLUGIN
