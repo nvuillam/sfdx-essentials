@@ -1,7 +1,7 @@
 {
   "name": "sfdx-essentials",
   "description": "Toolbox for Salesforce DX to provide some very helpful additional features to base sfdx commands.",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "author": "NicolasVuillamy @nvuillam",
   "bugs": "https://github.com/nvuillam/sfdx-essentials/issues",
   "dependencies": {
@@ -59,15 +59,17 @@
   ],
   "license": "GPL-3.0-or-later",
   "mocha": {
-    "require" : [
+    "require": [
       "test/helpers/init.js",
       "ts-node/register/type-check",
       "source-map-support/register"
     ],
-    "watch-extensions": ["ts"],
+    "watch-extensions": [
+      "ts"
+    ],
     "recursive": true,
-    "reporter":  "spec",
-    "timeout":  "20000"
+    "reporter": "spec",
+    "timeout": "20000"
   },
   "oclif": {
     "commands": "./lib/commands",
