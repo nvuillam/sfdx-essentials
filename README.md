@@ -184,7 +184,7 @@ EXAMPLES
   sfdx force:mdapi:deploy -d tmp/deployDemoQualiFiltered/ -w 60 -u DemoQuali
 ```
 
-_See code: [src/commands/essentials/metadata/filter-from-packagexml.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.0.5/src/commands/essentials/metadata/filter-from-packagexml.ts)_
+_See code: [src/commands/essentials/metadata/filter-from-packagexml.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.0.6/src/commands/essentials/metadata/filter-from-packagexml.ts)_
 
 ## `sfdx essentials:metadata:filter-xml-content`
 
@@ -215,7 +215,7 @@ EXAMPLES
   sfdx essentials:filter-xml-content -i "retrieveUnpackaged"
 ```
 
-_See code: [src/commands/essentials/metadata/filter-xml-content.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.0.5/src/commands/essentials/metadata/filter-xml-content.ts)_
+_See code: [src/commands/essentials/metadata/filter-xml-content.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.0.6/src/commands/essentials/metadata/filter-xml-content.ts)_
 
 ## `sfdx essentials:metadata:uncomment`
 
@@ -256,7 +256,7 @@ EXAMPLE
   --uncommentKey "SFDX_ESSENTIALS_UNCOMMENT_DxcDev_"
 ```
 
-_See code: [src/commands/essentials/metadata/uncomment.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.0.5/src/commands/essentials/metadata/uncomment.ts)_
+_See code: [src/commands/essentials/metadata/uncomment.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.0.6/src/commands/essentials/metadata/uncomment.ts)_
 
 ## `sfdx essentials:mig:fix-aura-attributes-names`
 
@@ -285,7 +285,7 @@ EXAMPLE
   sfdx essentials:mig:fix-aura-attributes-names
 ```
 
-_See code: [src/commands/essentials/mig/fix-aura-attributes-names.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.0.5/src/commands/essentials/mig/fix-aura-attributes-names.ts)_
+_See code: [src/commands/essentials/mig/fix-aura-attributes-names.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.0.6/src/commands/essentials/mig/fix-aura-attributes-names.ts)_
 
 ## `sfdx essentials:mig:migrate-object-model`
 
@@ -326,7 +326,7 @@ EXAMPLES
   "./package*.xml" --no-deleteFiles --no-deleteFilesExpr --no-copySfdxProjectFolder
 ```
 
-_See code: [src/commands/essentials/mig/migrate-object-model.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.0.5/src/commands/essentials/mig/migrate-object-model.ts)_
+_See code: [src/commands/essentials/mig/migrate-object-model.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.0.6/src/commands/essentials/mig/migrate-object-model.ts)_
 
 ## `sfdx essentials:packagexml:append`
 
@@ -350,7 +350,7 @@ EXAMPLE
   age_DevRoot_Scratch.xml" -o "./Config/packageXml/package_for_new_scratch_org.xml"
 ```
 
-_See code: [src/commands/essentials/packagexml/append.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.0.5/src/commands/essentials/packagexml/append.ts)_
+_See code: [src/commands/essentials/packagexml/append.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.0.6/src/commands/essentials/packagexml/append.ts)_
 
 ## `sfdx essentials:packagexml:sort`
 
@@ -372,7 +372,7 @@ EXAMPLES
   $ sfdx essentials:packagexml:sort -p "./Config/packageXml"
 ```
 
-_See code: [src/commands/essentials/packagexml/sort.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.0.5/src/commands/essentials/packagexml/sort.ts)_
+_See code: [src/commands/essentials/packagexml/sort.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.0.6/src/commands/essentials/packagexml/sort.ts)_
 
 ## `sfdx essentials:permissionset:generate`
 
@@ -402,7 +402,7 @@ EXAMPLES
   Custom -o "./Projects/DevRootSource/force-app/main/default/permissionsets"
 ```
 
-_See code: [src/commands/essentials/permissionset/generate.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.0.5/src/commands/essentials/permissionset/generate.ts)_
+_See code: [src/commands/essentials/permissionset/generate.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.0.6/src/commands/essentials/permissionset/generate.ts)_
 
 ## `sfdx essentials:project:change-dependency-version`
 
@@ -438,7 +438,7 @@ EXAMPLES
   $ sfdx essentials:project:change-dependency-version -a 47.0
 ```
 
-_See code: [src/commands/essentials/project/change-dependency-version.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.0.5/src/commands/essentials/project/change-dependency-version.ts)_
+_See code: [src/commands/essentials/project/change-dependency-version.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.0.6/src/commands/essentials/project/change-dependency-version.ts)_
 
 ## `sfdx essentials:project:check-consistency-with-packagexml`
 
@@ -478,5 +478,5 @@ EXAMPLE
   "./Projects/DevRootSource/force-app/main/default" -d "Document,EmailTemplate" --failIfError
 ```
 
-_See code: [src/commands/essentials/project/check-consistency-with-packagexml.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.0.5/src/commands/essentials/project/check-consistency-with-packagexml.ts)_
+_See code: [src/commands/essentials/project/check-consistency-with-packagexml.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.0.6/src/commands/essentials/project/check-consistency-with-packagexml.ts)_
 <!-- commandsstop -->
