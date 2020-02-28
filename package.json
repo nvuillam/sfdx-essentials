@@ -1,7 +1,7 @@
 {
   "name": "sfdx-essentials",
   "description": "Toolbox for Salesforce DX to provide some very helpful additional features to base sfdx commands.",
-  "version": "2.0.6",
+  "version": "2.0.8",
   "author": "NicolasVuillamy @nvuillam",
   "bugs": "https://github.com/nvuillam/sfdx-essentials/issues",
   "dependencies": {
@@ -94,11 +94,11 @@
   "scripts": {
     "lint": "tslint -c tslint.json 'src/**/*.ts' -t verbose",
     "lint:fix": "tslint -c tslint.json 'src/**/*.ts' --fix -t verbose",
+    "oclif:readme": "oclif-dev readme",
     "postpack": "rm -f .oclif.manifest.json",
     "posttest": "tsc -p test --noEmit && tslint -p test -t stylish",
-    "prepack": "rm -rf lib && tsc && oclif-dev manifest && oclif-dev readme",
-    "prepare": "rm -rf lib && tsc && oclif-dev manifest && oclif-dev readme",
-    "test": "nyc mocha --forbid-only \"test/**/*.test.ts\"",
-    "version": "oclif-dev readme && git add README.md"
+    "prepack": "rm -rf lib && tsc && oclif-dev manifest",
+    "prepare": "rm -rf lib && tsc && oclif-dev manifest",
+    "test": "nyc mocha --forbid-only \"test/**/*.test.ts\""
   }
 }
