@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.1.0] - 2020-03-06
+
+### Added
+
+- **permissionsets:generate**: Added Capability to define several rules for the same package.xml member type. Rules are executed in the order defined in the file. If several rules are defined, it is strongly advised to define for the a `ruleId`, to avoid errors in override / merge of rules when extensions are used.
+
+- **permissionsets:generate**: If a rule contains property `overrideRulesOfSameType` , all other rules of same type will be ignored
+
 ## [2.0.6] - 2020-02-20
 
 ### Added

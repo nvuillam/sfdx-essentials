@@ -12,6 +12,11 @@
         <enabled>true</enabled>
     </pageAccesses>
     <fieldPermissions>
+        <field>User.WebAppProfiles__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
         <field>Account.BirthCity__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -48,10 +53,6 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <field>User.WebAppProfiles__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
         <field>WebAppInitCacheData__c.Reference__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -60,11 +61,14 @@
         <readable>true</readable>
     </fieldPermissions>
     <objectPermissions>
-        <object>Account</object>
+        <object>WebAppInitCacheData__c</object>
         <allowRead>true</allowRead>
+        <allowCreate>true</allowCreate>
+        <allowDelete>true</allowDelete>
+        <allowEdit>true</allowEdit>
     </objectPermissions>
     <objectPermissions>
-        <object>WebAppInitCacheData__c</object>
+        <object>Account</object>
         <allowRead>true</allowRead>
     </objectPermissions>
     <recordTypeVisibilities>

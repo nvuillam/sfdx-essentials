@@ -58,6 +58,31 @@
 				]
 			},
 			{
+				"ruleId": "CustomObjectsWritable",
+				"typeName": "CustomObject",
+				"permissionSetsElementList": [
+					{
+						"elementName": "object"
+					},
+					{
+						"elementName": "allowRead",
+						"value": true
+					},
+					{
+						"elementName": "allowCreate",
+						"value": true
+					},
+					{
+						"elementName": "allowEdit",
+						"value": true
+					}
+				],
+				"includedFilterList": [
+					"WebAppInitCacheData__c"
+				]
+			},
+			{
+				"ruleId": "CustomObjectsOther",
 				"typeName": "CustomObject",
 				"permissionSetsElementList": [
 					{
@@ -139,6 +164,8 @@
 				]
 			},
 			{
+				"ruleId": "CustomObjectsOther",
+				"overrideRulesOfSameType": true,
 				"typeName": "CustomObject",
 				"permissionSetsElementList": [
 					{

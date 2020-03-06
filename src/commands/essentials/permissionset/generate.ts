@@ -143,14 +143,50 @@ export default class PermissionSetGenerate extends Command {
 
             // Append objects of low-level packageXml in template config
             const packageXmlListItemExtend = filterConfigItemExtend.packageXMLTypeList;
-            const packageXmlListItem = filterConfigItem.packageXMLTypeList || [];
+            let packageXmlListItem = filterConfigItem.packageXMLTypeList || [];
             for (const packageItemExtend of packageXmlListItemExtend) {
-                const match = packageXmlListItem.filter((item: any) => (item.typeName === packageItemExtend.typeName));
-                // If packageXml item defined on template level and not on current level, add it
-                if (match.length === 0) {
-                    packageXmlListItem.push(packageItemExtend);
+                // If extend item has a rule Id, do not replace if same ruleId is defined at this level
+                if (packageItemExtend.ruleId) {
+                    const matchIndex = packageXmlListItem.findIndex((item: any) => (item.ruleId === packageItemExtend.ruleId));
+                    if (matchIndex > -1) {
+                        // Skip rule as it is already defined at upper level
+                        this.log(`Skipped rule ${filterConfig[configName].extends + '.' + packageItemExtend.ruleId} as it is defined on ${configName}`);
+                    } else {
+                        // Add rule to local level
+                        packageXmlListItem.push(packageItemExtend);
+                    }
+                } else {
+                    const match = packageXmlListItem.filter((item: any) => (item.typeName === packageItemExtend.typeName));
+                    // If packageXml item defined on template level and not on current level, add it
+                    if (match.length === 0) {
+                        packageXmlListItem.push(packageItemExtend);
+                    }
                 }
             }
+
+            // If rule has been defined as overrideRulesOfSameType = true, remove other rules of the same type ( useful for Admin PS for example)
+            const overrideRulesOfSameTypeList: any = [];
+            for (const item of packageXmlListItem) {
+                if (item.overrideRulesOfSameType) {
+                    if (item.ruleId) {
+                        overrideRulesOfSameTypeList.push({ ruleId: item.ruleId, typeName: item.typeName });
+                    } else {
+                        const err = 'Rules defined with overrideRulesOfSameType = true must have a ruleId\n' + JSON.stringify(item);
+                        console.error(err);
+                        throw new Error(err);
+                    }
+                }
+            }
+            packageXmlListItem = packageXmlListItem.filter((item: any) => {
+                const filterableIndex = overrideRulesOfSameTypeList.findIndex((overrideRule: any) => overrideRule.typeName === item.typeName);
+                if (filterableIndex > -1 && overrideRulesOfSameTypeList[filterableIndex].ruleId !== item.ruleId) {
+                    this.log(`Rule ${overrideRulesOfSameTypeList[filterableIndex].ruleId} has overriden ${JSON.stringify(item)}`);
+                    return false;
+                }
+                return true;
+            });
+
+            // Sort by typeName
             filterConfigItem.packageXMLTypeList = packageXmlListItem.sort((a: any, b: any) => a.typeName.localeCompare(b.typeName)); // Sort by typeName value;
 
             // Add upper extends if here
@@ -187,7 +223,6 @@ export default class PermissionSetGenerate extends Command {
             }
         }
         console.table(tableLog);
-
         if (hasTemplate === false) {
             console.warn(`WARNING: There is no "isTemplate: true" permission set defined in ${configFilename}. The basic permission set can be an easy way to generate permission sets and to avoid copy/paste if there are common permissions sets. The "extends" parameter is used in order to indicate the permission sets name that will be extended. In case there is no value for "extends",  only description in packageXMLTypeList parameter will be taken into account.`);
         }
@@ -289,62 +324,72 @@ export default class PermissionSetGenerate extends Command {
         for (const packageXmlType of packageXmlTypes) {
 
             const packageXmlTypesName = packageXmlType.name[0];
+            const alreadyAddedMembersForThisType: string[] = [];
 
             if (packageXMLTypesAll.includes(packageXmlTypesName) && permissionSetDefinition.packageXMLTypeList.length > 0) {
 
-                const indexOfType = packageXMLTypesAll.indexOf(packageXmlTypesName);
-                const packageXMLTypeConfig = permissionSetDefinition.packageXMLTypeList[indexOfType];
-                let packageXmlMembers = packageXmlType.members;
-                // Add additional elements if defined
-                if (packageXMLTypeConfig.additionalElements) {
-                    packageXmlMembers = packageXmlMembers.concat(packageXMLTypeConfig.additionalElements).sort();
-                }
-                const permissionSetIncludedFilterArray = packageXMLTypeConfig.includedFilterList || ['(.*)']; // Default is regex "all"
-                const permissionSetExcludedFilterArray = packageXMLTypeConfig.excludedFilterList || []; // Default is no exclusion
+                // Get all package.xml types corresponding to the iterated one
+                const packageXMLTypeConfigs = permissionSetDefinition.packageXMLTypeList.filter((item: any) => item.typeName === packageXmlTypesName);
 
-                for (let packageXmlMember of packageXmlMembers) {
-
-                    let isIncludedFilterActivated = false;
-                    let isExcludedFilterActivated = false;
-                    let isIncludedMatch = false;
-                    let isExcludedMatch = false;
-
-                    // Check included filters
-                    if (permissionSetIncludedFilterArray.length > 0) {
-                        isIncludedFilterActivated = true;
+                // Process all members of the type
+                for (const packageXMLTypeConfig of packageXMLTypeConfigs) {
+                    let packageXmlMembers = packageXmlType.members;
+                    // Add additional elements if defined
+                    if (packageXMLTypeConfig.additionalElements) {
+                        packageXmlMembers = packageXmlMembers.concat(packageXMLTypeConfig.additionalElements);
                     }
+                    // Sort & Keep only members not already processed by another same typeName rule
+                    packageXmlMembers = packageXmlMembers
+                        .filter((packageXmlMember: string) => !alreadyAddedMembersForThisType.includes(packageXmlMember))
+                        .sort();
 
-                    for (let permissionSetIncludedFilter of permissionSetIncludedFilterArray) {
-                        const isRegexIncluded = permissionSetIncludedFilter.startsWith('(');
+                    const permissionSetIncludedFilterArray = packageXMLTypeConfig.includedFilterList || ['(.*)']; // Default is regex "all"
+                    const permissionSetExcludedFilterArray = packageXMLTypeConfig.excludedFilterList || []; // Default is no exclusion
 
-                        if ((isRegexIncluded && packageXmlMember.match(permissionSetIncludedFilter)) || (!isRegexIncluded && packageXmlMember === permissionSetIncludedFilter)) {
-                            isIncludedMatch = true;
+                    // Add rights for all elements matching criteria
+                    for (let packageXmlMember of packageXmlMembers) {
+
+                        let isIncludedFilterActivated = false;
+                        let isExcludedFilterActivated = false;
+                        let isIncludedMatch = false;
+                        let isExcludedMatch = false;
+
+                        // Check included filters
+                        if (permissionSetIncludedFilterArray.length > 0) {
+                            isIncludedFilterActivated = true;
                         }
-                    }
-
-                    // Check excluded filters
-                    if (permissionSetExcludedFilterArray.length > 0) {
-                        isExcludedFilterActivated = true;
-                    }
-
-                    for (let permissionSetExcludedFilter of permissionSetExcludedFilterArray) {
-                        const isRegexExcluded = permissionSetExcludedFilter.startsWith('(');
-
-                        if ((isRegexExcluded && packageXmlMember.match(permissionSetExcludedFilter)) || (!isRegexExcluded && packageXmlMember === permissionSetExcludedFilter)) {
-                            isExcludedMatch = true;
+                        for (let permissionSetIncludedFilter of permissionSetIncludedFilterArray) {
+                            const isRegexIncluded = permissionSetIncludedFilter.startsWith('(');
+                            if ((isRegexIncluded && packageXmlMember.match(permissionSetIncludedFilter)) || (!isRegexIncluded && packageXmlMember === permissionSetIncludedFilter)) {
+                                isIncludedMatch = true;
+                            }
                         }
-                    }
 
-                    if ((isIncludedFilterActivated && !isExcludedFilterActivated && isIncludedMatch) ||
-                        (!isIncludedFilterActivated && isExcludedFilterActivated && !isExcludedMatch) ||
-                        (isIncludedFilterActivated && isExcludedFilterActivated && isIncludedMatch && !isExcludedMatch) ||
-                        (!isIncludedFilterActivated && !isExcludedFilterActivated)) {
+                        // Check excluded filters
+                        if (permissionSetExcludedFilterArray.length > 0) {
+                            isExcludedFilterActivated = true;
+                        }
+                        for (let permissionSetExcludedFilter of permissionSetExcludedFilterArray) {
+                            const isRegexExcluded = permissionSetExcludedFilter.startsWith('(');
+                            if ((isRegexExcluded && packageXmlMember.match(permissionSetExcludedFilter)) || (!isRegexExcluded && packageXmlMember === permissionSetExcludedFilter)) {
+                                isExcludedMatch = true;
+                            }
+                        }
 
-                        const permissionSetsXMLElmementName = this.describeMetadataAll[packageXmlTypesName].permissionSetTypeName;
+                        // Add element if include & exclude conditions are verified
+                        if ((isIncludedFilterActivated && !isExcludedFilterActivated && isIncludedMatch) ||
+                            (!isIncludedFilterActivated && isExcludedFilterActivated && !isExcludedMatch) ||
+                            (isIncludedFilterActivated && isExcludedFilterActivated && isIncludedMatch && !isExcludedMatch) ||
+                            (!isIncludedFilterActivated && !isExcludedFilterActivated)) {
 
-                        // Test classes are excluded and also type name that are not described in describeMetadata (metadata-utils/index.ts)
-                        if (permissionSetsXMLElmementName !== undefined) {
-                            permissionSetsXmlElement += this.buildMultiplePermissionSetXML({ packageXMLTypeConfig, typeMember: packageXmlMember });
+                            // Metadata must be described to be processed
+                            const permissionSetsXMLElmementName = this.describeMetadataAll[packageXmlTypesName].permissionSetTypeName;
+                            if (permissionSetsXMLElmementName) {
+                                // Build XML
+                                permissionSetsXmlElement += this.buildMultiplePermissionSetXML({ packageXMLTypeConfig, typeMember: packageXmlMember });
+                                // Push in alreadyAddedMembersForThisType so a member is not added twice if there are several rules of the same type
+                                alreadyAddedMembersForThisType.push(packageXmlMember);
+                            }
                         }
                     }
                 }

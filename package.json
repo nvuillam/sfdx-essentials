@@ -1,7 +1,7 @@
 {
   "name": "sfdx-essentials",
   "description": "Toolbox for Salesforce DX to provide some very helpful additional features to base sfdx commands.",
-  "version": "2.0.9",
+  "version": "2.1.0-beta.1",
   "author": "NicolasVuillamy @nvuillam",
   "bugs": "https://github.com/nvuillam/sfdx-essentials/issues",
   "dependencies": {
@@ -99,6 +99,7 @@
     "posttest": "tsc -p test --noEmit && tslint -p test -t stylish",
     "prepack": "rm -rf lib && tsc && oclif-dev manifest",
     "prepare": "rm -rf lib && tsc && oclif-dev manifest",
-    "test": "nyc mocha --forbid-only \"test/**/*.test.ts\""
+    "test": "mocha --forbid-only \"test/**/*.test.ts\"",
+    "test:coverage": "nyc mocha --forbid-only \"test/**/*.test.ts\""
   }
 }

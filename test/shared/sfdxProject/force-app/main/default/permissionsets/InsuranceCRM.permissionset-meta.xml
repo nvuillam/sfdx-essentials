@@ -13,58 +13,73 @@
     </pageAccesses>
     <fieldPermissions>
         <field>Account.BirthCity__c</field>
+        <editable>true</editable>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <field>Account.BirthCountryCode__c</field>
+        <editable>true</editable>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <field>Account.BirthPostalCode__c</field>
+        <editable>true</editable>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <field>Account.FirstName</field>
+        <editable>true</editable>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <field>Account.LastName</field>
+        <editable>true</editable>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <field>Account.Name</field>
+        <editable>true</editable>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <field>Account.ProfessionCode__c</field>
+        <editable>true</editable>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <field>Account.ProfessionLabel__c</field>
+        <editable>true</editable>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <field>User.URI__c</field>
+        <editable>true</editable>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <field>User.WebAppProfiles__c</field>
+        <editable>true</editable>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <field>WebAppInitCacheData__c.Reference__c</field>
+        <editable>true</editable>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <field>WebAppInitCacheData__c.Type__c</field>
+        <editable>true</editable>
         <readable>true</readable>
     </fieldPermissions>
     <objectPermissions>
-        <object>Account</object>
+        <object>WebAppInitCacheData__c</object>
         <allowRead>true</allowRead>
+        <allowCreate>true</allowCreate>
+        <allowDelete>true</allowDelete>
+        <allowEdit>true</allowEdit>
     </objectPermissions>
     <objectPermissions>
-        <object>WebAppInitCacheData__c</object>
+        <object>Account</object>
         <allowRead>true</allowRead>
     </objectPermissions>
     <recordTypeVisibilities>

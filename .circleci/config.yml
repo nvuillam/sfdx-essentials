@@ -16,7 +16,7 @@
             command: yarn
         - run:
             name: Testing
-            command: yarn test
+            command: yarn test:coverage
         - run:
             name: Submitting code coverage to codecov
             command: |
