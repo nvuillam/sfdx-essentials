@@ -26,10 +26,10 @@
 #      <<: *test
 #      docker:
 #        - image: node:8
-    node-10:
-      <<: *test
-      docker:
-        - image: node:10
+#    node-10:
+#      <<: *test
+#      docker:
+#        - image: node:10
     cache:
       <<: *test
       steps:

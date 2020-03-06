@@ -80,15 +80,23 @@
   },
   "nyc": {
     "include": [
-      "src/**"
+      "src/**/*.ts"
     ],
+    "exclude": [
+      "coverage/**",
+      "node_modules/**",
+      "**/*.d.ts",
+      "**/*.test.ts"
+    ],
+    "sourceMap": true,
     "extension": [
       ".ts"
     ],
     "reporter": [
       "html"
     ],
-    "all": true
+    "all": true,
+    "instrument": true
   },
   "repository": "https://github.com/nvuillam/sfdx-essentials",
   "scripts": {
@@ -99,7 +107,7 @@
     "posttest": "tsc -p test --noEmit && tslint -p test -t stylish",
     "prepack": "rm -rf lib && tsc && oclif-dev manifest",
     "prepare": "rm -rf lib && tsc && oclif-dev manifest",
-    "test": "mocha --forbid-only \"test/**/*.test.ts\"",
-    "test:coverage": "nyc mocha --forbid-only \"test/**/*.test.ts\""
+    "test": "mocha --exit --forbid-only --colors \"test/**/*.test.ts\"",
+    "test:coverage": "nyc npm run test"
   }
 }
