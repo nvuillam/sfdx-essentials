@@ -38,6 +38,28 @@
 				]
 			},
 			{
+				"ruleId": "ProcessArchitectureCustomFields",
+				"typeName": "CustomField",
+				"permissionSetsElementList": [
+					{
+						"elementName": "field"
+					},
+					{
+						"elementName": "readable",
+						"value": true
+					},
+					{
+						"elementName": "editable",
+						"value": true
+					}
+				],
+				"includedFilterList": [
+					"(BackEndCalloutBuffer__c.)",
+					"(User.)"
+				]
+			},
+			{
+				"ruleId": "OtherCustomFields",
 				"typeName": "CustomField",
 				"permissionSetsElementList": [
 					{
@@ -58,6 +80,36 @@
 				]
 			},
 			{
+				"ruleId": "ProcessArchitectureCustomObjects",
+				"typeName": "CustomObject",
+				"permissionSetsElementList": [
+					{
+						"elementName": "object"
+					},
+					{
+						"elementName": "allowRead",
+						"value": true
+					},
+					{
+						"elementName": "allowCreate",
+						"value": true
+					},
+					{
+						"elementName": "allowDelete",
+						"value": true
+					},
+					{
+						"elementName": "allowEdit",
+						"value": true
+					}
+				],
+				"includedFilterList": [
+					"BackEndCalloutBuffer__c",
+					"WebAppInitCacheData__c"
+				]
+			},
+			{
+				"ruleId": "OtherCustomObjects",
 				"typeName": "CustomObject",
 				"permissionSetsElementList": [
 					{
@@ -115,6 +167,8 @@
 				"excludedFilterList": []
 			},
 			{
+				"ruleId": "AllRightsOnAllCustomFields",
+				"overrideRulesOfSameType": true,
 				"typeName": "CustomField",
 				"permissionSetsElementList": [
 					{
@@ -139,6 +193,8 @@
 				]
 			},
 			{
+				"ruleId": "AllRightsOnAllCustomObjects",
+				"overrideRulesOfSameType": true,
 				"typeName": "CustomObject",
 				"permissionSetsElementList": [
 					{
@@ -227,6 +283,31 @@
 				],
 				"includedFilterList": [
 					"DXCO4SF_Example"
+				]
+			},
+			{
+				"ruleId": "OtherCustomFields",
+				"typeName": "CustomField",
+				"permissionSetsElementList": [
+					{
+						"elementName": "field"
+					},
+					{
+						"elementName": "editable",
+						"value": true
+					},
+					{
+						"elementName": "readable",
+						"value": true
+					}
+				],
+				"includedFilterList": [
+					"(.*)"
+				],
+				"additionalElements": [
+					"Account.Name",
+					"Account.LastName",
+					"Account.FirstName"
 				]
 			}
 		]

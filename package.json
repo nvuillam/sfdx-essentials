@@ -1,7 +1,7 @@
 {
   "name": "sfdx-essentials",
   "description": "Toolbox for Salesforce DX to provide some very helpful additional features to base sfdx commands.",
-  "version": "2.0.9",
+  "version": "2.1.0-beta.1",
   "author": "NicolasVuillamy @nvuillam",
   "bugs": "https://github.com/nvuillam/sfdx-essentials/issues",
   "dependencies": {
@@ -80,15 +80,23 @@
   },
   "nyc": {
     "include": [
-      "src/**"
+      "src/**/*.ts"
     ],
+    "exclude": [
+      "coverage/**",
+      "node_modules/**",
+      "**/*.d.ts",
+      "**/*.test.ts"
+    ],
+    "sourceMap": true,
     "extension": [
       ".ts"
     ],
     "reporter": [
       "html"
     ],
-    "all": true
+    "all": true,
+    "instrument": true
   },
   "repository": "https://github.com/nvuillam/sfdx-essentials",
   "scripts": {
@@ -99,6 +107,7 @@
     "posttest": "tsc -p test --noEmit && tslint -p test -t stylish",
     "prepack": "rm -rf lib && tsc && oclif-dev manifest",
     "prepare": "rm -rf lib && tsc && oclif-dev manifest",
-    "test": "nyc mocha --forbid-only \"test/**/*.test.ts\""
+    "test": "mocha --exit --forbid-only --colors \"test/**/*.test.ts\"",
+    "test:coverage": "nyc npm run test"
   }
 }
