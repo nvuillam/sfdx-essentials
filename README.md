@@ -23,6 +23,8 @@ Easy to integrate in a CD/CI process (Jenkins Pipeline,CircleCI...)
 
 See [CHANGELOG](https://github.com/nvuillam/sfdx-essentials/blob/master/CHANGELOG.md)
 
+Any **question**, **problem** or **enhancement request** ? Ask [**here**](https://github.com/nvuillam/sfdx-essentials/issues) :)
+
 # Command list
 
 ## Metadata

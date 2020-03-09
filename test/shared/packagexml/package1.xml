@@ -36,6 +36,20 @@
     <members>Account.BirthPostalCode__c</members>
     <members>Account.ProfessionCode__c</members>
     <members>Account.ProfessionLabel__c</members>
+    <members>BackEndCalloutBuffer__c.BufferString__c</members>
+    <members>BackEndCalloutBuffer__c.BufferString2__c</members>
+    <members>BackEndCalloutBuffer__c.BufferString3__c</members>
+    <members>BackEndCalloutBuffer__c.BufferString4__c</members>
+    <members>BackEndCalloutBuffer__c.BufferString5__c</members>
+    <members>BackEndCalloutBuffer__c.BufferString6__c</members>
+    <members>BackEndCalloutBuffer__c.BufferString7__c</members>
+    <members>BackEndCalloutBuffer__c.BufferString8__c</members>
+    <members>BackEndCalloutBuffer__c.CalloutType__c</members>
+    <members>BackEndCalloutBuffer__c.Key__c</members>
+    <members>BackEndCalloutBuffer__c.Language__c</members>
+    <members>BackEndCalloutBuffer__c.LastRefreshDateTime__c</members>
+    <members>PostalCodeCity__c.City__c</members>
+    <members>PostalCodeCity__c.Country__c</members>
     <members>User.URI__c</members>
     <members>User.WebAppProfiles__c</members>
     <members>WebAppInitCacheData__c.Reference__c</members>
@@ -56,6 +70,8 @@
   </types>
   <types>
     <members>AppLoadedCSS__mdt</members>
+    <members>BackEndCalloutBuffer__c</members>
+    <members>PostalCodeCity__c</members>
     <members>WebAppInitCacheData__c</members>
     <name>CustomObject</name>
   </types>
