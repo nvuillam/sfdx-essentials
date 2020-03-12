@@ -2,6 +2,7 @@ import { Command, flags } from '@oclif/command';
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import * as glob from 'glob';
+import * as path from 'path';
 import * as xmlFormatter from 'xml-formatter';
 import * as xml2js from 'xml2js';
 import * as builder from 'xmlbuilder';
@@ -119,7 +120,7 @@ export default class PermissionSetGenerate extends Command {
                     const formattedPsXml = xmlFormatter(permissionSetsXmlElements, { collapseContent: true });
                     fs.writeFile(outputFilename, formattedPsXml, err3 => {
                         if (!err3) {
-                            console.log('      - ' + outputFilename);
+                            console.log('      - ' + path.resolve(outputFilename));
                             resolve();
                         } else {
                             console.error(err3.message);
@@ -268,11 +269,18 @@ export default class PermissionSetGenerate extends Command {
         }
         // Await all fields to be processed and update excludedFilterList to add custom fields to filter
         await Promise.all(promises);
-        const customFieldDefPos = filterConfigData.packageXMLTypeList.findIndex((item: any) => (item.typeName === 'CustomField'));
-        const customFieldDef = filterConfigData.packageXMLTypeList[customFieldDefPos];
-        const permissionSetExcludedFilterArray: any[] = customFieldDef.excludedFilterList || [];
-        customFieldDef.excludedFilterList = permissionSetExcludedFilterArray.concat(excludedCustomFieldList);
-        filterConfigData.packageXMLTypeList[customFieldDefPos] = customFieldDef;
+
+        // List all indexes with typeName === 'CustomField'
+        const customFieldElementsIndexes = filterConfigData.packageXMLTypeList.map((item, i) => item.typeName === 'CustomField' ? i : '').filter(String);
+        // Update excludedFilterList for all filter items of type CustomField
+        for (const customFieldDefPos of customFieldElementsIndexes) {
+            const customFieldDef = filterConfigData.packageXMLTypeList[customFieldDefPos];
+            const permissionSetExcludedFilterArray: any[] = customFieldDef.excludedFilterList || [];
+            customFieldDef.excludedFilterList = permissionSetExcludedFilterArray.concat(excludedCustomFieldList).sort();
+            customFieldDef.excludedFilterList = [...new Set(customFieldDef.excludedFilterList)]; // Make array unique
+            filterConfigData.packageXMLTypeList[customFieldDefPos] = customFieldDef;
+        }
+
         return filterConfigData;
     }
 
@@ -349,15 +357,10 @@ export default class PermissionSetGenerate extends Command {
                     // Add rights for all elements matching criteria
                     for (let packageXmlMember of packageXmlMembers) {
 
-                        let isIncludedFilterActivated = false;
-                        let isExcludedFilterActivated = false;
-                        let isIncludedMatch = false;
-                        let isExcludedMatch = false;
+                        let isIncludedMatch: boolean = false;
+                        let isExcludedMatch: boolean = false;
 
-                        // Check included filters
-                        if (permissionSetIncludedFilterArray.length > 0) {
-                            isIncludedFilterActivated = true;
-                        }
+                        // Check if item is in included filters
                         for (let permissionSetIncludedFilter of permissionSetIncludedFilterArray) {
                             const isRegexIncluded = permissionSetIncludedFilter.startsWith('(');
                             if ((isRegexIncluded && packageXmlMember.match(permissionSetIncludedFilter)) || (!isRegexIncluded && packageXmlMember === permissionSetIncludedFilter)) {
@@ -365,23 +368,18 @@ export default class PermissionSetGenerate extends Command {
                             }
                         }
 
-                        // Check excluded filters
+                        // Check excluded filters if defined
                         if (permissionSetExcludedFilterArray.length > 0) {
-                            isExcludedFilterActivated = true;
-                        }
-                        for (let permissionSetExcludedFilter of permissionSetExcludedFilterArray) {
-                            const isRegexExcluded = permissionSetExcludedFilter.startsWith('(');
-                            if ((isRegexExcluded && packageXmlMember.match(permissionSetExcludedFilter)) || (!isRegexExcluded && packageXmlMember === permissionSetExcludedFilter)) {
-                                isExcludedMatch = true;
+                            for (let permissionSetExcludedFilter of permissionSetExcludedFilterArray) {
+                                const isRegexExcluded = permissionSetExcludedFilter.startsWith('(');
+                                if ((isRegexExcluded && packageXmlMember.match(permissionSetExcludedFilter)) || (!isRegexExcluded && packageXmlMember === permissionSetExcludedFilter)) {
+                                    isExcludedMatch = true;
+                                }
                             }
                         }
 
                         // Add element if include & exclude conditions are verified
-                        if ((isIncludedFilterActivated && !isExcludedFilterActivated && isIncludedMatch) ||
-                            (!isIncludedFilterActivated && isExcludedFilterActivated && !isExcludedMatch) ||
-                            (isIncludedFilterActivated && isExcludedFilterActivated && isIncludedMatch && !isExcludedMatch) ||
-                            (!isIncludedFilterActivated && !isExcludedFilterActivated)) {
-
+                        if (isIncludedMatch === true && isExcludedMatch === false) {
                             // Metadata must be described to be processed
                             const permissionSetsXMLElmementName = this.describeMetadataAll[packageXmlTypesName].permissionSetTypeName;
                             if (permissionSetsXMLElmementName) {
