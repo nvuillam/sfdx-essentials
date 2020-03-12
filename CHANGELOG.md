@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.1.1] - 2020-03-12
+
+### Changed
+
+- **permissionsets:generate**: Fix exclusion of required & master detail fields when there are several CustomField filtering rules
+
 ## [2.1.0] - 2020-03-06
 
 ### Added
