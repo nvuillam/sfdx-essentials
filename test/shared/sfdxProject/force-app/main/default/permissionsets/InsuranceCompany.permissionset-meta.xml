@@ -104,14 +104,6 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <field>BackEndCalloutBuffer__c.CalloutType__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <field>BackEndCalloutBuffer__c.Key__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
         <field>PostalCodeCity__c.City__c</field>
         <readable>true</readable>
     </fieldPermissions>
