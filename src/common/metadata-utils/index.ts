@@ -62,7 +62,7 @@ class MetadataUtils {
       FieldSet: { sobjectRelated: true },
       ListView: { sobjectRelated: true },
       RecordType: { sobjectRelated: true, permissionSetTypeName: 'recordTypeVisibilities', permissionSetMemberName: 'recordType' },
-      UserPermission: { sobjectRelated: true, permissionSetTypeName: 'userPermissions', permissionSetMemberName: 'name' },
+      UserPermission: { sobjectRelated: false, permissionSetTypeName: 'userPermissions', permissionSetMemberName: 'name' },
       ValidationRule: { sobjectRelated: true },
       WebLink: { sobjectRelated: true },
 

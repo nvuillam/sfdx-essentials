@@ -337,14 +337,23 @@ export default class PermissionSetGenerate extends Command {
         // Manage elements that are in permissionSetDefinition JSON and not in packageXmlTypes
         for (const permissionSetElement of permissionSetDefinition.packageXMLTypeList) {
             if (!packageXmlTypesArray.includes(permissionSetElement.typeName) && packageXMLTypesAll.includes(permissionSetElement.typeName) ) {
-                const packageXmlTypeElement = {
-                    members: permissionSetElement.includedFilterList,
-                    name: [permissionSetElement.typeName]
-                };
-                packageXmlTypes.push(packageXmlTypeElement);
+                let permissionSetMemberList = [];
+                if (permissionSetElement.includedFilterList && !permissionSetElement.includedFilterList[0].startsWith('(')) {
+                    permissionSetMemberList = permissionSetElement.includedFilterList;
+                } else if (permissionSetElement.additionalElements) {
+                    permissionSetMemberList = permissionSetElement.additionalElements;
+                }
+
+                if (permissionSetMemberList.length > 0) {
+                    const packageXmlTypeElement = {
+                        members: permissionSetMemberList,
+                        name: [permissionSetElement.typeName]
+                    };
+                    packageXmlTypes.push(packageXmlTypeElement);
+                }
             }
         }
-        
+
         for (const packageXmlType of packageXmlTypes) {
 
             const packageXmlTypesName = packageXmlType.name[0];
