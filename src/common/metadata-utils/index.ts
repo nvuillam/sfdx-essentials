@@ -59,11 +59,12 @@ class MetadataUtils {
       CompactLayout: { sobjectRelated: true },
       CustomField: { sobjectRelated: true, permissionSetTypeName: 'fieldPermissions', permissionSetMemberName: 'field' },
       CustomObject: { sobjectRelated: true, permissionSetTypeName: 'objectPermissions', permissionSetMemberName: 'object' },
+      FieldSet: { sobjectRelated: true },
       ListView: { sobjectRelated: true },
       RecordType: { sobjectRelated: true, permissionSetTypeName: 'recordTypeVisibilities', permissionSetMemberName: 'recordType' },
-      WebLink: { sobjectRelated: true },
+      UserPermission: { sobjectRelated: true, permissionSetTypeName: 'userPermissions', permissionSetMemberName: 'name' },
       ValidationRule: { sobjectRelated: true },
-      FieldSet: { sobjectRelated: true },
+      WebLink: { sobjectRelated: true },
 
       // Special case: Translations, used for object copy and for filtering
       Translations: { translationRelated: true, folder: 'translations', nameSuffixList: ['.translation'], sfdxNameSuffixList: ['.translation-meta.xml'] }
