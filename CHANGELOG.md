@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.1.3] - 2020-04-07
+
+### Changed
+
+- console.log added to display permission set file generated with -v option
+
 ## [2.1.2] - 2020-03-25
 
 ### Changed
