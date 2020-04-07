@@ -121,6 +121,10 @@ export default class PermissionSetGenerate extends Command {
                     fs.writeFile(outputFilename, formattedPsXml, err3 => {
                         if (!err3) {
                             console.log('      - ' + path.resolve(outputFilename));
+                            if (this.verbose) {
+                                console.log(configName + '.permissionset-meta.xml file:');
+                                console.log(formattedPsXml + '\n');
+                            }
                             resolve();
                         } else {
                             console.error(err3.message);
