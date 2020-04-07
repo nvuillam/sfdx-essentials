@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.1.2] - 2020-03-25
+
+### Changed
+
+- userPermission added in list of Metadatas in MetadataUtils.describeMetadataTypes()
+
 ## [2.1.1] - 2020-03-12
 
 ### Changed
