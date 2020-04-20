@@ -34,6 +34,7 @@ Package.xml types currently managed:
 - CustomMetadata
 - CustomObject
 - CustomObjectTranslation
+- CustomPermission
 - CustomSite
 - CustomTab
 - Document
