@@ -224,7 +224,7 @@ sfdx force:mdapi:deploy -d tmp/deployDemoQualiFiltered/ -w 60 -u DemoQuali`
       }
 
       // Collect custom labels
-      if (metadataType === 'CustomLabel') {
+      if (metadataType[0] === 'CustomLabel') {
         this.collectAndFilterCustomLabels(metadataDesc, metadataType, members);
       }
 
@@ -318,7 +318,6 @@ sfdx force:mdapi:deploy -d tmp/deployDemoQualiFiltered/ -w 60 -u DemoQuali`
       const parser = new xml2js.Parser();
       const data = fs.readFileSync(copyTargetFile);
       parser.parseString(data, (err2, parsedObjectFile) => {
-
         if (members != null && members[0] === '*') {
           this.logIfVerbose('-- including all labels ');
         } else {
@@ -328,7 +327,7 @@ sfdx force:mdapi:deploy -d tmp/deployDemoQualiFiltered/ -w 60 -u DemoQuali`
             if (Array.isArray(itemName)) {
               itemName = itemName[0];
             }
-            if (members.includes(itemName)) {
+            if (!members.includes(itemName)) {
               this.logIfVerbose(`----removed ${itemName} `);
               delete parsedObjectFile['CustomLabels']['labels'][pos];
             } else {
