@@ -142,6 +142,7 @@ DESCRIPTION
   - CustomMetadata
   - CustomObject
   - CustomObjectTranslation
+  - CustomPermission
   - CustomSite
   - CustomTab
   - Document
