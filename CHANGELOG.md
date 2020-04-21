@@ -2,7 +2,7 @@
 
 ## [2.1.4] - 2020-04-20
 
-- #27 ([Carlos Lopes Ariza](https://github.com/carlos-lopez-ariza))
+- [#27](https://github.com/nvuillam/sfdx-essentials/pull/27) ([Carlos Lopes Ariza](https://github.com/carlos-lopez-ariza))
   - Fixed custom label on filter-from-packagexml 
   - Added Custom Permission support on filter-from-packagexml 
 
