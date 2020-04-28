@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.1.5] - 2020-04-28
+
+- Add silent mode for filter-from-packagexml command
+
 ## [2.1.4] - 2020-04-20
 
 - [#27](https://github.com/nvuillam/sfdx-essentials/pull/27) ([Carlos Lopes Ariza](https://github.com/carlos-lopez-ariza))
