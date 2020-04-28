@@ -81,6 +81,7 @@ sfdx force:mdapi:deploy -d tmp/deployDemoQualiFiltered/ -w 60 -u DemoQuali`
     packagexml: flags.string({ char: 'p', description: 'package.xml file path' }),
     inputfolder: flags.string({ char: 'i', description: 'Input folder (default: "." )' }),
     outputfolder: flags.string({ char: 'o', description: 'Output folder (default: filteredMetadatas)' }),
+    silent: flags.boolean({ char: 's', description: 'Silent logs when no error' }) as unknown as flags.IOptionFlag<boolean>,
     verbose: flags.boolean({ char: 'v', description: 'Verbose' }) as unknown as flags.IOptionFlag<boolean>
   };
 
@@ -91,6 +92,7 @@ sfdx force:mdapi:deploy -d tmp/deployDemoQualiFiltered/ -w 60 -u DemoQuali`
   public inputFolder: string;
   public outputFolder: string;
   public verbose: boolean = false;
+  public silent = false;
 
   // Internal properties
   public packageXmlMetadatasTypeLs = [];
@@ -112,6 +114,9 @@ sfdx force:mdapi:deploy -d tmp/deployDemoQualiFiltered/ -w 60 -u DemoQuali`
     this.outputFolder = flags.outputfolder || 'filteredMetadatas';
     if (flags.verbose) {
       this.verbose = true;
+    }
+    if (flags.silent) {
+      this.silent = true;
     }
     this.log(`Initialize filtering of ${this.inputFolder}, using ${this.packageXmlFile}, into ${this.outputFolder}`);
 
@@ -527,7 +532,9 @@ sfdx force:mdapi:deploy -d tmp/deployDemoQualiFiltered/ -w 60 -u DemoQuali`
 
   // Display results as JSON
   public displayResults() {
-    console.log('\n' + JSON.stringify(this.summaryResult));
+    if (!this.silent) {
+      console.log('\n' + JSON.stringify(this.summaryResult));
+    }
   }
 
   public logIfVerbose(content: string) {
