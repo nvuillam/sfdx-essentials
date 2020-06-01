@@ -118,6 +118,78 @@ class MetadataUtils {
     ];
     return objectFilteringProperties;
   }
+
+  public static getAroundCharsObjectReplacementList() {
+    const aroundCharReplaceObjectList = [
+      { name: 'simpleQuote', before: '\'', after: '\'', replacementPrefix: null, replacementSuffix: null },
+      { name: 'tag', before: '<', after: '>' },
+      { name: 'xmlFile', before: '>', after: '</' },
+      { name: 'packageXmlFile', before: '>', after: '.' },
+      { name: 'stringlist', before: '\'', after: '.' }, // ClassName.MEthodNmae('MyObject.Myfield');
+      { name: 'space', before: ' ', after: ' ' },
+      { name: 'spacePoint', before: ' ', after: '.' }, // Database.upsert( objectList, fieldobject.Fields.fieldName__c,false) ;
+      { name: 'parenthesis', before: '\(', after: '\)' },
+      { name: 'loop', before: '\(', after: '\ ' }, //  for (MyObject object : MyObjectList)
+      { name: 'newObject', before: '\ ', after: '\(' },      // ex: MyObject myObj = new MyObject()
+      { name: 'objectInParenthesis', before: '\ ', after: '\)' },      //  System.assert( object instanceof objectInstance__c);
+      { name: 'object', before: '"', after: '.' }, // value="MyObject__c.Field__c"
+      { name: 'DeclarationObject', before: '"', after: '"' }, //  <aura:attribute name="Fields__c" type="String" />
+      { name: 'GetRecordtypeinjson', before: '"', after: '@' }, //  TO PUT IN THE JSONCONFIG FILE NOT HERE
+      { name: 'fieldEndline', before: ' ', after: '$' }, // Select Id FROM MyObject__c \n WHERE Field == 'tes''
+      { name: 'declarationInClass', before: '', after: ' ' },
+      { name: 'declarationInClassWithTab', before: '\t', after: ' ' }
+
+    ];
+    return aroundCharReplaceObjectList;
+  }
+
+  public static getAroundCharsFieldReplacementList() {
+    // Default replacement list for object
+    let aroundCharReplacefieldList = [
+      { name: 'simpleQuote', before: '\'', after: '\'', replacementPrefix: null, replacementSuffix: null },
+      { name: 'doubleQuoteJson', before: '"', after: '":' },
+      { name: 'simpleQuoteFields', before: '\'', after: '.', replacementPrefix: null, replacementSuffix: null },
+      { name: 'point', before: '.', after: '.' },
+      { name: 'pointSpace', before: '.', after: ' ' },
+      { name: 'xmlFile', before: '>', after: '</' },
+      { name: 'xmlFile2', before: '.', after: '</' },
+      { name: 'packageXmlFile', before: '>', after: '.' },
+      { name: 'pointQuote', before: '.', after: '\'' }, // ClassName.MEthodNmae('MyObject.Myfield');
+      { name: 'spacePoint', before: ' ', after: '.' }, // Database.upsert( objectList, fieldobject.Fields.fieldName__c,false) ;
+      { name: 'pointEndLine', before: '.', after: ';' }, // Select id FROM MyObject__c WHERE ObjectFields__r.objectField__c
+      { name: 'objectArgument', before: '(', after: '=' }, //   Object myObject = new Object(field1__c=value1, field2__c = value2);
+      { name: 'fieldParenthesis', before: '(', after: ')' }, //   toLabel(field1__c)
+      { name: 'endOfstring', before: ' ', after: '\'' }, //   database.query('Select id, Fields1__c, Fields__c FROM MyObject__c WHERE ObjectFields__r.objectField__c')
+      { name: 'selectfields', before: ' ', after: ',' }, //   Select id, Fields1__c, Fields__c FROM MyObject__c WHERE ObjectFields__r.objectField__c
+      { name: 'pointArgument', before: '.', after: ',' }, //  className.method(myObject.field1__r,myObject.field1__C);
+      { name: 'pointEndParenthesis', before: '.', after: ')' },    // field in parenthesis className.method(myObject.field1__r,myObject.field1__C);
+      { name: 'SOQLRequest', before: ',', after: '.' }, // lookup fields SELECT Id,Name,lookupField__r.fields
+      { name: 'newObjectInitialize', before: ' ', after: '=' }, // l new myObject(field1__c=acc.Id, Field2__c='Owner')
+      { name: 'firstSOQLRequest', before: 'SELECT ', after: ' ' },    // in request soql SELECT field FROM
+      { name: 'firstSOQLRequestofList', before: 'SELECT ', after: ',' }, // in request soql SELECT field, field2 FROM
+      { name: 'SOQLRequestofList', before: ' ', after: ',' }, // in request soql SELECT field, field2 FROM
+      { name: 'lastSOQLRequestofList', before: ' ', after: ' FROM' },    // in request soql SELECT field, field2 FROM
+      { name: 'lastSOQLRequestofList', before: ',', after: ' FROM' },    // in request soql SELECT field,field2 FROM
+      { name: 'equality', before: '.', after: '=' },    // field== 'value'
+      { name: 'list', before: '.', after: '}' },    // new List<String>{MyOject.Field__c});
+      { name: 'inequality', before: '.', after: '!' },    // field!= 'value'
+      { name: 'Concatenation', before: '.', after: '+' },    // String test = SFObject.Field1__c+';'+SFObject.Field2__c;
+      { name: 'comaComa', before: ',', after: ',' }, // in select example Select field,field,field FROM Object
+      { name: 'pointCalculator', before: '.', after: '*' }, // operation on field Myobject.Field__c*2
+      { name: 'componentfield', before: '.', after: '"' }, // value="MyObject__c.Field__c"
+      { name: 'DeclarationField', before: '"', after: '"' }, //  <aura:attribute name="Fields__c" type="String" />
+      { name: 'fieldEndline', before: '.', after: '$' } // if  MyObject__c.Field == MyObject__c.Field2 \n || etc...
+    ];
+    return aroundCharReplacefieldList;
+  }
+
+  public static getAroundCharsClassReplacementList() {
+    // Default replacement list for object
+    let aroundCharReplaceClassList = [
+      { name: 'pointAfter', before: '', after: '.' }
+    ];
+    return aroundCharReplaceClassList;
+  }
 }
 
 export { MetadataUtils };
