@@ -2,18 +2,16 @@ Salesforce DX Essentials
 ========================
 
 [![Version](https://img.shields.io/npm/v/sfdx-essentials.svg)](https://npmjs.org/package/sfdx-essentials)
-[![Downloads/week](https://img.shields.io/npm/dw/sfdx-essentials.svg)](https://npmjs.org/package/sfdx-essentials) 
-[![Downloads/total](https://img.shields.io/npm/dt/sfdx-essentials.svg)](https://npmjs.org/package/sfdx-essentials) 
+[![Downloads/week](https://img.shields.io/npm/dw/sfdx-essentials.svg)](https://npmjs.org/package/sfdx-essentials)
+[![Downloads/total](https://img.shields.io/npm/dt/sfdx-essentials.svg)](https://npmjs.org/package/sfdx-essentials)
 [![CircleCI](https://circleci.com/gh/nvuillam/sfdx-essentials/tree/master.svg?style=shield)](https://circleci.com/gh/nvuillam/sfdx-essentials/tree/master)
 [![codecov](https://codecov.io/gh/nvuillam/sfdx-essentials/branch/master/graph/badge.svg)](https://codecov.io/gh/nvuillam/sfdx-essentials)
 [![GitHub contributors](https://img.shields.io/github/contributors/nvuillam/sfdx-essentials.svg)](https://gitHub.com/nvuillam/sfdx-essentials/graphs/contributors/)
 [![GitHub stars](https://img.shields.io/github/stars/nvuillam/sfdx-essentials?label=Star&maxAge=2592000)](https://GitHub.com/nvuillam/sfdx-essentials/stargazers/)
-[![License](https://img.shields.io/npm/l/sfdx-essentials.svg)](https://github.com/nvuillam/sfdx-essentials/blob/master/package.json) 
+[![License](https://img.shields.io/npm/l/sfdx-essentials.svg)](https://github.com/nvuillam/sfdx-essentials/blob/master/package.json)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
-[![HitCount](https://hits.dwyl.com/nvuillam/sfdx-essentials.svg)](https://hits.dwyl.com/nvuillam/sfdx-essentials)
-[![Say Thanks!](https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg)](https://saythanks.io/to/nicolas.vuillamy@gmail.com)
 
-# PLUGIN
+# SFDX ESSENTIALS PLUGIN
 
 Toolbox for Salesforce DX to provide some very helpful additional features to base sfdx commands.
 
@@ -25,9 +23,9 @@ See [CHANGELOG](https://github.com/nvuillam/sfdx-essentials/blob/master/CHANGELO
 
 Any **question**, **problem** or **enhancement request** ? Ask [**here**](https://github.com/nvuillam/sfdx-essentials/issues) :)
 
-# Command list
+## Commands
 
-## Metadata
+### Metadata
 
 | Command | Description |
 | ------------- | ------------- |
@@ -35,64 +33,67 @@ Any **question**, **problem** or **enhancement request** ? Ask [**here**](https:
 | [essentials:metadata:filter-xml-content](#sfdx-essentialsmetadatafilter-xml-content) | **Filter content of metadatas (XML)** in order to be able to deploy only part of them on an org |
 | [sfdx essentials:metadata:uncomment](#sfdx-essentialsmetadatauncomment) | **Uncomment lines in sfdx/md files** (useful to manage @Deprecated annotations with managed packages) |
 
-## Migration
+### Migration
 
 | Command | Description |
 | ------------- | ------------- |
 | [essentials:mig:fix-aura-attributes-names](#sfdx-essentialsmigfix-aura-attributes-names) | **Replace reserved lightning attribute names in lightning components and apex classes** ( if you named a lightning attribute like a custom apex class, since Summer 18 you simply can not generate a managed package again) |
 | [essentials:mig:migrate-object-model](#sfdx-essentialsmigmigrate-object-model) | **Migrate sources from an object model to a new object model** |
+| [essentials:mig:add-namespace](#sfdx-essentialsadd-namespace) | **Update SFDX sources to add a namespace on references to items described in a package.xml file** |
 
-## Package.xml
+### Package.xml
 
 | Command | Description |
 | ------------- | ------------- |
 | [essentials:packagexml:append](#sfdx-essentialspackagexmlappend) | **Append content of a package.xml files into a single one** |
 | [essentials:packagexml:sort](#sfdx-essentialspackagexmlsort) | **Reorder alphabetically the content of package.xml file(s)** |
 
-## Permission sets
+### Permission sets
 
 | Command | Description |
 | ------------- | ------------- |
 | [essentials:permissionset:generate](#sfdx-essentialspermissionsetgenerate) | **Generate permission sets** from packageXml file depending on JSON configuration file |
 
-## SFDX Project
+### SFDX Project
 
 | Command | Description |
 | ------------- | ------------- |
 | [essentials:project:change-dependency-version](#sfdx-essentialsprojectchange-dependency-version) | **Replace other managed packages dependency version number** ( very useful when you build a managed package over another managed package, like Financial Services Cloud ) |
 | [essentials:project:check-consistency-with-packagexml](#sfdx-essentialsprojectcheck-consistency-with-packagexml) | **Check consistency between a SFDX project files and package.xml files** |
 
-# INSTALLATION
+## INSTALLATION
 
-```
+```shell
     sfdx plugins:install sfdx-essentials
 ```
 
 - Windows users: [sfdx plugin generator](https://github.com/forcedotcom/sfdx-plugin-generate) is bugged on windows (hardcode call of linux rm instruction) , so you may use [Git Bash](https://gitforwindows.org/) to run this code ( at least while it installs the plugin dependencies )
 
 - CI Users: As the plugin is not signed, to install it from a Dockerfile or a script:
-```
+
+```shell
     echo 'y' | sfdx plugins:install sfdx-essentials
 ```
 
-# UPGRADE
+## UPGRADE
 
 Its seems that `sfdx plugins:update` does not always work, in that case , uninstall then reinstall the plugin
-```
+
+```shell
     sfdx plugins:uninstall sfdx-essentials
     sfdx plugins:install sfdx-essentials
 ```
 
-# CONTRIBUTE
+## CONTRIBUTE
 
 Contributions are very welcome, please run **npm run lint:fix** and **npm run test** before making a new PR
 
 - Fork the repo and clone it on your computer
 - To [debug](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_plugins.meta/sfdx_cli_plugins/cli_plugins_debug.htm), run  ``` $ sfdx plugins:link ``` or use  ``` $ NODE_OPTIONS=--inspect-brk bin/run yourcommand ```
-- Now your calls to sfdx essentials are performed on your local sources 
+- Now your calls to sfdx essentials are performed on your local sources
 - Once your code is ready, documented and linted, please make a pull request :)
 
-# Commands
+# Command details
 <!-- commands -->
 * [`sfdx essentials:metadata:filter-from-packagexml`](#sfdx-essentialsmetadatafilter-from-packagexml)
 * [`sfdx essentials:metadata:filter-xml-content`](#sfdx-essentialsmetadatafilter-xml-content)
