@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.2.1] - 2020-06-01
+
+- **essentials:mig:add-namespace**: Also convert XML files + use case sensitive replacements
+
 ## [2.2.0] - 2020-06-01
 
 - New command **essentials:mig:add-namespace**: Update SFDX sources to add a namespace on references to items described in a package.xml file

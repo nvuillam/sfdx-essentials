@@ -95,6 +95,7 @@ export default class AddNamespace extends Command {
             for (const file of customFileNameList) {
                 this.progressBar.update(null, { file: 'Processing ' + file });
                 await this.addNameSpaceInFile(file, replacementList);
+                await this.manageRenameFile(file, replacementList);
             }
             if (!this.verbose && this.progressBar.terminal.isTTY()) {
                 this.progressBar.increment();
@@ -152,7 +153,7 @@ export default class AddNamespace extends Command {
             let oldString = aroundChars.before + prevSubString + aroundChars.after;
             let newString = aroundChars.before + newSubstring + aroundChars.after;
             const regexStr = this.stringToRegex(oldString);
-            const regexToReplace = new RegExp(regexStr, 'gi');
+            const regexToReplace = new RegExp(regexStr, 'g');
             replacementList.push({ regex: regexToReplace, replacement: newString, type });
         }
         return replacementList;
@@ -172,8 +173,9 @@ export default class AddNamespace extends Command {
         const fileExt = file.split('.').pop();
         switch (fileExt) {
             case 'cls':
-            case 'apex': fileLines = this.applyOnApex(fileLines, replacementList); break;
-            case 'json': fileLines = this.applyOnJson(fileLines, replacementList); break;
+            case 'apex': fileLines = this.applyReplacementsGeneric(fileLines, replacementList); break;
+            case 'json': fileLines = this.applyReplacementsGeneric(fileLines, replacementList); break;
+            case 'xml': fileLines = this.applyReplacementsGeneric(fileLines, replacementList); break;
             default: console.log(`Extension ${fileExt} not supported (yet ?)`);
         }
 
@@ -184,16 +186,18 @@ export default class AddNamespace extends Command {
         }
     }
 
-    private applyOnApex(fileLines: string[], replacementList: any): string[] {
-        const newFileLines = [];
-        for (let line of fileLines) {
-            line = this.applyStringReplacements(line, replacementList);
-            newFileLines.push(line);
+    private async manageRenameFile(file: string, replacementList: any) {
+        const filePath = path.resolve(file);
+        const updatedFilePath = this.applyStringReplacements(filePath, replacementList);
+
+        // Update file if its content has been updated
+        if (updatedFilePath !== filePath) {
+            await fse.rename(filePath, updatedFilePath);
+            console.log(`Renamed ${filePath} into ${updatedFilePath}`);
         }
-        return newFileLines;
     }
 
-    private applyOnJson(fileLines: string[], replacementList: any): string[] {
+    private applyReplacementsGeneric(fileLines: string[], replacementList: any): string[] {
         const newFileLines = [];
         for (let line of fileLines) {
             line = this.applyStringReplacements(line, replacementList);
