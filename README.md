@@ -39,7 +39,7 @@ Any **question**, **problem** or **enhancement request** ? Ask [**here**](https:
 | ------------- | ------------- |
 | [essentials:mig:fix-aura-attributes-names](#sfdx-essentialsmigfix-aura-attributes-names) | **Replace reserved lightning attribute names in lightning components and apex classes** ( if you named a lightning attribute like a custom apex class, since Summer 18 you simply can not generate a managed package again) |
 | [essentials:mig:migrate-object-model](#sfdx-essentialsmigmigrate-object-model) | **Migrate sources from an object model to a new object model** |
-| [essentials:mig:add-namespace](#sfdx-essentialsadd-namespace) | **Update SFDX sources to add a namespace on references to items described in a package.xml file** |
+| [essentials:mig:add-namespace](#sfdx-essentialsmigadd-namespace) | **Update SFDX sources to add a namespace on references to items described in a package.xml file** |
 
 ### Package.xml
 
