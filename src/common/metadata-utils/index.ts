@@ -138,7 +138,6 @@ class MetadataUtils {
       { name: 'fieldEndline', before: ' ', after: '$' }, // Select Id FROM MyObject__c \n WHERE Field == 'tes''
       { name: 'declarationInClass', before: '', after: ' ' },
       { name: 'declarationInClassWithTab', before: '\t', after: ' ' }
-
     ];
     return aroundCharReplaceObjectList;
   }
@@ -186,7 +185,23 @@ class MetadataUtils {
   public static getAroundCharsClassReplacementList() {
     // Default replacement list for object
     let aroundCharReplaceClassList = [
-      { name: 'pointAfter', before: '', after: '.' }
+      { name: 'simpleQuote', before: '\'', after: '\'', replacementPrefix: null, replacementSuffix: null },
+      { name: 'tag', before: '<', after: '>' },
+      { name: 'xmlFile', before: '>', after: '</' },
+      { name: 'packageXmlFile', before: '>', after: '.' },
+      { name: 'stringlist', before: '\'', after: '.' }, // ClassName.MEthodNmae('MyObject.Myfield');
+      { name: 'space', before: ' ', after: ' ' },
+      { name: 'spacePoint', before: ' ', after: '.' }, // Database.upsert( objectList, fieldobject.Fields.fieldName__c,false) ;
+      { name: 'parenthesis', before: '\(', after: '\)' },
+      { name: 'loop', before: '\(', after: '\ ' }, //  for (MyObject object : MyObjectList)
+      { name: 'newObject', before: '\ ', after: '\(' },      // ex: MyObject myObj = new MyObject()
+      { name: 'objectInParenthesis', before: '\ ', after: '\)' },      //  System.assert( object instanceof objectInstance__c);
+      { name: 'object', before: '"', after: '.' }, // value="MyObject__c.Field__c"
+      { name: 'DeclarationObject', before: '"', after: '"' }, //  <aura:attribute name="Fields__c" type="String" />
+      { name: 'GetRecordtypeinjson', before: '"', after: '@' }, //  TO PUT IN THE JSONCONFIG FILE NOT HERE
+      { name: 'fieldEndline', before: ' ', after: '$' }, // Select Id FROM MyObject__c \n WHERE Field == 'tes''
+      { name: 'declarationInClassWithTab', before: '\t', after: ' ' },
+      { name: 'spaceAround', before: ' ', after: ' ' },
     ];
     return aroundCharReplaceClassList;
   }
