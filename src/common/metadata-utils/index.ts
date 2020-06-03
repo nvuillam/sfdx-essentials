@@ -201,7 +201,7 @@ class MetadataUtils {
       { name: 'GetRecordtypeinjson', before: '"', after: '@' }, //  TO PUT IN THE JSONCONFIG FILE NOT HERE
       { name: 'fieldEndline', before: ' ', after: '$' }, // Select Id FROM MyObject__c \n WHERE Field == 'tes''
       { name: 'declarationInClassWithTab', before: '\t', after: ' ' },
-      { name: 'spaceAround', before: ' ', after: ' ' },
+      { name: 'spaceAround', before: ' ', after: ' ' }
     ];
     return aroundCharReplaceClassList;
   }

@@ -17,7 +17,7 @@ export default class AddNamespace extends Command {
     public static examples = [
         '$ essentials:mig:add-namespace -n DxcOemDev -p "../../somefolder/package.xml"',
         '$ essentials:mig:add-namespace -n DxcOemDev -i "C:/Work/git/some-client-project/Projects/DevRootSource" --fetchExpressionList="**/*.apex,**/*.json" -p "C:/Work/git/DXCO4SF_Sources_OEM_ST/Config/packageXml/package_DevRoot_Managed.xml"',
-        '$ essentials:mig:add-namespace -n DxcOemDev -e "**/www*" -p "../../somefolder/package.xml"',
+        '$ essentials:mig:add-namespace -n DxcOemDev -e "**/www*" -p "../../somefolder/package.xml"'
     ];
 
     public static flags = {
@@ -94,7 +94,7 @@ export default class AddNamespace extends Command {
         const replacementList = this.buildReplacementList(packageXmlContent);
 
         // Process files
-        await Promise.all(this.fetchExpressionList.map(async (fetchExpression) => {
+        await Promise.all(this.fetchExpressionList.map(async fetchExpression => {
             // Get all files matching expression
             const fetchExprWithPath = path.resolve(this.inputFolder + '/' + fetchExpression);
             const customFileNameList = glob.sync(fetchExprWithPath);
@@ -113,7 +113,7 @@ export default class AddNamespace extends Command {
                 await this.addNameSpaceInFile(file, replacementList);
                 await this.manageRenameFile(file, replacementList);
                 if (this.verbose) {
-                    console.log(`Processed ${file}`);
+                    console.log(`-- Processed ${file}`);
                 }
                 if (!this.verbose && this.progressBar.terminal.isTTY()) {
                     this.progressBar.increment();
@@ -126,12 +126,21 @@ export default class AddNamespace extends Command {
             // @ts-ignore
             this.progressBar.update(null, { file: 'Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - elapseStart) / 1000)) });
             this.progressBar.stop();
-        }
-        else {
+        } else {
             this.progressBar.stop();
             console.info('Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - elapseStart) / 1000)) + 's');
         }
         return;
+    }
+
+    // Checks if the file path is contained in exclude list
+    public isExcluded(file: string, excludeExprLs: string[]): boolean {
+        for (const expression of excludeExprLs) {
+            if (new AntPathMatcher().match(expression, file)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // Build the list of replacement strings to apply
@@ -161,6 +170,12 @@ export default class AddNamespace extends Command {
                 const fieldNameWithNameSpace = this.namespace + '__' + fieldNameWithoutObject;
                 const fldReplacementsList = this.buildStringItemReplacementList('CustomField', aroundCharReplacefieldList, fieldNameWithoutObject, fieldNameWithNameSpace);
                 replacementLists.push(...fldReplacementsList);
+                if (fieldNameWithoutObject.endsWith('__c')) {
+                    const relationName = fieldNameWithoutObject.replace('__c', '__r');
+                    const relationWithNameSpace = this.namespace + '__' + relationName;
+                    const relationReplacementsList = this.buildStringItemReplacementList('CustomField', aroundCharReplacefieldList, relationName, relationWithNameSpace);
+                    replacementLists.push(...relationReplacementsList);
+                }
             }
         }
 
@@ -194,21 +209,11 @@ export default class AddNamespace extends Command {
             const replacement = {
                 regex: regexToReplace,
                 replacement: newString,
-                type: type
+                type
             };
             replacementList.push(replacement);
         }
         return replacementList;
-    }
-
-    // Checks if the file path is contained in exclude list
-    isExcluded(file: string, excludeExprLs: string[]): boolean {
-        for (const expression of excludeExprLs) {
-            if (new AntPathMatcher().match(expression, file)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     // Apply replacements on file
