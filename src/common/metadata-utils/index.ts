@@ -166,6 +166,9 @@ class MetadataUtils {
       { name: 'newObjectInitialize', before: ' ', after: '=' }, // l new myObject(field1__c=acc.Id, Field2__c='Owner')
       { name: 'firstSOQLRequest', before: 'SELECT ', after: ' ' },    // in request soql SELECT field FROM
       { name: 'firstSOQLRequestofList', before: 'SELECT ', after: ',' }, // in request soql SELECT field, field2 FROM
+      { name: 'firstSOQLWhere', before: 'WHERE ', after: ' ' },    // in request soql SELECT field FROM
+      { name: 'firstSOQLWhereEquals', before: 'WHERE ', after: '=' },    // in request soql SELECT field FROM
+      { name: 'firstSOQLWhereHey', before: 'WHERE ', after: ' !' },    // in request soql SELECT field FROM
       { name: 'SOQLRequestofList', before: ' ', after: ',' }, // in request soql SELECT field, field2 FROM
       { name: 'lastSOQLRequestofList', before: ' ', after: ' FROM' },    // in request soql SELECT field, field2 FROM
       { name: 'lastSOQLRequestofListComma', before: ',', after: ' FROM' },    // in request soql SELECT field,field2 FROM
@@ -194,7 +197,9 @@ class MetadataUtils {
       { name: 'spacePoint', before: ' ', after: '.' }, // Database.upsert( objectList, fieldobject.Fields.fieldName__c,false) ;
       { name: 'parenthesis', before: '(', after: ')' },
       { name: 'parenthesisOpen', before: '(', after: '.' },
+      { name: 'exclamation', before: '!', after: '.' },
       { name: 'parenthesisClose', before: ')', after: '.' },
+      { name: 'bracketOpen', before: '{', after: '.' },
       { name: 'loop', before: '(', after: ' ' }, //  for (MyObject object : MyObjectList)
       { name: 'newObject', before: ' ', after: '(' },      // ex: MyObject myObj = new MyObject()
       { name: 'objectInParenthesis', before: '\ ', after: ')' },      //  System.assert( object instanceof objectInstance__c);
