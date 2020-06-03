@@ -3,7 +3,8 @@ import * as AntPathMatcher from 'ant-path-matcher';
 import * as cliProgress from 'cli-progress';
 import * as fse from 'fs-extra';
 import * as glob from 'glob';
-import path = require('path');
+import * as path from 'path';
+import * as xml2js from 'xml2js';
 import { EssentialsUtils } from '../../../common/essentials-utils';
 import { MetadataUtils } from '../../../common/metadata-utils';
 
@@ -24,6 +25,7 @@ export default class AddNamespace extends Command {
         // flag with a value (-n, --name=VALUE)
         namespace: flags.string({ char: 'n', description: 'Namespace string', required: true }),
         packagexml: flags.string({ char: 'p', description: 'Path to package.xml file', required: true }),
+        labelsfile: flags.string({ char: 'l', description: 'Path to CustomLabel.labels-meta.xml', required: false }),
         inputFolder: flags.string({ char: 'i', description: 'Input folder (default: "." )' }),
         fetchExpressionList: flags.string({ char: 'f', description: 'Fetch expression list. Let default if you dont know. ex: ./aura/**/*.js,./aura/**/*.cmp,./classes/*.cls,./objects/*/fields/*.xml,./objects/*/recordTypes/*.xml,./triggers/*.trigger,./permissionsets/*.xml,./profiles/*.xml,./staticresources/*.json' }),
         excludeExpressionList: flags.string({ char: 'e', description: 'List of expressions to ignore. ex: **/node_modules/**' }),
@@ -35,6 +37,7 @@ export default class AddNamespace extends Command {
     // Input params properties
     private namespace: string;
     private packagexmlLs: string[];
+    private labelsFile: string;
     private inputFolder: string;
     private fetchExpressionList: string[] = [
         '**/aura/**/*.js',
@@ -62,6 +65,7 @@ export default class AddNamespace extends Command {
         const { flags } = this.parse(AddNamespace);
         this.namespace = flags.namespace;
         this.packagexmlLs = flags.packagexml.split(',');
+        this.labelsFile = flags.labelsfile;
         this.inputFolder = flags.inputFolder || '.';
         this.verbose = flags.verbose;
         if (flags.fetchExpressionList) {
@@ -91,7 +95,7 @@ export default class AddNamespace extends Command {
         });
 
         // Build replacement list
-        const replacementList = this.buildReplacementList(packageXmlContent);
+        const replacementList = await this.buildReplacementList(packageXmlContent, this.labelsFile);
 
         // Process files
         await Promise.all(this.fetchExpressionList.map(async fetchExpression => {
@@ -144,7 +148,7 @@ export default class AddNamespace extends Command {
     }
 
     // Build the list of replacement strings to apply
-    private buildReplacementList(packageXmlContent) {
+    private async buildReplacementList(packageXmlContent: any, labelsFile: string) {
         const replacementLists = [];
 
         // Manage object names
@@ -190,6 +194,23 @@ export default class AddNamespace extends Command {
                 const classNameWithNameSpace = this.namespace + '.' + className;
                 const classReplacementsList = this.buildStringItemReplacementList('ApexClass', aroundCharReplaceClassList, className, classNameWithNameSpace);
                 replacementLists.push(...classReplacementsList);
+            }
+        }
+
+        // Manage label names
+        const aroundCharReplaceLabelList = MetadataUtils.getLabelsReplacementList();
+        if (packageXmlContent.CustomLabel || labelsFile) {
+            const labelList = packageXmlContent.CustomLabel;
+            if (labelsFile && fse.existsSync(labelsFile)) {
+                const parser = new xml2js.Parser();
+                const labelsXmlData = await parser.parseStringPromise(fse.readFileSync(labelsFile));
+                const fromLabelsFileLabels = labelsXmlData.CustomLabels.labels.map((item: any) => item.fullName[0]);
+                labelList.push(...fromLabelsFileLabels);
+            }
+            for (const labelName of labelList) {
+                const labelNameWithNameSpace = this.namespace + '.' + labelName;
+                const labelNameReplacementsList = this.buildStringItemReplacementList('CustomLabel', aroundCharReplaceLabelList, labelName, labelNameWithNameSpace);
+                replacementLists.push(...labelNameReplacementsList);
             }
         }
         return replacementLists;

@@ -168,7 +168,7 @@ class MetadataUtils {
       { name: 'firstSOQLRequestofList', before: 'SELECT ', after: ',' }, // in request soql SELECT field, field2 FROM
       { name: 'SOQLRequestofList', before: ' ', after: ',' }, // in request soql SELECT field, field2 FROM
       { name: 'lastSOQLRequestofList', before: ' ', after: ' FROM' },    // in request soql SELECT field, field2 FROM
-      { name: 'lastSOQLRequestofList', before: ',', after: ' FROM' },    // in request soql SELECT field,field2 FROM
+      { name: 'lastSOQLRequestofListComma', before: ',', after: ' FROM' },    // in request soql SELECT field,field2 FROM
       { name: 'equality', before: '.', after: '=' },    // field== 'value'
       { name: 'list', before: '.', after: '}' },    // new List<String>{MyOject.Field__c});
       { name: 'inequality', before: '.', after: '!' },    // field!= 'value'
@@ -192,19 +192,37 @@ class MetadataUtils {
       { name: 'stringlist', before: '\'', after: '.' }, // ClassName.MEthodNmae('MyObject.Myfield');
       { name: 'space', before: ' ', after: ' ' },
       { name: 'spacePoint', before: ' ', after: '.' }, // Database.upsert( objectList, fieldobject.Fields.fieldName__c,false) ;
-      { name: 'parenthesis', before: '\(', after: '\)' },
-      { name: 'loop', before: '\(', after: '\ ' }, //  for (MyObject object : MyObjectList)
-      { name: 'newObject', before: '\ ', after: '\(' },      // ex: MyObject myObj = new MyObject()
-      { name: 'objectInParenthesis', before: '\ ', after: '\)' },      //  System.assert( object instanceof objectInstance__c);
+      { name: 'parenthesis', before: '(', after: ')' },
+      { name: 'parenthesisOpen', before: '(', after: '.' },
+      { name: 'parenthesisClose', before: ')', after: '.' },
+      { name: 'loop', before: '(', after: ' ' }, //  for (MyObject object : MyObjectList)
+      { name: 'newObject', before: ' ', after: '(' },      // ex: MyObject myObj = new MyObject()
+      { name: 'objectInParenthesis', before: '\ ', after: ')' },      //  System.assert( object instanceof objectInstance__c);
       { name: 'object', before: '"', after: '.' }, // value="MyObject__c.Field__c"
       { name: 'DeclarationObject', before: '"', after: '"' }, //  <aura:attribute name="Fields__c" type="String" />
       { name: 'GetRecordtypeinjson', before: '"', after: '@' }, //  TO PUT IN THE JSONCONFIG FILE NOT HERE
       { name: 'fieldEndline', before: ' ', after: '$' }, // Select Id FROM MyObject__c \n WHERE Field == 'tes''
       { name: 'declarationInClassWithTab', before: '\t', after: ' ' },
-      { name: 'spaceAround', before: ' ', after: ' ' }
+      { name: 'spaceAround', before: ' ', after: ' ' },
+      { name: 'insideRequest', before: ':', after: '.' }
     ];
     return aroundCharReplaceClassList;
   }
+
+  public static getLabelsReplacementList() {
+    // Default replacement list for object
+    let aroundCharReplaceLabelList = [
+      { name: 'apexRefSpace', before: 'Label.', after: ' ' },
+      { name: 'apexRefClosingBrace', before: 'Label.', after: ')' },
+      { name: 'apexRefPlus', before: 'Label.', after: '+' },
+      { name: 'apexSemicolon', before: 'Label.', after: ';' },
+      { name: 'auraRefJsSimpleQuote', before: '$Label.c.', after: '\"' },
+      { name: 'auraRefJsDoubleQuote', before: '$Label.c.', after: '\'' },
+      { name: 'auraRefJsClosingBrace', before: '$Label.c.', after: '}' }
+    ];
+    return aroundCharReplaceLabelList;
+  }
+
 }
 
 export { MetadataUtils };
