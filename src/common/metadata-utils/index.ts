@@ -180,7 +180,9 @@ class MetadataUtils {
       { name: 'pointCalculator', before: '.', after: '*' }, // operation on field Myobject.Field__c*2
       { name: 'componentfield', before: '.', after: '"' }, // value="MyObject__c.Field__c"
       { name: 'DeclarationField', before: '"', after: '"' }, //  <aura:attribute name="Fields__c" type="String" />
-      { name: 'fieldEndline', before: '.', after: '$' } // if  MyObject__c.Field == MyObject__c.Field2 \n || etc...
+      { name: 'fieldEndline', before: '.', after: '$' }, // if  MyObject__c.Field == MyObject__c.Field2 \n || etc...
+      { name: 'fieldNameConcat', before: '\'', after: '=' } // if  MyObject__c.Field == MyObject__c.Field2 \n || etc...
+
     ];
     return aroundCharReplacefieldList;
   }
