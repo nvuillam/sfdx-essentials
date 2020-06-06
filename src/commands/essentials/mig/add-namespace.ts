@@ -1,8 +1,10 @@
 import Command, { flags } from '@oclif/command';
+import * as AntPathMatcher from 'ant-path-matcher';
 import * as cliProgress from 'cli-progress';
 import * as fse from 'fs-extra';
 import * as glob from 'glob';
-import path = require('path');
+import * as path from 'path';
+import * as xml2js from 'xml2js';
 import { EssentialsUtils } from '../../../common/essentials-utils';
 import { MetadataUtils } from '../../../common/metadata-utils';
 
@@ -15,15 +17,18 @@ export default class AddNamespace extends Command {
 
     public static examples = [
         '$ essentials:mig:add-namespace -n DxcOemDev -p "../../somefolder/package.xml"',
-        '$ essentials:mig:add-namespace -n DxcOemDev -i "C:/Work/git/some-client-project/Projects/DevRootSource" --fetchExpressionList="**/*.apex,**/*.json" -p "C:/Work/git/DXCO4SF_Sources_OEM_ST/Config/packageXml/package_DevRoot_Managed.xml"'
+        '$ essentials:mig:add-namespace -n DxcOemDev -i "C:/Work/git/some-client-project/Projects/DevRootSource" --fetchExpressionList="**/*.apex,**/*.json" -p "C:/Work/git/DXCO4SF_Sources_OEM_ST/Config/packageXml/package_DevRoot_Managed.xml"',
+        '$ essentials:mig:add-namespace -n DxcOemDev -e "**/www*" -p "../../somefolder/package.xml"'
     ];
 
     public static flags = {
         // flag with a value (-n, --name=VALUE)
         namespace: flags.string({ char: 'n', description: 'Namespace string', required: true }),
         packagexml: flags.string({ char: 'p', description: 'Path to package.xml file', required: true }),
+        labelsfile: flags.string({ char: 'l', description: 'Path to CustomLabel.labels-meta.xml', required: false }),
         inputFolder: flags.string({ char: 'i', description: 'Input folder (default: "." )' }),
-        fetchExpressionList: flags.string({ char: 'f', description: 'Fetch expression list. Let default if you dont know. ex: /aura/**/*.js,./aura/**/*.cmp,./classes/*.cls,./objects/*/fields/*.xml,./objects/*/recordTypes/*.xml,./triggers/*.trigger,./permissionsets/*.xml,./profiles/*.xml,./staticresources/*.json' }),
+        fetchExpressionList: flags.string({ char: 'f', description: 'Fetch expression list. Let default if you dont know. ex: ./aura/**/*.js,./aura/**/*.cmp,./classes/*.cls,./objects/*/fields/*.xml,./objects/*/recordTypes/*.xml,./triggers/*.trigger,./permissionsets/*.xml,./profiles/*.xml,./staticresources/*.json' }),
+        excludeExpressionList: flags.string({ char: 'e', description: 'List of expressions to ignore. ex: **/node_modules/**' }),
         verbose: flags.boolean({ char: 'v', description: 'Verbose', default: false }) as unknown as flags.IOptionFlag<boolean>
     };
 
@@ -32,19 +37,21 @@ export default class AddNamespace extends Command {
     // Input params properties
     private namespace: string;
     private packagexmlLs: string[];
+    private labelsFile: string;
     private inputFolder: string;
     private fetchExpressionList: string[] = [
-        './aura/**/*.js',
-        './aura/**/*.cmp',
-        './classes/*.cls',
-        './objects/*/fields/*.xml',
-        './objects/*/recordTypes/*.xml',
-        './objectTranslations/*/*.xml',
-        './triggers/*.trigger',
-        './permissionsets/*.xml',
-        './profiles/*.xml',
-        './staticresources/*.json'
+        '**/aura/**/*.js',
+        '**/aura/**/*.cmp',
+        '**/classes/*.cls',
+        '**/objects/*/fields/*.xml',
+        '**/objects/*/recordTypes/*.xml',
+        '**/objectTranslations/*/*.xml',
+        '**/triggers/*.trigger',
+        '**/permissionsets/*.xml',
+        '**/profiles/*.xml',
+        '**/staticresources/*.json'
     ];
+    private excludeExpressionList: string[] = [];
     private verbose: boolean = false;
 
     // Internal props
@@ -58,10 +65,14 @@ export default class AddNamespace extends Command {
         const { flags } = this.parse(AddNamespace);
         this.namespace = flags.namespace;
         this.packagexmlLs = flags.packagexml.split(',');
+        this.labelsFile = flags.labelsfile;
         this.inputFolder = flags.inputFolder || '.';
         this.verbose = flags.verbose;
         if (flags.fetchExpressionList) {
             this.fetchExpressionList = flags.fetchExpressionList.split(',');
+        }
+        if (flags.excludeExpressionList) {
+            this.excludeExpressionList = flags.excludeExpressionList.split(',');
         }
 
         const elapseStart = Date.now();
@@ -84,40 +95,69 @@ export default class AddNamespace extends Command {
         });
 
         // Build replacement list
-        const replacementList = this.buildReplacementList(packageXmlContent);
+        const replacementList = await this.buildReplacementList(packageXmlContent, this.labelsFile);
 
         // Process files
-        for (const fetchExpression of this.fetchExpressionList) {
-
+        await Promise.all(this.fetchExpressionList.map(async fetchExpression => {
             // Get all files matching expression
             const fetchExprWithPath = path.resolve(this.inputFolder + '/' + fetchExpression);
             const customFileNameList = glob.sync(fetchExprWithPath);
             for (const file of customFileNameList) {
-                this.progressBar.update(null, { file: 'Processing ' + file });
+                if (this.isExcluded(file, this.excludeExpressionList)) {
+                    if (this.verbose) {
+                        console.log(`Skipped ${file}`);
+                    }
+                    continue;
+                }
+                if (this.verbose) {
+                    console.log(`Processing ${file}`);
+                } else if (this.progressBar.terminal.isTTY()) {
+                    this.progressBar.update(null, { file: `Processing ${file}` });
+                }
                 await this.addNameSpaceInFile(file, replacementList);
                 await this.manageRenameFile(file, replacementList);
+                if (this.verbose) {
+                    console.log(`-- Processed ${file}`);
+                }
+                if (!this.verbose && this.progressBar.terminal.isTTY()) {
+                    this.progressBar.increment();
+                }
             }
-            if (!this.verbose && this.progressBar.terminal.isTTY()) {
-                this.progressBar.increment();
-            }
-        }
+        }));
 
         // Finalise progress bar
         if (!this.verbose && this.progressBar.terminal.isTTY()) {
             // @ts-ignore
             this.progressBar.update(null, { file: 'Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - elapseStart) / 1000)) });
             this.progressBar.stop();
+        } else {
+            this.progressBar.stop();
+            console.info('Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - elapseStart) / 1000)) + 's');
         }
+        return;
+    }
+
+    // Checks if the file path is contained in exclude list
+    public isExcluded(file: string, excludeExprLs: string[]): boolean {
+        for (const expression of excludeExprLs) {
+            if (new AntPathMatcher().match(expression, file)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // Build the list of replacement strings to apply
-    private buildReplacementList(packageXmlContent) {
+    private async buildReplacementList(packageXmlContent: any, labelsFile: string) {
         const replacementLists = [];
 
         // Manage object names
         const aroundCharReplaceObjectList = MetadataUtils.getAroundCharsObjectReplacementList();
         if (packageXmlContent.CustomObject) {
             for (const objName of packageXmlContent.CustomObject) {
+                if (!objName.endsWith('__c')) {
+                    continue;
+                }
                 const objNameWithNameSpace = this.namespace + '__' + objName;
                 const objReplacementsList = this.buildStringItemReplacementList('CustomObject', aroundCharReplaceObjectList, objName, objNameWithNameSpace);
                 replacementLists.push(...objReplacementsList);
@@ -128,9 +168,18 @@ export default class AddNamespace extends Command {
         if (packageXmlContent.CustomField) {
             for (const fieldName of packageXmlContent.CustomField) {
                 const fieldNameWithoutObject = fieldName.split('.').pop();
+                if (!fieldNameWithoutObject.endsWith('__c')) {
+                    continue;
+                }
                 const fieldNameWithNameSpace = this.namespace + '__' + fieldNameWithoutObject;
                 const fldReplacementsList = this.buildStringItemReplacementList('CustomField', aroundCharReplacefieldList, fieldNameWithoutObject, fieldNameWithNameSpace);
                 replacementLists.push(...fldReplacementsList);
+                if (fieldNameWithoutObject.endsWith('__c')) {
+                    const relationName = fieldNameWithoutObject.replace('__c', '__r');
+                    const relationWithNameSpace = this.namespace + '__' + relationName;
+                    const relationReplacementsList = this.buildStringItemReplacementList('CustomField', aroundCharReplacefieldList, relationName, relationWithNameSpace);
+                    replacementLists.push(...relationReplacementsList);
+                }
             }
         }
 
@@ -138,9 +187,30 @@ export default class AddNamespace extends Command {
         const aroundCharReplaceClassList = MetadataUtils.getAroundCharsClassReplacementList();
         if (packageXmlContent.ApexClass) {
             for (const className of packageXmlContent.ApexClass) {
+                if (className.length < 3) {
+                    console.info('Skipped ' + className);
+                    continue;
+                }
                 const classNameWithNameSpace = this.namespace + '.' + className;
                 const classReplacementsList = this.buildStringItemReplacementList('ApexClass', aroundCharReplaceClassList, className, classNameWithNameSpace);
                 replacementLists.push(...classReplacementsList);
+            }
+        }
+
+        // Manage label names
+        const aroundCharReplaceLabelList = MetadataUtils.getLabelsReplacementList();
+        if (packageXmlContent.CustomLabel || labelsFile) {
+            const labelList = packageXmlContent.CustomLabel;
+            if (labelsFile && fse.existsSync(labelsFile)) {
+                const parser = new xml2js.Parser();
+                const labelsXmlData = await parser.parseStringPromise(fse.readFileSync(labelsFile));
+                const fromLabelsFileLabels = labelsXmlData.CustomLabels.labels.map((item: any) => item.fullName[0]);
+                labelList.push(...fromLabelsFileLabels);
+            }
+            for (const labelName of labelList) {
+                const labelNameWithNameSpace = this.namespace + '.' + labelName;
+                const labelNameReplacementsList = this.buildStringItemReplacementList('CustomLabel', aroundCharReplaceLabelList, labelName, labelNameWithNameSpace);
+                replacementLists.push(...labelNameReplacementsList);
             }
         }
         return replacementLists;
@@ -152,13 +222,22 @@ export default class AddNamespace extends Command {
         for (const aroundChars of aroundCharsReplaceList) {
             let oldString = aroundChars.before + prevSubString + aroundChars.after;
             let newString = aroundChars.before + newSubstring + aroundChars.after;
-            const regexStr = this.stringToRegex(oldString);
+            let regexStr = this.stringToRegex(oldString);
+            if (aroundChars.beforeRegex) {
+                regexStr = aroundChars.beforeRegex + regexStr;
+            }
             const regexToReplace = new RegExp(regexStr, 'g');
-            replacementList.push({ regex: regexToReplace, replacement: newString, type });
+            const replacement = {
+                regex: regexToReplace,
+                replacement: newString,
+                type
+            };
+            replacementList.push(replacement);
         }
         return replacementList;
     }
 
+    // Apply replacements on file
     private async addNameSpaceInFile(file: string, replacementList: any) {
         const fileContent = fse.readFileSync(file);
         if (fileContent == null) {
@@ -192,7 +271,12 @@ export default class AddNamespace extends Command {
 
         // Update file if its content has been updated
         if (updatedFilePath !== filePath) {
-            await fse.rename(filePath, updatedFilePath);
+            try {
+                await fse.rename(filePath, updatedFilePath);
+            } catch (e) {
+                console.error(`Error renaming ${filePath} into ${updatedFilePath}`);
+                return;
+            }
             console.log(`Renamed ${filePath} into ${updatedFilePath}`);
         }
     }
