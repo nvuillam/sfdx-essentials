@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.0] - 2020-06-01
+
+- **essentials:mig:add-namespace** updates :
+  - New parameter excludeExpressionList
+  - Manage namespace on labels
+  - More replacement expressions
+
 ## [2.2.1] - 2020-06-01
 
 - **essentials:mig:add-namespace**: Also convert XML files + use case sensitive replacements
