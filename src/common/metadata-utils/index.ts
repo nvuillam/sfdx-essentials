@@ -31,7 +31,7 @@ class MetadataUtils {
       EmailTemplate: { folder: 'email', nameSuffixList: ['', '.email', '.email-meta.xml'], sfdxNameSuffixList: ['.email', '.email-meta.xml'], metasInSubFolders: true },
       EscalationRules: { folder: 'escalationRules', nameSuffixList: ['.escalationRules'], sfdxNameSuffixList: ['.escalationRules-meta.xml'] },
       FlexiPage: { folder: 'flexipages', nameSuffixList: ['.flexipage'], sfdxNameSuffixList: ['.flexipage-meta.xml'] },
-      Flow: { folder: 'flows', nameSuffixList: ['.flow'] },
+      Flow: { folder: 'flows', nameSuffixList: ['.flow'], sfdxNameSuffixList: ['.flow-meta.xml'] },
       GlobalValueSet: { folder: 'globalValueSets', nameSuffixList: ['.globalValueSet'], sfdxNameSuffixList: ['.globalValueSet-meta.xml'] },
       GlobalValueSetTranslation: { folder: 'globalValueSetTranslations', nameSuffixList: ['.globalValueSetTranslation'], sfdxNameSuffixList: ['.globalValueSetTranslation-meta.xml'] },
       HomePageLayout: { folder: 'homePageLayouts', nameSuffixList: ['.homePageLayout'], sfdxNameSuffixList: ['.homePageLayout-meta.xml'] },
