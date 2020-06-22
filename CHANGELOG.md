@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.3.1] - 2020-06-22
+
+- Add flow in sfdx metadata descriptions
+
 ## [2.3.0] - 2020-06-01
 
 - **essentials:mig:add-namespace** updates :
