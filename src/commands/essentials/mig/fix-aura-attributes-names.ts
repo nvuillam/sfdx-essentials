@@ -16,7 +16,8 @@ Ex : MyClass_x attribute would be renamed myClassX`;
   ];
 
   public static flags = {
-    folder: flags.string({ char: 'f', description: 'SFDX project folder containing files' })
+    folder: flags.string({ char: 'f', description: 'SFDX project folder containing files' }),
+    noinsight: flags.boolean({ description: 'Do not send anonymous usage stats' }) as unknown as flags.IOptionFlag<boolean>
     // flag with a value (-n, --name=VALUE)
   };
 

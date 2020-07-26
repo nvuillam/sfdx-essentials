@@ -27,7 +27,8 @@ export default class PermissionSetGenerate extends Command {
         sfdxSourcesFolder: flags.string({ char: 'f', description: 'SFDX Sources folder (used to filter required and masterDetail fields)' }),
         nameSuffix: flags.string({ char: 's', description: 'Name suffix for generated permission sets' }),
         outputfolder: flags.string({ char: 'o', description: 'Output folder (default: "." )', default: '.' }),
-        verbose: flags.boolean({ char: 'v', description: 'Verbose', default: false }) as unknown as flags.IOptionFlag<boolean>
+        verbose: flags.boolean({ char: 'v', description: 'Verbose', default: false }) as unknown as flags.IOptionFlag<boolean>,
+        noinsight: flags.boolean({ description: 'Do not send anonymous usage stats' }) as unknown as flags.IOptionFlag<boolean>
     };
 
     // Input params properties
@@ -340,7 +341,7 @@ export default class PermissionSetGenerate extends Command {
         }
         // Manage elements that are in permissionSetDefinition JSON and not in packageXmlTypes
         for (const permissionSetElement of permissionSetDefinition.packageXMLTypeList) {
-            if (!packageXmlTypesArray.includes(permissionSetElement.typeName) && packageXMLTypesAll.includes(permissionSetElement.typeName) ) {
+            if (!packageXmlTypesArray.includes(permissionSetElement.typeName) && packageXMLTypesAll.includes(permissionSetElement.typeName)) {
                 let permissionSetMemberList = [];
                 if (permissionSetElement.includedFilterList && !permissionSetElement.includedFilterList[0].startsWith('(')) {
                     permissionSetMemberList = permissionSetElement.includedFilterList;

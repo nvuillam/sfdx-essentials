@@ -82,7 +82,8 @@ sfdx force:mdapi:deploy -d tmp/deployDemoQualiFiltered/ -w 60 -u DemoQuali`
     inputfolder: flags.string({ char: 'i', description: 'Input folder (default: "." )' }),
     outputfolder: flags.string({ char: 'o', description: 'Output folder (default: filteredMetadatas)' }),
     silent: flags.boolean({ char: 's', description: 'Silent logs when no error' }) as unknown as flags.IOptionFlag<boolean>,
-    verbose: flags.boolean({ char: 'v', description: 'Verbose' }) as unknown as flags.IOptionFlag<boolean>
+    verbose: flags.boolean({ char: 'v', description: 'Verbose' }) as unknown as flags.IOptionFlag<boolean>,
+    noinsight: flags.boolean({ description: 'Do not send anonymous usage stats' }) as unknown as flags.IOptionFlag<boolean>
   };
 
   public static args = [];
