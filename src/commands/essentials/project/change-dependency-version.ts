@@ -31,7 +31,8 @@ export default class ProjectChangeDependencyVersion extends Command {
     apiversion: flags.string({ char: 'a', description: 'If sent, updates api version' }),
     remove: flags.boolean({ char: 'r', description: 'Verbose', default: false }) as unknown as flags.IOptionFlag<boolean>,
     folder: flags.string({ char: 'f', description: 'SFDX project folder containing files' }),
-    verbose: flags.boolean({ char: 'v', description: 'Verbose' }) as unknown as flags.IOptionFlag<boolean>
+    verbose: flags.boolean({ char: 'v', description: 'Verbose' }) as unknown as flags.IOptionFlag<boolean>,
+    noinsight: flags.boolean({ description: 'Do not send anonymous usage stats' }) as unknown as flags.IOptionFlag<boolean>
   };
 
   public static args = [];

@@ -29,7 +29,8 @@ Use this command if you need to replace a SObject by another one in all your sfd
     deleteFiles: flags.boolean({ char: 'd', description: 'Delete files with deprecated references', default: true, allowNo: true }) as unknown as flags.IOptionFlag<boolean>,
     deleteFilesExpr: flags.boolean({ char: 'k', description: 'Delete files matching expression', default: true, allowNo: true }) as unknown as flags.IOptionFlag<boolean>,
     copySfdxProjectFolder: flags.boolean({ char: 's', description: 'Copy sfdx project files after process', default: true, allowNo: true }) as unknown as flags.IOptionFlag<boolean>,
-    verbose: flags.boolean({ char: 'v', description: 'Verbose', default: false }) as unknown as flags.IOptionFlag<boolean>
+    verbose: flags.boolean({ char: 'v', description: 'Verbose', default: false }) as unknown as flags.IOptionFlag<boolean>,
+    noinsight: flags.boolean({ description: 'Do not send anonymous usage stats' }) as unknown as flags.IOptionFlag<boolean>
   };
 
   public static args = [];

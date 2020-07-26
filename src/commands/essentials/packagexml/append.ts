@@ -14,7 +14,8 @@ API version number of the result file will be the same than in the first package
         // flag with a value (-n, --name=VALUE)
         packagexmls: flags.string({ char: 'p', description: 'package.xml files path (separated by commas)' }),
         outputfile: flags.string({ char: 'o', description: 'package.xml output file' }),
-        verbose: flags.boolean({ char: 'v', description: 'Verbose', default: false }) as unknown as flags.IOptionFlag<boolean>
+        verbose: flags.boolean({ char: 'v', description: 'Verbose', default: false }) as unknown as flags.IOptionFlag<boolean>,
+        noinsight: flags.boolean({ description: 'Do not send anonymous usage stats' }) as unknown as flags.IOptionFlag<boolean>
     };
 
     public static args = [];

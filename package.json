@@ -5,6 +5,7 @@
   "author": "NicolasVuillamy @nvuillam",
   "bugs": "https://github.com/nvuillam/sfdx-essentials/issues",
   "dependencies": {
+    "@amplitude/node": "^0.3.3",
     "@oclif/command": "^1.5.19",
     "@oclif/config": "^1.13.3",
     "@oclif/errors": "^1.2.2",
@@ -19,11 +20,15 @@
     "camelcase": "^5.3.1",
     "cint": "^8.2.1",
     "cli-progress": "^3.5.0",
+    "debug": "^4.1.1",
+    "find-package-json": "^1.2.0",
     "fs": "0.0.1-security",
     "fs-extra": "^8.1.0",
     "glob": "^7.1.6",
+    "minimist": "^1.2.5",
     "path": "^0.12.7",
     "util": "^0.12.1",
+    "uuid": "^8.2.0",
     "xml-formatter": "^1.2.0",
     "xml2js": "^0.4.23"
   },
@@ -33,8 +38,9 @@
     "@oclif/test": "^1.2.5",
     "@salesforce/dev-config": "1.5.0",
     "@types/chai": "^4.2.7",
+    "@types/debug": "^4.1.5",
     "@types/jsforce": "1.9.13",
-    "@types/mocha": "^7.0.1",
+    "@types/mocha": "^7.0.2",
     "@types/node": "^13.7.0",
     "chai": "^4.2.0",
     "globby": "^11.0.0",
@@ -75,6 +81,14 @@
   "oclif": {
     "commands": "./lib/commands",
     "bin": "sfdx",
+    "hooks": {
+      "prerun": [
+        "./lib/hooks/prerun/analytics-init"
+      ],
+      "postrun": [
+        "./lib/hooks/postrun/analytics-send"
+      ]
+    },
     "devPlugins": [
       "@oclif/plugin-help"
     ]
@@ -109,6 +123,7 @@
     "prepack": "rm -rf lib && tsc && oclif-dev manifest",
     "prepare": "rm -rf lib && tsc && oclif-dev manifest",
     "test": "mocha --exit --forbid-only --colors \"test/**/*.test.ts\"",
-    "test:coverage": "nyc npm run test"
+    "test:coverage": "nyc npm run test",
+    "test:debug": "env DEBUG=sfdx-essentials mocha --exit --forbid-only --colors \"test/**/*.test.ts\""
   }
 }

@@ -1,4 +1,10 @@
-# Changelog
+# CHANGELOG
+
+## [2.4.0] - 2020-07-27
+
+- Add anonymous usage stats to improve plugin
+  - your sources are never sent to analytics server ([Amplitude](https://amplitude.com/))
+  - disable with argument **--noinsight**
 
 ## [2.3.1] - 2020-06-22
 

@@ -29,7 +29,8 @@ export default class AddNamespace extends Command {
         inputFolder: flags.string({ char: 'i', description: 'Input folder (default: "." )' }),
         fetchExpressionList: flags.string({ char: 'f', description: 'Fetch expression list. Let default if you dont know. ex: ./aura/**/*.js,./aura/**/*.cmp,./classes/*.cls,./objects/*/fields/*.xml,./objects/*/recordTypes/*.xml,./triggers/*.trigger,./permissionsets/*.xml,./profiles/*.xml,./staticresources/*.json' }),
         excludeExpressionList: flags.string({ char: 'e', description: 'List of expressions to ignore. ex: **/node_modules/**' }),
-        verbose: flags.boolean({ char: 'v', description: 'Verbose', default: false }) as unknown as flags.IOptionFlag<boolean>
+        verbose: flags.boolean({ char: 'v', description: 'Verbose', default: false }) as unknown as flags.IOptionFlag<boolean>,
+        noinsight: flags.boolean({ description: 'Do not send anonymous usage stats' }) as unknown as flags.IOptionFlag<boolean>
     };
 
     public static args = [];
