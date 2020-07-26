@@ -196,6 +196,8 @@ Use this command if you need to replace a SObject by another one in all your sfd
       this.multibar.update();
       this.multibar.stop();
     }
+
+    await this.config.runHook('essentials-analytics', this);
   }
 
   // Process component file

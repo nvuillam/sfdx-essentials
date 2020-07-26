@@ -152,6 +152,7 @@ Ex : MyClass_x attribute would be renamed myClassX`;
         console.log('Promises error: ' + err);
       });
     });
+    await this.config.runHook('essentials-analytics', this);
   }
 
   // Process component file

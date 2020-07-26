@@ -105,7 +105,7 @@ global static List<OrgDebugOption__c> setDebugOption() {
     }
 
     console.log('Total uncomments: ' + this.totalUncomments);
-
+    await this.config.runHook('essentials-analytics', this);
   }
 
   // Process component file

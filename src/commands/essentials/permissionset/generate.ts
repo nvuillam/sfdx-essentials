@@ -140,6 +140,8 @@ export default class PermissionSetGenerate extends Command {
 
         // Wait all files to be processed
         await Promise.all(promises);
+
+        await this.config.runHook('essentials-analytics', this);
     }
 
     // Complete description with extend description
