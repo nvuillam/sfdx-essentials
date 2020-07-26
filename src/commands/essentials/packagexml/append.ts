@@ -41,6 +41,8 @@ API version number of the result file will be the same than in the first package
             outputXmlFile: this.outputFile
         });
 
+        await this.config.runHook('essentials-analytics', this);
+
     }
 
 }

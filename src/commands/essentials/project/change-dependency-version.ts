@@ -168,6 +168,7 @@ export default class ProjectChangeDependencyVersion extends Command {
       this.progressBar.stop();
     }
     console.log('Updated ' + updatedNb + ' files');
+    await this.config.runHook('essentials-analytics', this);
   }
 
 }

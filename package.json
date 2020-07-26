@@ -85,8 +85,8 @@
       "prerun": [
         "./lib/hooks/prerun/analytics-init"
       ],
-      "postrun": [
-        "./lib/hooks/postrun/analytics-send"
+      "essentials-analytics": [
+        "./lib/hooks/essentials-analytics/analytics-send"
       ]
     },
     "devPlugins": [

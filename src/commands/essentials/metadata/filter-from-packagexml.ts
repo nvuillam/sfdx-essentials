@@ -187,6 +187,7 @@ sfdx force:mdapi:deploy -d tmp/deployDemoQualiFiltered/ -w 60 -u DemoQuali`
       this.multibar.stop();
     }
     this.displayResults();
+    await this.config.runHook('essentials-analytics', this);
   }
 
   // Filter metadatas by type

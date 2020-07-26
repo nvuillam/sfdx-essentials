@@ -135,6 +135,7 @@ export default class AddNamespace extends Command {
             this.progressBar.stop();
             console.info('Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - elapseStart) / 1000)) + 's');
         }
+        await this.config.runHook('essentials-analytics', this);
         return;
     }
 

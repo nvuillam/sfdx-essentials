@@ -95,6 +95,8 @@ export default class CheckConsistencyWithPackageXml extends Command {
       console.table(this.cmdLog.compareResult, ['md_type', 'status', 'identical_nb', 'in_sfdx_but_not_in_pckg_xml_nb', 'in_pckg_xml_but_not_in_sfdx_nb']);
     }
 
+    await this.config.runHook('essentials-analytics', this);
+
     if (this.failIfError && this.cmdLog.scriptSuccess === false) {
       throw Error('SFDX Project consistency contains errors. Check logs for details');
     }

@@ -99,6 +99,7 @@ This script requires a filter-config.json file`;
     // Display results as JSON
     console.log(JSON.stringify(this.smmryResult));
 
+    await this.config.runHook('essentials-analytics', this);
   }
 
   // Filter XML content of the file

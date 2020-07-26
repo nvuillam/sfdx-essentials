@@ -45,6 +45,8 @@ export default class PackageXmlSort extends Command {
             await this.reorderPackageXmlFile(this.packageXmlFile);
         }
 
+        await this.config.runHook('essentials-analytics', this);
+
     }
 
     private async reorderPackageXmlFile(packageXmlUniqueFile: string) {
