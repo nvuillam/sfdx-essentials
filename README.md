@@ -122,6 +122,7 @@ OPTIONS
   -p, --packagexml=packagexml      package.xml file path
   -s, --silent                     Silent logs when no error
   -v, --verbose                    Verbose
+  --noinsight                      Do not send anonymous usage stats
 
 DESCRIPTION
   This can help if you need to deploy only part of the result of sfdx force:source:convert into a org, by filtering the 
@@ -192,7 +193,7 @@ EXAMPLES
   sfdx force:mdapi:deploy -d tmp/deployDemoQualiFiltered/ -w 60 -u DemoQuali
 ```
 
-_See code: [src\commands\essentials\metadata\filter-from-packagexml.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.3.1/src\commands\essentials\metadata\filter-from-packagexml.ts)_
+_See code: [src/commands/essentials/metadata/filter-from-packagexml.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.4.0/src/commands/essentials/metadata/filter-from-packagexml.ts)_
 
 ## `sfdx essentials:metadata:filter-xml-content`
 
@@ -206,6 +207,7 @@ OPTIONS
   -c, --configFile=configFile      Config JSON file path
   -i, --inputfolder=inputfolder    Input folder (default: "." )
   -o, --outputfolder=outputfolder  Output folder (default: parentFolder + _xml_content_filtered)
+  --noinsight                      Do not send anonymous usage stats
 
 DESCRIPTION
   When you perform deployments from one org to another, the features activated in the target org may not fit the content 
@@ -223,7 +225,7 @@ EXAMPLES
   sfdx essentials:filter-xml-content -i "retrieveUnpackaged"
 ```
 
-_See code: [src\commands\essentials\metadata\filter-xml-content.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.3.1/src\commands\essentials\metadata\filter-xml-content.ts)_
+_See code: [src/commands/essentials/metadata/filter-xml-content.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.4.0/src/commands/essentials/metadata/filter-xml-content.ts)_
 
 ## `sfdx essentials:metadata:uncomment`
 
@@ -237,6 +239,7 @@ OPTIONS
   -f, --folder=folder              SFDX project folder containing files
   -k, --uncommentKey=uncommentKey  Uncomment key (default: SFDX_ESSENTIALS_UNCOMMENT)
   -v, --verbose                    Verbose
+  --noinsight                      Do not send anonymous usage stats
 
 DESCRIPTION
   Uncomment desired lines just before making a deployment
@@ -264,7 +267,7 @@ EXAMPLE
   --uncommentKey "SFDX_ESSENTIALS_UNCOMMENT_DxcDev_"
 ```
 
-_See code: [src\commands\essentials\metadata\uncomment.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.3.1/src\commands\essentials\metadata\uncomment.ts)_
+_See code: [src/commands/essentials/metadata/uncomment.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.4.0/src/commands/essentials/metadata/uncomment.ts)_
 
 ## `sfdx essentials:mig:add-namespace`
 
@@ -292,6 +295,8 @@ OPTIONS
 
   -v, --verbose                                      Verbose
 
+  --noinsight                                        Do not send anonymous usage stats
+
 DESCRIPTION
   Use this command if you need to replace a SObject by another one in all your sfdx sources
 
@@ -306,7 +311,7 @@ EXAMPLES
   $ essentials:mig:add-namespace -n DxcOemDev -e "**/www*" -p "../../somefolder/package.xml"
 ```
 
-_See code: [src\commands\essentials\mig\add-namespace.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.3.1/src\commands\essentials\mig\add-namespace.ts)_
+_See code: [src/commands/essentials/mig/add-namespace.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.4.0/src/commands/essentials/mig/add-namespace.ts)_
 
 ## `sfdx essentials:mig:fix-aura-attributes-names`
 
@@ -318,6 +323,7 @@ USAGE
 
 OPTIONS
   -f, --folder=folder  SFDX project folder containing files
+  --noinsight          Do not send anonymous usage stats
 
 DESCRIPTION
   If you named a lightning attribute like a custom apex class, since Summer 18 you simply can not generate a managed 
@@ -335,7 +341,7 @@ EXAMPLE
   sfdx essentials:mig:fix-aura-attributes-names
 ```
 
-_See code: [src\commands\essentials\mig\fix-aura-attributes-names.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.3.1/src\commands\essentials\mig\fix-aura-attributes-names.ts)_
+_See code: [src/commands/essentials/mig/fix-aura-attributes-names.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.4.0/src/commands/essentials/mig/fix-aura-attributes-names.ts)_
 
 ## `sfdx essentials:mig:migrate-object-model`
 
@@ -364,6 +370,8 @@ OPTIONS
 
   -v, --verbose                                  Verbose
 
+  --noinsight                                    Do not send anonymous usage stats
+
 DESCRIPTION
   Use this command if you need to replace a SObject by another one in all your sfdx sources
 
@@ -376,7 +384,7 @@ EXAMPLES
   "./package*.xml" --no-deleteFiles --no-deleteFilesExpr --no-copySfdxProjectFolder
 ```
 
-_See code: [src\commands\essentials\mig\migrate-object-model.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.3.1/src\commands\essentials\mig\migrate-object-model.ts)_
+_See code: [src/commands/essentials/mig/migrate-object-model.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.4.0/src/commands/essentials/mig/migrate-object-model.ts)_
 
 ## `sfdx essentials:packagexml:append`
 
@@ -390,6 +398,7 @@ OPTIONS
   -o, --outputfile=outputfile    package.xml output file
   -p, --packagexmls=packagexmls  package.xml files path (separated by commas)
   -v, --verbose                  Verbose
+  --noinsight                    Do not send anonymous usage stats
 
 DESCRIPTION
   API version number of the result file will be the same than in the first package.xml file sent as argument
@@ -400,7 +409,7 @@ EXAMPLE
   age_DevRoot_Scratch.xml" -o "./Config/packageXml/package_for_new_scratch_org.xml"
 ```
 
-_See code: [src\commands\essentials\packagexml\append.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.3.1/src\commands\essentials\packagexml\append.ts)_
+_See code: [src/commands/essentials/packagexml/append.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.4.0/src/commands/essentials/packagexml/append.ts)_
 
 ## `sfdx essentials:packagexml:sort`
 
@@ -412,6 +421,7 @@ USAGE
 
 OPTIONS
   -p, --packagexml=packagexml  package.xml file path (or a folder containing package.xml files)
+  --noinsight                  Do not send anonymous usage stats
 
 ALIASES
   $ sfdx essentials:order-package-xml
@@ -422,7 +432,7 @@ EXAMPLES
   $ sfdx essentials:packagexml:sort -p "./Config/packageXml"
 ```
 
-_See code: [src\commands\essentials\packagexml\sort.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.3.1/src\commands\essentials\packagexml\sort.ts)_
+_See code: [src/commands/essentials/packagexml/sort.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.4.0/src/commands/essentials/packagexml/sort.ts)_
 
 ## `sfdx essentials:permissionset:generate`
 
@@ -439,6 +449,7 @@ OPTIONS
   -p, --packagexml=packagexml                package.xml file path
   -s, --nameSuffix=nameSuffix                Name suffix for generated permission sets
   -v, --verbose                              Verbose
+  --noinsight                                Do not send anonymous usage stats
 
 ALIASES
   $ sfdx essentials:generate-permission-sets
@@ -452,7 +463,7 @@ EXAMPLES
   Custom -o "./Projects/DevRootSource/force-app/main/default/permissionsets"
 ```
 
-_See code: [src\commands\essentials\permissionset\generate.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.3.1/src\commands\essentials\permissionset\generate.ts)_
+_See code: [src/commands/essentials/permissionset/generate.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.4.0/src/commands/essentials/permissionset/generate.ts)_
 
 ## `sfdx essentials:project:change-dependency-version`
 
@@ -470,6 +481,7 @@ OPTIONS
   -n, --namespace=namespace        Namespace of the managed package
   -r, --remove                     Verbose
   -v, --verbose                    Verbose
+  --noinsight                      Do not send anonymous usage stats
 
 DESCRIPTION
   Can also :
@@ -488,7 +500,7 @@ EXAMPLES
   $ sfdx essentials:project:change-dependency-version -a 47.0
 ```
 
-_See code: [src\commands\essentials\project\change-dependency-version.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.3.1/src\commands\essentials\project\change-dependency-version.ts)_
+_See code: [src/commands/essentials/project/change-dependency-version.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.4.0/src/commands/essentials/project/change-dependency-version.ts)_
 
 ## `sfdx essentials:project:check-consistency-with-packagexml`
 
@@ -512,6 +524,8 @@ OPTIONS
 
   -p, --packageXmlList=packageXmlList              List of package.xml files path
 
+  --noinsight                                      Do not send anonymous usage stats
+
 DESCRIPTION
   This will output a table with the number of elements :
 
@@ -528,5 +542,5 @@ EXAMPLE
   "./Projects/DevRootSource/force-app/main/default" -d "Document,EmailTemplate" --failIfError
 ```
 
-_See code: [src\commands\essentials\project\check-consistency-with-packagexml.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.3.1/src\commands\essentials\project\check-consistency-with-packagexml.ts)_
+_See code: [src/commands/essentials/project/check-consistency-with-packagexml.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.4.0/src/commands/essentials/project/check-consistency-with-packagexml.ts)_
 <!-- commandsstop -->
