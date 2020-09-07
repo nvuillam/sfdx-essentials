@@ -8,11 +8,10 @@ if (!fs.existsSync('./test/tmp')) {
     fs.mkdirSync('./test/tmp');
 }
 
-// Disable anonymous stats
-globalThis.noinsight = true;
-
 // Activate debug library
 const debug = typeof v8debug === "object" || /--debug|--inspect|--inspect-brk/.test(process.execArgv.join(" "));
 if (debug) {
     require("debug").enable("sfdx-essentials");
 }
+
+globalThis.SFDX_ESSENTIALS_TEST = true;

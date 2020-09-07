@@ -5,6 +5,7 @@ import path = require('path');
 const debug = Debug('sfdx-essentials');
 
 const AMPLITUDE_TOKEN = 'ec70987c2fddff910b2f53d14f556b59';
+const STATS_VERSION = globalThis.SFDX_ESSENTIALS_TEST === true ? -1 : 2;
 
 let amplitudeClient;
 let pkgJson;
@@ -24,9 +25,13 @@ export function recordAnonymousEvent(eventType: string, data: any): Promise<any>
     }
 
     return new Promise(resolve => {
-        const eventPayloadFiltered = buildEventPayload(data);
+        const eventPayloadFiltered = buildEventPayload(eventType, data);
         amplitudeClient.logEvent({
-            event_type: eventType,
+            app_version: data.appVersion,
+            os_name: data.osPlatform,
+            os_version: data.osRelease,
+            language: process.env.LANG || process.env.LANGUAGE || process.env.LC_ALL || process.env.LC_MESSAGES,
+            event_type: 'command',
             event_properties: eventPayloadFiltered,
             user_id: anonymousUserId,
             ip: '127.0.0.1'
@@ -36,12 +41,14 @@ export function recordAnonymousEvent(eventType: string, data: any): Promise<any>
     });
 }
 
-function buildEventPayload(data: any) {
+function buildEventPayload(eventType: string, data: any) {
     data.app = pkgJson.name;
     data.appVersion = pkgJson.version;
     data.osPlatform = os.platform();
     data.osRelease = os.release();
-    data.ci = process.env.CI ? true : false; // boolean ,
+    data.ci = process.env.CI ? true : false;
+    data.statsVersion = STATS_VERSION;
+    data.command = eventType;
     return data;
 }
 
