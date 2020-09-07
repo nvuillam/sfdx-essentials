@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [2.4.2] - 2020-09-07
+
+- Update anonymous usage stats
+
 ## [2.4.0] - 2020-07-27
 
 - Add anonymous usage stats to improve plugin
