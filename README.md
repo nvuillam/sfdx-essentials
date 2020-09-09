@@ -6,6 +6,7 @@ Salesforce DX Essentials
 [![Downloads/total](https://img.shields.io/npm/dt/sfdx-essentials.svg)](https://npmjs.org/package/sfdx-essentials)
 [![CircleCI](https://circleci.com/gh/nvuillam/sfdx-essentials/tree/master.svg?style=shield)](https://circleci.com/gh/nvuillam/sfdx-essentials/tree/master)
 [![codecov](https://codecov.io/gh/nvuillam/sfdx-essentials/branch/master/graph/badge.svg)](https://codecov.io/gh/nvuillam/sfdx-essentials)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/ef9117945e6d452887d724f612af89dc)](https://www.codacy.com/manual/nvuillam/sfdx-essentials?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=nvuillam/sfdx-essentials&amp;utm_campaign=Badge_Grade)
 [![GitHub contributors](https://img.shields.io/github/contributors/nvuillam/sfdx-essentials.svg)](https://gitHub.com/nvuillam/sfdx-essentials/graphs/contributors/)
 [![GitHub stars](https://img.shields.io/github/stars/nvuillam/sfdx-essentials?label=Star&maxAge=2592000)](https://GitHub.com/nvuillam/sfdx-essentials/stargazers/)
 [![License](https://img.shields.io/npm/l/sfdx-essentials.svg)](https://github.com/nvuillam/sfdx-essentials/blob/master/package.json)
