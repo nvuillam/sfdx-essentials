@@ -35,6 +35,8 @@ Package.xml types currently managed:
 - CustomObject
 - CustomObjectTranslation
 - CustomPermission
+- CustomPlatformEvent
+- CustomSettings
 - CustomSite
 - CustomTab
 - Document

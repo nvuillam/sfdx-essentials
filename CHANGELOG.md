@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [2.4.4] - 2020-09-30
+
+- Add CustomSettings in metadata types
+
 ## [2.4.2] - 2020-09-07
 
 - Update anonymous usage stats

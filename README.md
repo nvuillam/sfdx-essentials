@@ -149,6 +149,8 @@ DESCRIPTION
   - CustomObject
   - CustomObjectTranslation
   - CustomPermission
+  - CustomPlatformEvent
+  - CustomSettings
   - CustomSite
   - CustomTab
   - Document
