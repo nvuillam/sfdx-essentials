@@ -22,6 +22,7 @@ class MetadataUtils {
       CustomLabel: { folder: 'labels', nameSuffixList: ['.labels'], sfdxNameSuffixList: ['.labels-meta.xml'] },
       CustomMetadata: { folder: 'customMetadata', nameSuffixList: ['.md'], sfdxNameSuffixList: ['.md-meta.xml'] },
       CustomMetadataType: { virtual: true, permissionSetTypeName: 'customMetadataTypeAccesses', permissionSetMemberName: 'name' },
+      CustomSettings: { virtual: true, permissionSetTypeName: 'customSettingAccesses', permissionSetMemberName: 'name' },
       CustomSite: { folder: 'sites', nameSuffixList: ['.site'], sfdxNameSuffixList: ['.site-meta.xml'] },
       CustomObjectTranslation: { folder: 'objectTranslations', nameSuffixList: ['.objectTranslation'] }, // We use Translations to define the list of objectTranslations to filter & copy
       CustomPermission: { folder: 'customPermissions', nameSuffixList: ['.customPermission'], sfdxNameSuffixList: ['.customPermission-meta.xml'] },
