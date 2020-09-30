@@ -16,7 +16,8 @@ export default class PackageXmlSort extends Command {
 
     public static flags = {
         // flag with a value (-n, --name=VALUE)
-        packagexml: flags.string({ char: 'p', description: 'package.xml file path (or a folder containing package.xml files)' })
+        packagexml: flags.string({ char: 'p', description: 'package.xml file path (or a folder containing package.xml files)' }),
+        noinsight: flags.boolean({ description: 'Do not send anonymous usage stats' }) as unknown as flags.IOptionFlag<boolean>
     };
 
     public static args = [];
@@ -43,6 +44,8 @@ export default class PackageXmlSort extends Command {
         } else {
             await this.reorderPackageXmlFile(this.packageXmlFile);
         }
+
+        await this.config.runHook('essentials-analytics', this);
 
     }
 

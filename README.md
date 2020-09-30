@@ -2,18 +2,17 @@ Salesforce DX Essentials
 ========================
 
 [![Version](https://img.shields.io/npm/v/sfdx-essentials.svg)](https://npmjs.org/package/sfdx-essentials)
-[![Downloads/week](https://img.shields.io/npm/dw/sfdx-essentials.svg)](https://npmjs.org/package/sfdx-essentials) 
-[![Downloads/total](https://img.shields.io/npm/dt/sfdx-essentials.svg)](https://npmjs.org/package/sfdx-essentials) 
+[![Downloads/week](https://img.shields.io/npm/dw/sfdx-essentials.svg)](https://npmjs.org/package/sfdx-essentials)
+[![Downloads/total](https://img.shields.io/npm/dt/sfdx-essentials.svg)](https://npmjs.org/package/sfdx-essentials)
 [![CircleCI](https://circleci.com/gh/nvuillam/sfdx-essentials/tree/master.svg?style=shield)](https://circleci.com/gh/nvuillam/sfdx-essentials/tree/master)
 [![codecov](https://codecov.io/gh/nvuillam/sfdx-essentials/branch/master/graph/badge.svg)](https://codecov.io/gh/nvuillam/sfdx-essentials)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/ef9117945e6d452887d724f612af89dc)](https://www.codacy.com/manual/nvuillam/sfdx-essentials?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=nvuillam/sfdx-essentials&amp;utm_campaign=Badge_Grade)
 [![GitHub contributors](https://img.shields.io/github/contributors/nvuillam/sfdx-essentials.svg)](https://gitHub.com/nvuillam/sfdx-essentials/graphs/contributors/)
 [![GitHub stars](https://img.shields.io/github/stars/nvuillam/sfdx-essentials?label=Star&maxAge=2592000)](https://GitHub.com/nvuillam/sfdx-essentials/stargazers/)
-[![License](https://img.shields.io/npm/l/sfdx-essentials.svg)](https://github.com/nvuillam/sfdx-essentials/blob/master/package.json) 
+[![License](https://img.shields.io/npm/l/sfdx-essentials.svg)](https://github.com/nvuillam/sfdx-essentials/blob/master/package.json)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
-[![HitCount](https://hits.dwyl.com/nvuillam/sfdx-essentials.svg)](https://hits.dwyl.com/nvuillam/sfdx-essentials)
-[![Say Thanks!](https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg)](https://saythanks.io/to/nicolas.vuillamy@gmail.com)
 
-# PLUGIN
+# SFDX ESSENTIALS PLUGIN
 
 Toolbox for Salesforce DX to provide some very helpful additional features to base sfdx commands.
 
@@ -25,9 +24,9 @@ See [CHANGELOG](https://github.com/nvuillam/sfdx-essentials/blob/master/CHANGELO
 
 Any **question**, **problem** or **enhancement request** ? Ask [**here**](https://github.com/nvuillam/sfdx-essentials/issues) :)
 
-# Command list
+## Commands
 
-## Metadata
+### Metadata
 
 | Command | Description |
 | ------------- | ------------- |
@@ -35,68 +34,73 @@ Any **question**, **problem** or **enhancement request** ? Ask [**here**](https:
 | [essentials:metadata:filter-xml-content](#sfdx-essentialsmetadatafilter-xml-content) | **Filter content of metadatas (XML)** in order to be able to deploy only part of them on an org |
 | [sfdx essentials:metadata:uncomment](#sfdx-essentialsmetadatauncomment) | **Uncomment lines in sfdx/md files** (useful to manage @Deprecated annotations with managed packages) |
 
-## Migration
+### Migration
 
 | Command | Description |
 | ------------- | ------------- |
 | [essentials:mig:fix-aura-attributes-names](#sfdx-essentialsmigfix-aura-attributes-names) | **Replace reserved lightning attribute names in lightning components and apex classes** ( if you named a lightning attribute like a custom apex class, since Summer 18 you simply can not generate a managed package again) |
 | [essentials:mig:migrate-object-model](#sfdx-essentialsmigmigrate-object-model) | **Migrate sources from an object model to a new object model** |
+| [essentials:mig:add-namespace](#sfdx-essentialsmigadd-namespace) | **Update SFDX sources to add a namespace on references to items described in a package.xml file** |
 
-## Package.xml
+### Package.xml
 
 | Command | Description |
 | ------------- | ------------- |
 | [essentials:packagexml:append](#sfdx-essentialspackagexmlappend) | **Append content of a package.xml files into a single one** |
 | [essentials:packagexml:sort](#sfdx-essentialspackagexmlsort) | **Reorder alphabetically the content of package.xml file(s)** |
 
-## Permission sets
+### Permission sets
 
 | Command | Description |
 | ------------- | ------------- |
 | [essentials:permissionset:generate](#sfdx-essentialspermissionsetgenerate) | **Generate permission sets** from packageXml file depending on JSON configuration file |
 
-## SFDX Project
+### SFDX Project
 
 | Command | Description |
 | ------------- | ------------- |
 | [essentials:project:change-dependency-version](#sfdx-essentialsprojectchange-dependency-version) | **Replace other managed packages dependency version number** ( very useful when you build a managed package over another managed package, like Financial Services Cloud ) |
 | [essentials:project:check-consistency-with-packagexml](#sfdx-essentialsprojectcheck-consistency-with-packagexml) | **Check consistency between a SFDX project files and package.xml files** |
 
-# INSTALLATION
+## INSTALLATION
 
-```
+```shell
     sfdx plugins:install sfdx-essentials
 ```
 
 - Windows users: [sfdx plugin generator](https://github.com/forcedotcom/sfdx-plugin-generate) is bugged on windows (hardcode call of linux rm instruction) , so you may use [Git Bash](https://gitforwindows.org/) to run this code ( at least while it installs the plugin dependencies )
 
 - CI Users: As the plugin is not signed, to install it from a Dockerfile or a script:
-```
+
+```shell
     echo 'y' | sfdx plugins:install sfdx-essentials
 ```
 
-# UPGRADE
+## UPGRADE
 
 Its seems that `sfdx plugins:update` does not always work, in that case , uninstall then reinstall the plugin
-```
+
+```shell
     sfdx plugins:uninstall sfdx-essentials
     sfdx plugins:install sfdx-essentials
 ```
 
-# CONTRIBUTE
+## CONTRIBUTE
 
 Contributions are very welcome, please run **npm run lint:fix** and **npm run test** before making a new PR
 
 - Fork the repo and clone it on your computer
 - To [debug](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_plugins.meta/sfdx_cli_plugins/cli_plugins_debug.htm), run  ``` $ sfdx plugins:link ``` or use  ``` $ NODE_OPTIONS=--inspect-brk bin/run yourcommand ```
-- Now your calls to sfdx essentials are performed on your local sources 
+- Now your calls to sfdx essentials are performed on your local sources
 - Once your code is ready, documented and linted, please make a pull request :)
 
-# Commands
+# Command details
+
 <!-- commands -->
 * [`sfdx essentials:metadata:filter-from-packagexml`](#sfdx-essentialsmetadatafilter-from-packagexml)
 * [`sfdx essentials:metadata:filter-xml-content`](#sfdx-essentialsmetadatafilter-xml-content)
 * [`sfdx essentials:metadata:uncomment`](#sfdx-essentialsmetadatauncomment)
+* [`sfdx essentials:mig:add-namespace`](#sfdx-essentialsmigadd-namespace)
 * [`sfdx essentials:mig:fix-aura-attributes-names`](#sfdx-essentialsmigfix-aura-attributes-names)
 * [`sfdx essentials:mig:migrate-object-model`](#sfdx-essentialsmigmigrate-object-model)
 * [`sfdx essentials:packagexml:append`](#sfdx-essentialspackagexmlappend)
@@ -117,7 +121,9 @@ OPTIONS
   -i, --inputfolder=inputfolder    Input folder (default: "." )
   -o, --outputfolder=outputfolder  Output folder (default: filteredMetadatas)
   -p, --packagexml=packagexml      package.xml file path
+  -s, --silent                     Silent logs when no error
   -v, --verbose                    Verbose
+  --noinsight                      Do not send anonymous usage stats
 
 DESCRIPTION
   This can help if you need to deploy only part of the result of sfdx force:source:convert into a org, by filtering the 
@@ -142,6 +148,7 @@ DESCRIPTION
   - CustomMetadata
   - CustomObject
   - CustomObjectTranslation
+  - CustomPermission
   - CustomSite
   - CustomTab
   - Document
@@ -187,7 +194,7 @@ EXAMPLES
   sfdx force:mdapi:deploy -d tmp/deployDemoQualiFiltered/ -w 60 -u DemoQuali
 ```
 
-_See code: [src/commands/essentials/metadata/filter-from-packagexml.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.1.2/src/commands/essentials/metadata/filter-from-packagexml.ts)_
+_See code: [src/commands/essentials/metadata/filter-from-packagexml.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.4.0/src/commands/essentials/metadata/filter-from-packagexml.ts)_
 
 ## `sfdx essentials:metadata:filter-xml-content`
 
@@ -201,6 +208,7 @@ OPTIONS
   -c, --configFile=configFile      Config JSON file path
   -i, --inputfolder=inputfolder    Input folder (default: "." )
   -o, --outputfolder=outputfolder  Output folder (default: parentFolder + _xml_content_filtered)
+  --noinsight                      Do not send anonymous usage stats
 
 DESCRIPTION
   When you perform deployments from one org to another, the features activated in the target org may not fit the content 
@@ -218,7 +226,7 @@ EXAMPLES
   sfdx essentials:filter-xml-content -i "retrieveUnpackaged"
 ```
 
-_See code: [src/commands/essentials/metadata/filter-xml-content.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.1.2/src/commands/essentials/metadata/filter-xml-content.ts)_
+_See code: [src/commands/essentials/metadata/filter-xml-content.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.4.0/src/commands/essentials/metadata/filter-xml-content.ts)_
 
 ## `sfdx essentials:metadata:uncomment`
 
@@ -232,6 +240,7 @@ OPTIONS
   -f, --folder=folder              SFDX project folder containing files
   -k, --uncommentKey=uncommentKey  Uncomment key (default: SFDX_ESSENTIALS_UNCOMMENT)
   -v, --verbose                    Verbose
+  --noinsight                      Do not send anonymous usage stats
 
 DESCRIPTION
   Uncomment desired lines just before making a deployment
@@ -259,7 +268,51 @@ EXAMPLE
   --uncommentKey "SFDX_ESSENTIALS_UNCOMMENT_DxcDev_"
 ```
 
-_See code: [src/commands/essentials/metadata/uncomment.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.1.2/src/commands/essentials/metadata/uncomment.ts)_
+_See code: [src/commands/essentials/metadata/uncomment.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.4.0/src/commands/essentials/metadata/uncomment.ts)_
+
+## `sfdx essentials:mig:add-namespace`
+
+Migrate sources from an object model to a new object model (See [Example configuration](https://github.com/nvuillam/sfdx-essentials/blob/master/examples/migrate-object-model-config.json))
+
+```
+USAGE
+  $ sfdx essentials:mig:add-namespace
+
+OPTIONS
+  -e, --excludeExpressionList=excludeExpressionList  List of expressions to ignore. ex: **/node_modules/**
+
+  -f, --fetchExpressionList=fetchExpressionList      Fetch expression list. Let default if you dont know. ex:
+                                                     ./aura/**/*.js,./aura/**/*.cmp,./classes/*.cls,./objects/*/fields/*
+                                                     .xml,./objects/*/recordTypes/*.xml,./triggers/*.trigger,./permissio
+                                                     nsets/*.xml,./profiles/*.xml,./staticresources/*.json
+
+  -i, --inputFolder=inputFolder                      Input folder (default: "." )
+
+  -l, --labelsfile=labelsfile                        Path to CustomLabel.labels-meta.xml
+
+  -n, --namespace=namespace                          (required) Namespace string
+
+  -p, --packagexml=packagexml                        (required) Path to package.xml file
+
+  -v, --verbose                                      Verbose
+
+  --noinsight                                        Do not send anonymous usage stats
+
+DESCRIPTION
+  Use this command if you need to replace a SObject by another one in all your sfdx sources
+
+ALIASES
+  $ sfdx essentials:migrate-object-model
+
+EXAMPLES
+  $ essentials:mig:add-namespace -n DxcOemDev -p "../../somefolder/package.xml"
+  $ essentials:mig:add-namespace -n DxcOemDev -i "C:/Work/git/some-client-project/Projects/DevRootSource" 
+  --fetchExpressionList="**/*.apex,**/*.json" -p 
+  "C:/Work/git/DXCO4SF_Sources_OEM_ST/Config/packageXml/package_DevRoot_Managed.xml"
+  $ essentials:mig:add-namespace -n DxcOemDev -e "**/www*" -p "../../somefolder/package.xml"
+```
+
+_See code: [src/commands/essentials/mig/add-namespace.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.4.0/src/commands/essentials/mig/add-namespace.ts)_
 
 ## `sfdx essentials:mig:fix-aura-attributes-names`
 
@@ -271,6 +324,7 @@ USAGE
 
 OPTIONS
   -f, --folder=folder  SFDX project folder containing files
+  --noinsight          Do not send anonymous usage stats
 
 DESCRIPTION
   If you named a lightning attribute like a custom apex class, since Summer 18 you simply can not generate a managed 
@@ -288,7 +342,7 @@ EXAMPLE
   sfdx essentials:mig:fix-aura-attributes-names
 ```
 
-_See code: [src/commands/essentials/mig/fix-aura-attributes-names.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.1.2/src/commands/essentials/mig/fix-aura-attributes-names.ts)_
+_See code: [src/commands/essentials/mig/fix-aura-attributes-names.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.4.0/src/commands/essentials/mig/fix-aura-attributes-names.ts)_
 
 ## `sfdx essentials:mig:migrate-object-model`
 
@@ -317,6 +371,8 @@ OPTIONS
 
   -v, --verbose                                  Verbose
 
+  --noinsight                                    Do not send anonymous usage stats
+
 DESCRIPTION
   Use this command if you need to replace a SObject by another one in all your sfdx sources
 
@@ -329,7 +385,7 @@ EXAMPLES
   "./package*.xml" --no-deleteFiles --no-deleteFilesExpr --no-copySfdxProjectFolder
 ```
 
-_See code: [src/commands/essentials/mig/migrate-object-model.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.1.2/src/commands/essentials/mig/migrate-object-model.ts)_
+_See code: [src/commands/essentials/mig/migrate-object-model.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.4.0/src/commands/essentials/mig/migrate-object-model.ts)_
 
 ## `sfdx essentials:packagexml:append`
 
@@ -343,6 +399,7 @@ OPTIONS
   -o, --outputfile=outputfile    package.xml output file
   -p, --packagexmls=packagexmls  package.xml files path (separated by commas)
   -v, --verbose                  Verbose
+  --noinsight                    Do not send anonymous usage stats
 
 DESCRIPTION
   API version number of the result file will be the same than in the first package.xml file sent as argument
@@ -353,7 +410,7 @@ EXAMPLE
   age_DevRoot_Scratch.xml" -o "./Config/packageXml/package_for_new_scratch_org.xml"
 ```
 
-_See code: [src/commands/essentials/packagexml/append.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.1.2/src/commands/essentials/packagexml/append.ts)_
+_See code: [src/commands/essentials/packagexml/append.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.4.0/src/commands/essentials/packagexml/append.ts)_
 
 ## `sfdx essentials:packagexml:sort`
 
@@ -365,6 +422,7 @@ USAGE
 
 OPTIONS
   -p, --packagexml=packagexml  package.xml file path (or a folder containing package.xml files)
+  --noinsight                  Do not send anonymous usage stats
 
 ALIASES
   $ sfdx essentials:order-package-xml
@@ -375,7 +433,7 @@ EXAMPLES
   $ sfdx essentials:packagexml:sort -p "./Config/packageXml"
 ```
 
-_See code: [src/commands/essentials/packagexml/sort.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.1.2/src/commands/essentials/packagexml/sort.ts)_
+_See code: [src/commands/essentials/packagexml/sort.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.4.0/src/commands/essentials/packagexml/sort.ts)_
 
 ## `sfdx essentials:permissionset:generate`
 
@@ -392,6 +450,7 @@ OPTIONS
   -p, --packagexml=packagexml                package.xml file path
   -s, --nameSuffix=nameSuffix                Name suffix for generated permission sets
   -v, --verbose                              Verbose
+  --noinsight                                Do not send anonymous usage stats
 
 ALIASES
   $ sfdx essentials:generate-permission-sets
@@ -405,7 +464,7 @@ EXAMPLES
   Custom -o "./Projects/DevRootSource/force-app/main/default/permissionsets"
 ```
 
-_See code: [src/commands/essentials/permissionset/generate.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.1.2/src/commands/essentials/permissionset/generate.ts)_
+_See code: [src/commands/essentials/permissionset/generate.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.4.0/src/commands/essentials/permissionset/generate.ts)_
 
 ## `sfdx essentials:project:change-dependency-version`
 
@@ -423,6 +482,7 @@ OPTIONS
   -n, --namespace=namespace        Namespace of the managed package
   -r, --remove                     Verbose
   -v, --verbose                    Verbose
+  --noinsight                      Do not send anonymous usage stats
 
 DESCRIPTION
   Can also :
@@ -441,7 +501,7 @@ EXAMPLES
   $ sfdx essentials:project:change-dependency-version -a 47.0
 ```
 
-_See code: [src/commands/essentials/project/change-dependency-version.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.1.2/src/commands/essentials/project/change-dependency-version.ts)_
+_See code: [src/commands/essentials/project/change-dependency-version.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.4.0/src/commands/essentials/project/change-dependency-version.ts)_
 
 ## `sfdx essentials:project:check-consistency-with-packagexml`
 
@@ -465,6 +525,8 @@ OPTIONS
 
   -p, --packageXmlList=packageXmlList              List of package.xml files path
 
+  --noinsight                                      Do not send anonymous usage stats
+
 DESCRIPTION
   This will output a table with the number of elements :
 
@@ -481,5 +543,5 @@ EXAMPLE
   "./Projects/DevRootSource/force-app/main/default" -d "Document,EmailTemplate" --failIfError
 ```
 
-_See code: [src/commands/essentials/project/check-consistency-with-packagexml.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.1.2/src/commands/essentials/project/check-consistency-with-packagexml.ts)_
+_See code: [src/commands/essentials/project/check-consistency-with-packagexml.ts](https://github.com/nvuillam/sfdx-essentials/blob/v2.4.0/src/commands/essentials/project/check-consistency-with-packagexml.ts)_
 <!-- commandsstop -->

@@ -13,6 +13,20 @@ describe('essentials:metadata:filter-from-packagexml', () => {
         });
 });
 
+describe('essentials:metadata:filter-from-packagexml (silent)', () => {
+    test
+        .stdout()
+        .command(['essentials:metadata:filter-from-packagexml',
+            '-i', './test/shared/mdapioutput',
+            '-p', './test/shared/packagexml/package1.xml',
+            '-o', './test/tmp/mdapioutputFiltered',
+            '-s'
+        ])
+        .it('runs essentials:metadata:filter-from-packagexml', (ctx) => {
+            expect(ctx.stdout).to.not.contain('nbCopied');
+        });
+});
+
 describe('(alias) essentials:filter-metadatas', () => {
     test
         .stdout()

@@ -34,6 +34,7 @@ Package.xml types currently managed:
 - CustomMetadata
 - CustomObject
 - CustomObjectTranslation
+- CustomPermission
 - CustomSite
 - CustomTab
 - Document
@@ -80,7 +81,9 @@ sfdx force:mdapi:deploy -d tmp/deployDemoQualiFiltered/ -w 60 -u DemoQuali`
     packagexml: flags.string({ char: 'p', description: 'package.xml file path' }),
     inputfolder: flags.string({ char: 'i', description: 'Input folder (default: "." )' }),
     outputfolder: flags.string({ char: 'o', description: 'Output folder (default: filteredMetadatas)' }),
-    verbose: flags.boolean({ char: 'v', description: 'Verbose' }) as unknown as flags.IOptionFlag<boolean>
+    silent: flags.boolean({ char: 's', description: 'Silent logs when no error' }) as unknown as flags.IOptionFlag<boolean>,
+    verbose: flags.boolean({ char: 'v', description: 'Verbose' }) as unknown as flags.IOptionFlag<boolean>,
+    noinsight: flags.boolean({ description: 'Do not send anonymous usage stats' }) as unknown as flags.IOptionFlag<boolean>
   };
 
   public static args = [];
@@ -90,6 +93,7 @@ sfdx force:mdapi:deploy -d tmp/deployDemoQualiFiltered/ -w 60 -u DemoQuali`
   public inputFolder: string;
   public outputFolder: string;
   public verbose: boolean = false;
+  public silent = false;
 
   // Internal properties
   public packageXmlMetadatasTypeLs = [];
@@ -111,6 +115,9 @@ sfdx force:mdapi:deploy -d tmp/deployDemoQualiFiltered/ -w 60 -u DemoQuali`
     this.outputFolder = flags.outputfolder || 'filteredMetadatas';
     if (flags.verbose) {
       this.verbose = true;
+    }
+    if (flags.silent) {
+      this.silent = true;
     }
     this.log(`Initialize filtering of ${this.inputFolder}, using ${this.packageXmlFile}, into ${this.outputFolder}`);
 
@@ -180,6 +187,7 @@ sfdx force:mdapi:deploy -d tmp/deployDemoQualiFiltered/ -w 60 -u DemoQuali`
       this.multibar.stop();
     }
     this.displayResults();
+    await this.config.runHook('essentials-analytics', this);
   }
 
   // Filter metadatas by type
@@ -224,7 +232,7 @@ sfdx force:mdapi:deploy -d tmp/deployDemoQualiFiltered/ -w 60 -u DemoQuali`
       }
 
       // Collect custom labels
-      if (metadataType === 'CustomLabel') {
+      if (metadataType[0] === 'CustomLabel') {
         this.collectAndFilterCustomLabels(metadataDesc, metadataType, members);
       }
 
@@ -318,7 +326,6 @@ sfdx force:mdapi:deploy -d tmp/deployDemoQualiFiltered/ -w 60 -u DemoQuali`
       const parser = new xml2js.Parser();
       const data = fs.readFileSync(copyTargetFile);
       parser.parseString(data, (err2, parsedObjectFile) => {
-
         if (members != null && members[0] === '*') {
           this.logIfVerbose('-- including all labels ');
         } else {
@@ -328,7 +335,7 @@ sfdx force:mdapi:deploy -d tmp/deployDemoQualiFiltered/ -w 60 -u DemoQuali`
             if (Array.isArray(itemName)) {
               itemName = itemName[0];
             }
-            if (members.includes(itemName)) {
+            if (!members.includes(itemName)) {
               this.logIfVerbose(`----removed ${itemName} `);
               delete parsedObjectFile['CustomLabels']['labels'][pos];
             } else {
@@ -527,7 +534,9 @@ sfdx force:mdapi:deploy -d tmp/deployDemoQualiFiltered/ -w 60 -u DemoQuali`
 
   // Display results as JSON
   public displayResults() {
-    console.log('\n' + JSON.stringify(this.summaryResult));
+    if (!this.silent) {
+      console.log('\n' + JSON.stringify(this.summaryResult));
+    }
   }
 
   public logIfVerbose(content: string) {

@@ -31,7 +31,8 @@ export default class CheckConsistencyWithPackageXml extends Command {
     ignoreDuplicateTypes: flags.string({ char: 'd', default: '', description: 'List of types to ignore while checking for duplicates in package.xml files' }),
     failIfError: flags.boolean({ char: 'f', default: false, description: 'Script failing if errors are founds' }) as unknown as flags.IOptionFlag<boolean>,
     chatty: flags.boolean({ char: 'c', default: false, description: 'Chatty logs' }) as unknown as flags.IOptionFlag<boolean>,
-    jsonLogging: flags.boolean({ char: 'j', default: false, description: 'JSON logs' }) as unknown as flags.IOptionFlag<boolean>
+    jsonLogging: flags.boolean({ char: 'j', default: false, description: 'JSON logs' }) as unknown as flags.IOptionFlag<boolean>,
+    noinsight: flags.boolean({ description: 'Do not send anonymous usage stats' }) as unknown as flags.IOptionFlag<boolean>
   };
 
   // Input params properties
@@ -93,6 +94,8 @@ export default class CheckConsistencyWithPackageXml extends Command {
     } else {
       console.table(this.cmdLog.compareResult, ['md_type', 'status', 'identical_nb', 'in_sfdx_but_not_in_pckg_xml_nb', 'in_pckg_xml_but_not_in_sfdx_nb']);
     }
+
+    await this.config.runHook('essentials-analytics', this);
 
     if (this.failIfError && this.cmdLog.scriptSuccess === false) {
       throw Error('SFDX Project consistency contains errors. Check logs for details');

@@ -33,7 +33,8 @@ global static List<OrgDebugOption__c> setDebugOption() {
   public static flags = {
     folder: flags.string({ char: 'f', description: 'SFDX project folder containing files' }),
     uncommentKey: flags.string({ char: 'k', description: 'Uncomment key (default: SFDX_ESSENTIALS_UNCOMMENT)' }),
-    verbose: flags.boolean({ char: 'v', description: 'Verbose' }) as unknown as flags.IOptionFlag<boolean>
+    verbose: flags.boolean({ char: 'v', description: 'Verbose' }) as unknown as flags.IOptionFlag<boolean>,
+    noinsight: flags.boolean({ description: 'Do not send anonymous usage stats' }) as unknown as flags.IOptionFlag<boolean>
   };
 
   public static args = [];
@@ -104,7 +105,7 @@ global static List<OrgDebugOption__c> setDebugOption() {
     }
 
     console.log('Total uncomments: ' + this.totalUncomments);
-
+    await this.config.runHook('essentials-analytics', this);
   }
 
   // Process component file

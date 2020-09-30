@@ -24,7 +24,8 @@ This script requires a filter-config.json file`;
     // flag with a value (-n, --name=VALUE)
     configFile: flags.string({ char: 'c', description: 'Config JSON file path' }),
     inputfolder: flags.string({ char: 'i', description: 'Input folder (default: "." )' }),
-    outputfolder: flags.string({ char: 'o', description: 'Output folder (default: parentFolder + _xml_content_filtered)' })
+    outputfolder: flags.string({ char: 'o', description: 'Output folder (default: parentFolder + _xml_content_filtered)' }),
+    noinsight: flags.boolean({ description: 'Do not send anonymous usage stats' }) as unknown as flags.IOptionFlag<boolean>
   };
 
   public static args = [];
@@ -98,6 +99,7 @@ This script requires a filter-config.json file`;
     // Display results as JSON
     console.log(JSON.stringify(this.smmryResult));
 
+    await this.config.runHook('essentials-analytics', this);
   }
 
   // Filter XML content of the file

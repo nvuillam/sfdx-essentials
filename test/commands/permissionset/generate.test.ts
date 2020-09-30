@@ -5,6 +5,7 @@ describe('essentials:permissionset:generate', () => {
   test
     .stdout()
     .command(['essentials:permissionset:generate',
+      '-v',
       '-c', './test/commands/permissionset/generate-permission-sets-config.json',
       '-p', './test/shared/packagexml/package1.xml',
       '-f', './test/shared/sfdxProject/force-app/main/default',
@@ -18,6 +19,7 @@ describe('(alias) essentials:generate-permission-sets', () => {
   test
     .stdout()
     .command(['essentials:generate-permission-sets',
+      '-v',
       '-c', './test/commands/permissionset/generate-permission-sets-config.json',
       '-p', './test/shared/packagexml/package1.xml',
       '-f', './test/shared/sfdxProject/force-app/main/default',
