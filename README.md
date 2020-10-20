@@ -1,3 +1,4 @@
+<!-- markdownlint-disable -->
 Salesforce DX Essentials
 ========================
 
