@@ -14,7 +14,8 @@ export default class ProjectCountLines extends Command {
   public static examples = [
     '$ sfdx essentials:project:count-apex-lines -f "./force-app/main/default"',
     '$ sfdx essentials:project:count-apex-lines -f "./force-app/main/default" -b "**/WsMockV*.cls"',
-    '$ sfdx essentials:project:count-apex-lines -f "./force-app/main/default" -p "./packagexml/package1.xml"'
+    '$ sfdx essentials:project:count-apex-lines -f "./force-app/main/default" -p "./packagexml/package1.xml"',
+    '$ sfdx essentials:project:count-apex-lines -f "./force-app/main/default" -p "./packagexml/package1.xml" -e "(WsBlabla|POC_)"'
   ];
 
   // @ts-ignore
@@ -111,6 +112,8 @@ export default class ProjectCountLines extends Command {
     if (this.verbose) {
       console.log(JSON.stringify(stats));
     }
+
+    console.log('Processed files: \n' + stats.map(s => s.file + ' (' + s.source + ')').join('\n'));
 
     // Finalize
     if (!this.verbose && this.progressBar.terminal.isTTY()) {
