@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [2.5.0] - 2020-10-20
+
+- Ne command essentials:project:count-apex-lines
+
 ## [2.4.4] - 2020-09-30
 
 - Add CustomSettings in metadata types
