@@ -27,6 +27,21 @@ describe('essentials:project:count-apex-lines with packageXml', () => {
         });
 });
 
+describe('essentials:project:count-apex-lines with packageXml', () => {
+    test
+        .stdout()
+        .command(['essentials:project:count-apex-lines',
+            '-f', './test/shared/sfdxProject/force-app/main/default',
+            '-p', './test/shared/packagexml/package1.xml',
+            '-e', '(WsMockS)'
+        ]
+        )
+        .it('runs essentials:project:count-apex-lines', (ctx) => {
+            expect(ctx.stdout).to.contain('Number of files: 1');
+            expect(ctx.stdout).to.contain('Number of source lines (excluding comments): 134');
+        });
+});
+
 describe('essentials:project:count-apex-lines with overridden browsingPattern', () => {
     test
         .stdout()

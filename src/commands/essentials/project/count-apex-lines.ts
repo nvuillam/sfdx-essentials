@@ -23,6 +23,7 @@ export default class ProjectCountLines extends Command {
     folder: flags.string({ char: 'f', description: 'SFDX project folder containing files' }),
     packagexmls: flags.string({ char: 'p', description: 'package.xml files path (separated by commas)' }),
     browsingpattern: flags.string({ char: 'b', description: 'Files browsing pattern. Default **/*.cls' }),
+    excludepattern: flags.string({ char: 'e', description: 'Regex to exclude patterns' }),
     verbose: flags.boolean({ char: 'v', description: 'Verbose' }) as unknown as flags.IOptionFlag<boolean>,
     noinsight: flags.boolean({ description: 'Do not send anonymous usage stats' }) as unknown as flags.IOptionFlag<boolean>
   };
@@ -33,6 +34,7 @@ export default class ProjectCountLines extends Command {
   public folder: string;
   public packageXmlFiles: string[];
   public browsingPattern: string;
+  public excludePattern: RegExp = null;
   public verbose: boolean = false;
 
   // Internal properties
@@ -49,6 +51,9 @@ export default class ProjectCountLines extends Command {
     this.folder = flags.folder || '.';
     this.packageXmlFiles = (flags.packagexmls || '').split(',');
     this.browsingPattern = flags.browsingpattern || '**/*.cls';
+    if (flags.excludepattern) {
+      this.excludePattern = new RegExp(flags.excludepattern);
+    }
     if (flags.verbose) {
       this.verbose = true;
     }
@@ -88,7 +93,8 @@ export default class ProjectCountLines extends Command {
       }
       const fileName = path.parse(file).name;
       if ((pckgXmlApexClasses.length > 0 && !pckgXmlApexClasses.includes(fileName))
-        || fileName.toLowerCase().endsWith('test')) {
+        || fileName.toLowerCase().endsWith('test')
+        || (this.excludePattern && this.excludePattern.test(fileName))) {
         if (this.verbose) {
           console.log(`Skipped file ${file}`);
         }
