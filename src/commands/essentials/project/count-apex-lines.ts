@@ -6,6 +6,8 @@ import * as path from 'path';
 import * as sloc from 'sloc';
 import { EssentialsUtils } from '../../../common/essentials-utils';
 
+const commentsRegex = /((['"])(?:(?!\2|\\).|\\.)*\2)|\/\/[^\n]*|\/\*(?:[^*]|\*(?!\/))*\*\//gm;
+
 export default class ProjectCountLines extends Command {
   public static aliases = ['essentials:count-apex-lines'];
 
@@ -25,6 +27,7 @@ export default class ProjectCountLines extends Command {
     packagexmls: flags.string({ char: 'p', description: 'package.xml files path (separated by commas)' }),
     browsingpattern: flags.string({ char: 'b', description: 'Files browsing pattern. Default **/*.cls' }),
     excludepattern: flags.string({ char: 'e', description: 'Regex to exclude patterns' }),
+    weight: flags.boolean({ char: 'w', description: 'Return also weight (number of chars). Slower and requires Perl' }) as unknown as flags.IOptionFlag<boolean>,
     verbose: flags.boolean({ char: 'v', description: 'Verbose' }) as unknown as flags.IOptionFlag<boolean>,
     noinsight: flags.boolean({ description: 'Do not send anonymous usage stats' }) as unknown as flags.IOptionFlag<boolean>
   };
@@ -36,6 +39,7 @@ export default class ProjectCountLines extends Command {
   public packageXmlFiles: string[];
   public browsingPattern: string;
   public excludePattern: RegExp = null;
+  public weight: boolean = false;
   public verbose: boolean = false;
 
   // Internal properties
@@ -54,6 +58,9 @@ export default class ProjectCountLines extends Command {
     this.browsingPattern = flags.browsingpattern || '**/*.cls';
     if (flags.excludepattern) {
       this.excludePattern = new RegExp(flags.excludepattern);
+    }
+    if (flags.weight) {
+      this.weight = true;
     }
     if (flags.verbose) {
       this.verbose = true;
@@ -83,15 +90,8 @@ export default class ProjectCountLines extends Command {
       this.progressBar.start(fileList.length, 0, { name: 'Progress', file: 'N/A' });
     }
 
-    // Count lines in files
-    const stats = [];
-    let sourceNb = 0;
-    let fileNb = 0;
-    for (const file of fileList) {
-      if (!this.verbose && this.progressBar.terminal.isTTY()) {
-        this.progressBar.increment();
-        this.progressBar.update(null, { file });
-      }
+    // Filter file list
+    const fileListFiltered = fileList.filter(file => {
       const fileName = path.parse(file).name;
       if ((pckgXmlApexClasses.length > 0 && !pckgXmlApexClasses.includes(fileName))
         || fileName.toLowerCase().endsWith('test')
@@ -99,21 +99,44 @@ export default class ProjectCountLines extends Command {
         if (this.verbose) {
           console.log(`Skipped file ${file}`);
         }
-        continue;
+        return false;
+      }
+      return true;
+    });
+
+    // Count lines in files
+    const stats = [];
+    let sourceLinesNb = 0;
+    let sourceCharsNb = 0;
+
+    // Use sloc to only count lines
+    for (const file of fileListFiltered) {
+      if (!this.verbose && this.progressBar.terminal.isTTY()) {
+        this.progressBar.increment();
+        this.progressBar.update(null, { file });
       }
       const code = await fse.readFile(file, 'utf8');
-      const fileSstats = sloc(code, 'java');
-      fileSstats.file = file;
-      fileNb++;
-      sourceNb += fileSstats.source;
-      stats.push(fileSstats);
+      const fileStats = sloc(code, 'java');
+      fileStats.file = file;
+      fileStats.fileStatsLabel = `${file} (${fileStats.source})`;
+      sourceLinesNb += fileStats.source;
+      // Calculate weight if requested (more execution time)
+      if (this.weight) {
+        const cleanCode = code.replace(commentsRegex, '')
+          .split('\n')
+          .map(line => line.trim())
+          .join('\n');
+        fileStats.chars = cleanCode.length;
+        fileStats.fileStatsLabel = `${file} (${fileStats.source} / ${fileStats.chars})`;
+        sourceCharsNb += fileStats.chars;
+      }
+      stats.push(fileStats);
     }
 
     if (this.verbose) {
-      console.log(JSON.stringify(stats));
+      console.log(JSON.stringify(stats, null, 2));
     }
-
-    console.log('Processed files: \n' + stats.map(s => s.file + ' (' + s.source + ')').join('\n'));
+    console.log('Processed files: \n' + stats.map(s => s.fileStatsLabel).join('\n'));
 
     // Finalize
     if (!this.verbose && this.progressBar.terminal.isTTY()) {
@@ -121,8 +144,11 @@ export default class ProjectCountLines extends Command {
       this.progressBar.update(null, { file: 'Completed in ' + EssentialsUtils.formatSecs(Math.round((Date.now() - elapseStart) / 1000)) });
       this.progressBar.stop();
     }
-    console.log(`Number of files: ${fileNb}`);
-    console.log(`Number of source lines (excluding comments): ${sourceNb}`);
+    console.log(`Number of files: [${fileListFiltered.length}]`);
+    console.log(`Number of source lines (excluding comments): [${sourceLinesNb}]`);
+    if (this.weight) {
+      console.log(`Number of characters in source lines (excluding comments): [${sourceCharsNb}]`);
+    }
     await this.config.runHook('essentials-analytics', this);
   }
 

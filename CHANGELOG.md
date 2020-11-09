@@ -1,8 +1,12 @@
 # CHANGELOG
 
+## [2.5.3] - 2020-11-10
+
+- Also allow to count characters with command essentials:project:count-apex-lines
+
 ## [2.5.0] - 2020-10-20
 
-- Ne command essentials:project:count-apex-lines
+- New command essentials:project:count-apex-lines
 
 ## [2.4.4] - 2020-09-30
 
