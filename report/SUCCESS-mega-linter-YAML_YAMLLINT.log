@@ -1,0 +1,5 @@
+Results of yamllint linter (version 1.25.0)
+See documentation on https://github.com/nvuillam/mega-linter/tree/master/docs/descriptors/yaml_yamllint.md
+-----------------------------------------------
+
+[SUCCESS] /github/workspace/.github/workflows/mega-linter.yml

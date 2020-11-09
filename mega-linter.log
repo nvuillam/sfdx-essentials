@@ -1,0 +1,43 @@
+2020-11-09 22:52:52,246 [INFO] ----------------------------------------------------------------------------------------------------
+2020-11-09 22:52:52,246 [INFO] ------------------------------- GitHub Actions Multi Language Linter -------------------------------
+2020-11-09 22:52:52,246 [INFO] ----------------------------------------------------------------------------------------------------
+2020-11-09 22:52:52,247 [INFO]  - Image Creation Date: 2020-11-06T07:40:53Z
+2020-11-09 22:52:52,247 [INFO]  - Image Revision: 30e5468
+2020-11-09 22:52:52,247 [INFO]  - Image Version: latest
+2020-11-09 22:52:52,247 [INFO] ----------------------------------------------------------------------------------------------------
+2020-11-09 22:52:52,247 [INFO] The Mega-Linter source code can be found at:
+2020-11-09 22:52:52,247 [INFO]  - https://github.com/nvuillam/mega-linter
+2020-11-09 22:52:52,247 [INFO] ----------------------------------------------------------------------------------------------------
+2020-11-09 22:52:52,248 [INFO] 
+2020-11-09 22:52:53,134 [INFO] Skipped linters: ANSIBLE_ANSIBLE_LINT, COPYPASTE_JSCPD, EDITORCONFIG_EDITORCONFIG_CHECKER, KUBERNETES_KUBEVAL, SPELL_CSPELL, TYPESCRIPT_ES, TYPESCRIPT_STANDARD
+2020-11-09 22:52:53,135 [INFO] Listing updated files in [/github/workspace] using git diff, then filter with:
+2020-11-09 22:52:53,560 [ERROR] Unable to pull current branch 4946337fd8f070d44a64b54c6837ee3c91a4a2a6
+2020-11-09 22:52:53,581 [INFO] Git diff :
+.github/workflows/mega-linter.yml
+src/commands/essentials/project/count-apex-lines.ts
+test/commands/project/count-apex-lines.test.ts
+2020-11-09 22:52:53,581 [INFO] - File extensions: .json, .sh, .bash, .dash, .ksh, .c, .h, .clj, .cljs, .cljc, .edn, .yml, .yaml, .coffee, .cpp, .cc, .hpp, .cxx, .cu, .hxx, .c++, .hh, .h++, .cuh, .cs, .css, .scss, .saas, .dart, .env, .go, .graphql, .groovy, .gvy, .gradle, .nf, .html, .htm, .java, .js, .jsx, .kt, .kts, .tex, .lua, .md, .pl, .pm, .t, .php, .ps1, .psm1, .psd1, .ps1xml, .pssc, .psrc, .cdxml, .proto, .pp, .py, .r, .R, .Rmd, .RMD, .raku, .rakumod, .rakutest, .pm6, .pl6, .p6, .rb, .rs, .scala, .smk, .sql, .hcl, .tf, .tsx, .vb, .xml
+2020-11-09 22:52:53,581 [INFO] - File names: Dockerfile, Jenkinsfile, Snakefile
+2020-11-09 22:52:53,581 [INFO] - Excluding regex: (\/test\/|\/lib\/)
+2020-11-09 22:52:53,582 [INFO] Kept [1] files on [3] found files
+2020-11-09 22:52:53,583 [INFO] 
+2020-11-09 22:52:53,584 [INFO] +----MATCHING LINTERS---+------------+----------------+
+2020-11-09 22:52:53,584 [INFO] | Descriptor | Linter   | Criteria   | Matching files |
+2020-11-09 22:52:53,585 [INFO] +------------+----------+------------+----------------+
+2020-11-09 22:52:53,585 [INFO] | YAML       | yamllint | .yml|.yaml | 1              |
+2020-11-09 22:52:53,585 [INFO] +------------+----------+------------+----------------+
+2020-11-09 22:52:53,585 [INFO] 
+2020-11-09 22:52:53,753 [INFO] ### Linting [YAML] files
+- Using [yamllint v1.25.0] https://github.com/adrienverge/yamllint
+- Mega-Linter key: [YAML_YAMLLINT]
+- Rules config: [/action/lib/.automation/.yaml-lint.yml
+2020-11-09 22:52:53,958 [INFO] [yamllint] /github/workspace/.github/workflows/mega-linter.yml - SUCCESS
+2020-11-09 22:52:53,958 [INFO] Linted [YAML] files with [yamllint] successfully
+2020-11-09 22:52:54,764 [INFO] 
+2020-11-09 22:52:54,765 [INFO] +----SUMMARY-+----------+-------+-------+--------+
+2020-11-09 22:52:54,765 [INFO] | Descriptor | Linter   | Found | Fixed | Errors |
+2020-11-09 22:52:54,765 [INFO] +------------+----------+-------+-------+--------+
+2020-11-09 22:52:54,765 [INFO] | YAML       | yamllint | 1     |       | 0      |
+2020-11-09 22:52:54,765 [INFO] +------------+----------+-------+-------+--------+
+2020-11-09 22:52:54,765 [INFO] 
+2020-11-09 22:52:55,932 [INFO] Successfully linted all files without errors
