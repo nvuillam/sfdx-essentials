@@ -8,8 +8,8 @@ describe('essentials:project:count-apex-lines without packageXml', () => {
         ]
         )
         .it('runs essentials:project:count-apex-lines', (ctx) => {
-            expect(ctx.stdout).to.contain('Number of files: 2');
-            expect(ctx.stdout).to.contain('Number of source lines (excluding comments): 303');
+            expect(ctx.stdout).to.contain('Number of files: [2]');
+            expect(ctx.stdout).to.contain('Number of source lines (excluding comments): [303]');
         });
 });
 
@@ -22,12 +22,12 @@ describe('essentials:project:count-apex-lines with packageXml', () => {
         ]
         )
         .it('runs essentials:project:count-apex-lines', (ctx) => {
-            expect(ctx.stdout).to.contain('Number of files: 2');
-            expect(ctx.stdout).to.contain('Number of source lines (excluding comments): 303');
+            expect(ctx.stdout).to.contain('Number of files: [2]');
+            expect(ctx.stdout).to.contain('Number of source lines (excluding comments): [303]');
         });
 });
 
-describe('essentials:project:count-apex-lines with packageXml', () => {
+describe('essentials:project:count-apex-lines with packageXml and exclude', () => {
     test
         .stdout()
         .command(['essentials:project:count-apex-lines',
@@ -37,8 +37,8 @@ describe('essentials:project:count-apex-lines with packageXml', () => {
         ]
         )
         .it('runs essentials:project:count-apex-lines', (ctx) => {
-            expect(ctx.stdout).to.contain('Number of files: 1');
-            expect(ctx.stdout).to.contain('Number of source lines (excluding comments): 134');
+            expect(ctx.stdout).to.contain('Number of files: [1]');
+            expect(ctx.stdout).to.contain('Number of source lines (excluding comments): [134]');
         });
 });
 
@@ -51,8 +51,8 @@ describe('essentials:project:count-apex-lines with overridden browsingPattern', 
         ]
         )
         .it('runs essentials:project:count-apex-lines', (ctx) => {
-            expect(ctx.stdout).to.contain('Number of files: 1');
-            expect(ctx.stdout).to.contain('Number of source lines (excluding comments): 134');
+            expect(ctx.stdout).to.contain('Number of files: [1]');
+            expect(ctx.stdout).to.contain('Number of source lines (excluding comments): [134]');
         });
 });
 
@@ -66,7 +66,38 @@ describe('essentials:project:count-apex-lines with packagexml and browsingPatter
         ]
         )
         .it('runs essentials:project:count-apex-lines', (ctx) => {
-            expect(ctx.stdout).to.contain('Number of files: 1');
-            expect(ctx.stdout).to.contain('Number of source lines (excluding comments): 134');
+            expect(ctx.stdout).to.contain('Number of files: [1]');
+            expect(ctx.stdout).to.contain('Number of source lines (excluding comments): [134]');
+        });
+});
+
+describe('essentials:project:count-apex-lines with weight', () => {
+    test
+        .stdout()
+        .command(['essentials:project:count-apex-lines',
+            '-f', './test/shared/sfdxProject/force-app/main/default',
+            '--weight'
+        ]
+        )
+        .it('runs essentials:project:count-apex-lines', (ctx) => {
+            expect(ctx.stdout).to.contain('Number of files: [2]');
+            expect(ctx.stdout).to.contain('Number of source lines (excluding comments): [303]');
+            expect(ctx.stdout).to.contain('Number of characters in source lines (excluding comments): [11413]');
+        });
+});
+
+describe('essentials:project:count-apex-lines with weight and packageXml', () => {
+    test
+        .stdout()
+        .command(['essentials:project:count-apex-lines',
+            '-f', './test/shared/sfdxProject/force-app/main/default',
+            '-p', './test/shared/packagexml/package1.xml',
+            '--weight'
+        ]
+        )
+        .it('runs essentials:project:count-apex-lines', (ctx) => {
+            expect(ctx.stdout).to.contain('Number of files: [2]');
+            expect(ctx.stdout).to.contain('Number of source lines (excluding comments): [303]');
+            expect(ctx.stdout).to.contain('Number of characters in source lines (excluding comments): [11413]');
         });
 });
