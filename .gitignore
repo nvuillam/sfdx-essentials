@@ -12,3 +12,6 @@ test/tmp/
 .nyc_output/
 
 coverage/
+
+*.log
+report/
