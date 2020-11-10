@@ -3,6 +3,7 @@ import { expect, test } from '@salesforce/command/lib/test';
 describe('essentials:metadata:filter-from-packagexml', () => {
     test
         .stdout()
+        .timeout(30000)
         .command(['essentials:metadata:filter-from-packagexml',
             '-i', './test/shared/mdapioutput',
             '-p', './test/shared/packagexml/package1.xml',
@@ -16,6 +17,7 @@ describe('essentials:metadata:filter-from-packagexml', () => {
 describe('essentials:metadata:filter-from-packagexml (silent)', () => {
     test
         .stdout()
+        .timeout(30000)
         .command(['essentials:metadata:filter-from-packagexml',
             '-i', './test/shared/mdapioutput',
             '-p', './test/shared/packagexml/package1.xml',

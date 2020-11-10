@@ -564,6 +564,7 @@ OPTIONS
   -e, --excludepattern=excludepattern    Regex to exclude patterns
   -f, --folder=folder                    SFDX project folder containing files
   -p, --packagexmls=packagexmls          package.xml files path (separated by commas)
+  -s, --sort=sort                        [default: alpha] Sort order: alpha (default), lines, chars
   -v, --verbose                          Verbose
   -w, --weight                           Return also weight (number of chars). Slower and requires Perl
   --noinsight                            Do not send anonymous usage stats
