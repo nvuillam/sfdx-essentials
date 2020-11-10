@@ -27,6 +27,7 @@ export default class ProjectCountLines extends Command {
     packagexmls: flags.string({ char: 'p', description: 'package.xml files path (separated by commas)' }),
     browsingpattern: flags.string({ char: 'b', description: 'Files browsing pattern. Default **/*.cls' }),
     excludepattern: flags.string({ char: 'e', description: 'Regex to exclude patterns' }),
+    sort: flags.string({ char: 's', description: 'Sort order: alpha (default), lines, chars', default: 'alpha' }),
     weight: flags.boolean({ char: 'w', description: 'Return also weight (number of chars). Slower and requires Perl' }) as unknown as flags.IOptionFlag<boolean>,
     verbose: flags.boolean({ char: 'v', description: 'Verbose' }) as unknown as flags.IOptionFlag<boolean>,
     noinsight: flags.boolean({ description: 'Do not send anonymous usage stats' }) as unknown as flags.IOptionFlag<boolean>
@@ -39,6 +40,7 @@ export default class ProjectCountLines extends Command {
   public packageXmlFiles: string[];
   public browsingPattern: string;
   public excludePattern: RegExp = null;
+  public sort: string;
   public weight: boolean = false;
   public verbose: boolean = false;
 
@@ -56,6 +58,7 @@ export default class ProjectCountLines extends Command {
     this.folder = flags.folder || '.';
     this.packageXmlFiles = (flags.packagexmls || '').split(',');
     this.browsingPattern = flags.browsingpattern || '**/*.cls';
+    this.sort = flags.sort || 'alpha';
     if (flags.excludepattern) {
       this.excludePattern = new RegExp(flags.excludepattern);
     }
@@ -118,7 +121,6 @@ export default class ProjectCountLines extends Command {
       const code = await fse.readFile(file, 'utf8');
       const fileStats = sloc(code, 'java');
       fileStats.file = file;
-      fileStats.fileStatsLabel = `${file} (${fileStats.source})`;
       sourceLinesNb += fileStats.source;
       // Calculate weight if requested (more execution time)
       if (this.weight) {
@@ -127,7 +129,6 @@ export default class ProjectCountLines extends Command {
           .map(line => line.trim())
           .join('\n');
         fileStats.chars = cleanCode.length;
-        fileStats.fileStatsLabel = `${file} (${fileStats.source} / ${fileStats.chars})`;
         sourceCharsNb += fileStats.chars;
       }
       stats.push(fileStats);
@@ -136,7 +137,23 @@ export default class ProjectCountLines extends Command {
     if (this.verbose) {
       console.log(JSON.stringify(stats, null, 2));
     }
-    console.log('Processed files: \n' + stats.map(s => s.fileStatsLabel).join('\n'));
+
+    // Sort
+    if (this.sort === 'alpha') {
+      stats.sort((a, b) => (a.file > b.file) ? 1 : -1);
+    } else if (this.sort === 'lines') {
+      stats.sort((a, b) => (a.source < b.source) ? 1 : -1);
+    } else if (this.sort === 'chars') {
+      stats.sort((a, b) => (a.chars < b.chars) ? 1 : -1);
+    }
+
+    console.table(stats.map(s => {
+      return {
+        Item: s.file,
+        Lines: s.source,
+        Chars: s.chars
+      };
+    }));
 
     // Finalize
     if (!this.verbose && this.progressBar.terminal.isTTY()) {
