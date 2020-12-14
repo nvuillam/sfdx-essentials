@@ -1,0 +1,20 @@
+{
+    "ignorePaths": [
+        "**/node_modules/**",
+        "**/vscode-extension/**",
+        "**/.git/**",
+        ".vscode",
+        "report"
+    ],
+    "language": "en",
+    "version": 0.1,
+    "words": [
+        "COPYPASTE",
+        "EDITORCONFIG",
+        "FILEIO",
+        "fkirc",
+        "nvuillam",
+        "sfdx",
+        "stefanzweifel"
+    ]
+}
