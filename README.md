@@ -97,7 +97,7 @@ Contributions are very welcome, please run **npm run lint:fix** and **npm run te
 - Once your code is ready, documented and linted, please make a pull request :)
 
 # Command details
-
+<!-- cSpell:disable -->
 <!-- commands -->
 * [`sfdx essentials:metadata:filter-from-packagexml`](#sfdx-essentialsmetadatafilter-from-packagexml)
 * [`sfdx essentials:metadata:filter-xml-content`](#sfdx-essentialsmetadatafilter-xml-content)
