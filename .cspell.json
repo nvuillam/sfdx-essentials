@@ -1,0 +1,38 @@
+{
+    "ignorePaths": [
+        "**/node_modules/**",
+        "**/vscode-extension/**",
+        "**/.git/**",
+        ".vscode",
+        "report"
+    ],
+    "language": "en",
+    "version": "0.1",
+    "words": [
+        "COPYPASTE",
+        "EDITORCONFIG",
+        "FILEIO",
+        "codecov",
+        "essentialsmetadatafilter",
+        "essentialsmetadatauncomment",
+        "essentialsmigadd",
+        "essentialsmigfix",
+        "essentialsmigmigrate",
+        "essentialspackagexmlappend",
+        "essentialspackagexmlsort",
+        "essentialspermissionsetgenerate",
+        "essentialsprojectchange",
+        "essentialsprojectcheck",
+        "essentialsprojectcount",
+        "fkirc",
+        "hardcode",
+        "markdownlint",
+        "metadatas",
+        "nvuillam",
+        "packagexml",
+        "permissionset",
+        "sfdx",
+        "stefanzweifel",
+        "yourcommand"
+    ]
+}

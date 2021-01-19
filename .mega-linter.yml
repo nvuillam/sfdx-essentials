@@ -1,0 +1,7 @@
+FILTER_REGEX_EXCLUDE: (\/test\/|\/lib\/)
+DISABLE:
+  - COPYPASTE
+  - EDITORCONFIG
+  - TYPESCRIPT # sfdx-essentials use deprecated tslint, reactivate TYPESCRIPT after migration to eslint
+MARKDOWN_MARKDOWN_LINK_CHECK_DISABLE_ERRORS: true
+FILEIO_REPORTER: true
