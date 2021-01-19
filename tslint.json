@@ -11,13 +11,9 @@
     "no-unsafe-any": {
       "severity": "off"
     },
-    "prefer-const": [
-      "error",
-      {
-        "destructuring": "any",
-        "ignoreReadBeforeAssign": false
-      }
-    ],
+    "prefer-const": {
+        "severity": "warning"
+    },
     "prefer-for-of": {
       "severity": "warning"
     },
