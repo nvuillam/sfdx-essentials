@@ -5,7 +5,6 @@ Salesforce DX Essentials
 [![Version](https://img.shields.io/npm/v/sfdx-essentials.svg)](https://npmjs.org/package/sfdx-essentials)
 [![Downloads/week](https://img.shields.io/npm/dw/sfdx-essentials.svg)](https://npmjs.org/package/sfdx-essentials)
 [![Downloads/total](https://img.shields.io/npm/dt/sfdx-essentials.svg)](https://npmjs.org/package/sfdx-essentials)
-[![CircleCI](https://circleci.com/gh/nvuillam/sfdx-essentials/tree/master.svg?style=shield)](https://circleci.com/gh/nvuillam/sfdx-essentials/tree/master)
 [![codecov](https://codecov.io/gh/nvuillam/sfdx-essentials/branch/master/graph/badge.svg)](https://codecov.io/gh/nvuillam/sfdx-essentials)
 [![Mega-Linter](https://github.com/nvuillam/sfdx-essentials/workflows/Mega-Linter/badge.svg?branch=master)](https://github.com/nvuillam/mega-linter#readme)
 [![GitHub contributors](https://img.shields.io/github/contributors/nvuillam/sfdx-essentials.svg)](https://gitHub.com/nvuillam/sfdx-essentials/graphs/contributors/)
@@ -29,40 +28,40 @@ Any **question**, **problem** or **enhancement request** ? Ask [**here**](https:
 
 ### Metadata
 
-| Command | Description |
-| ------------- | ------------- |
+| Command                                                                                      | Description                                                                                                  |
+|----------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------|
 | [essentials:metadata:filter-from-packagexml](#sfdx-essentialsmetadatafilter-from-packagexml) | **Filter metadatas generated from a SFDX Project** in order to be able to deploy only part of them on an org |
-| [essentials:metadata:filter-xml-content](#sfdx-essentialsmetadatafilter-xml-content) | **Filter content of metadatas (XML)** in order to be able to deploy only part of them on an org |
-| [sfdx essentials:metadata:uncomment](#sfdx-essentialsmetadatauncomment) | **Uncomment lines in sfdx/md files** (useful to manage @Deprecated annotations with managed packages) |
+| [essentials:metadata:filter-xml-content](#sfdx-essentialsmetadatafilter-xml-content)         | **Filter content of metadatas (XML)** in order to be able to deploy only part of them on an org              |
+| [sfdx essentials:metadata:uncomment](#sfdx-essentialsmetadatauncomment)                      | **Uncomment lines in sfdx/md files** (useful to manage @Deprecated annotations with managed packages)        |
 
 ### Migration
 
-| Command | Description |
-| ------------- | ------------- |
+| Command                                                                                  | Description                                                                                                                                                                                                                 |
+|------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | [essentials:mig:fix-aura-attributes-names](#sfdx-essentialsmigfix-aura-attributes-names) | **Replace reserved lightning attribute names in lightning components and apex classes** ( if you named a lightning attribute like a custom apex class, since Summer 18 you simply can not generate a managed package again) |
-| [essentials:mig:migrate-object-model](#sfdx-essentialsmigmigrate-object-model) | **Migrate sources from an object model to a new object model** |
-| [essentials:mig:add-namespace](#sfdx-essentialsmigadd-namespace) | **Update SFDX sources to add a namespace on references to items described in a package.xml file** |
+| [essentials:mig:migrate-object-model](#sfdx-essentialsmigmigrate-object-model)           | **Migrate sources from an object model to a new object model**                                                                                                                                                              |
+| [essentials:mig:add-namespace](#sfdx-essentialsmigadd-namespace)                         | **Update SFDX sources to add a namespace on references to items described in a package.xml file**                                                                                                                           |
 
 ### Package.xml
 
-| Command | Description |
-| ------------- | ------------- |
-| [essentials:packagexml:append](#sfdx-essentialspackagexmlappend) | **Append content of a package.xml files into a single one** |
-| [essentials:packagexml:sort](#sfdx-essentialspackagexmlsort) | **Reorder alphabetically the content of package.xml file(s)** |
+| Command                                                          | Description                                                   |
+|------------------------------------------------------------------|---------------------------------------------------------------|
+| [essentials:packagexml:append](#sfdx-essentialspackagexmlappend) | **Append content of a package.xml files into a single one**   |
+| [essentials:packagexml:sort](#sfdx-essentialspackagexmlsort)     | **Reorder alphabetically the content of package.xml file(s)** |
 
 ### Permission sets
 
-| Command | Description |
-| ------------- | ------------- |
+| Command                                                                    | Description                                                                            |
+|----------------------------------------------------------------------------|----------------------------------------------------------------------------------------|
 | [essentials:permissionset:generate](#sfdx-essentialspermissionsetgenerate) | **Generate permission sets** from packageXml file depending on JSON configuration file |
 
 ### SFDX Project
 
-| Command | Description |
-| ------------- | ------------- |
-| [essentials:project:change-dependency-version](#sfdx-essentialsprojectchange-dependency-version) | **Replace other managed packages dependency version number** ( very useful when you build a managed package over another managed package, like Financial Services Cloud ) |
-| [essentials:project:check-consistency-with-packagexml](#sfdx-essentialsprojectcheck-consistency-with-packagexml) | **Check consistency between a SFDX project files and package.xml files** |
-| [essentials:project:count-apex-lines](#sfdx-essentialsprojectcount-apex-lines) | **Count apex source lines of filtered files** |
+| Command                                                                                                          | Description                                                                                                                                                               |
+|------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [essentials:project:change-dependency-version](#sfdx-essentialsprojectchange-dependency-version)                 | **Replace other managed packages dependency version number** ( very useful when you build a managed package over another managed package, like Financial Services Cloud ) |
+| [essentials:project:check-consistency-with-packagexml](#sfdx-essentialsprojectcheck-consistency-with-packagexml) | **Check consistency between a SFDX project files and package.xml files**                                                                                                  |
+| [essentials:project:count-apex-lines](#sfdx-essentialsprojectcount-apex-lines)                                   | **Count apex source lines of filtered files**                                                                                                                             |
 
 ## INSTALLATION
 
