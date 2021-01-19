@@ -11,6 +11,9 @@
     "no-unsafe-any": {
       "severity": "off"
     },
+    "prefer-const": {
+        "severity": "warning"
+    },
     "prefer-for-of": {
       "severity": "warning"
     },
