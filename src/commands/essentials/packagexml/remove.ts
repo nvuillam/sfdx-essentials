@@ -1,11 +1,11 @@
 import { Command, flags } from '@oclif/command';
 import { EssentialsUtils } from '../../../common/essentials-utils';
 
-export default class PackageXmlReduce extends Command {
+export default class PackageXmlRemove extends Command {
   public static description = 'Removes the content of a package.xml file matching another package.xml file';
 
   public static examples = [
-    'sfdx essentials:packagexml:reduce -p "package.xml" -r "destructiveChanges.xml" -o "my-reduced-package.xml"'
+    'sfdx essentials:packagexml:remove -p "package.xml" -r "destructiveChanges.xml" -o "my-reduced-package.xml"'
   ];
 
   public static flags = {
@@ -45,10 +45,10 @@ export default class PackageXmlReduce extends Command {
   // Runtime methods
   public async run() {
     // tslint:disable-next-line:no-shadowed-variable
-    const { flags } = this.parse(PackageXmlReduce);
+    const { flags } = this.parse(PackageXmlRemove);
 
     this.packageXmlFile = flags.packagexml || 'package.xml';
-    this.removePackageXmlFile = flags.packagexml || 'removepackagexml.xml';
+    this.removePackageXmlFile = flags.removepackagexml || 'destructiveChanges.xml';
     this.outputFile = flags.outputfile;
     this.verbose = flags.verbose;
 

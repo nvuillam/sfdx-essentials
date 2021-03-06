@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [2.6.0] - 2021-06-03
+
+- Fix command **essentials:packagexml:append**
+- New command **essentials:packagexml:remove**
+
 ## [2.5.4] - 2020-11-10
 
 - Sort results table with command essentials:project:count-apex-lines
