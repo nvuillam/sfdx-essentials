@@ -126,7 +126,7 @@ export default class PermissionSetGenerate extends Command {
                                 console.log(configName + '.permissionset-meta.xml file:');
                                 console.log(formattedPsXml + '\n');
                             }
-                            resolve();
+                            resolve(true);
                         } else {
                             console.error(err3.message);
                             reject();
@@ -254,7 +254,7 @@ export default class PermissionSetGenerate extends Command {
                 parser.parseString(fs.readFileSync(customFieldFile), (err: any, fieldXml: any) => {
                     if (err) {
                         console.error(`Error in : ${customFieldFile}` + err.message);
-                        resolve();
+                        resolve(true);
                     }
                     // Add in exclude list if it must be removed from Permission Sets
                     let excludeIt = false;
@@ -269,7 +269,7 @@ export default class PermissionSetGenerate extends Command {
                         const eltName = objectName + '.' + fieldName;
                         excludedCustomFieldList.push(eltName);
                     }
-                    resolve();
+                    resolve(true);
                 });
             });
             promises.push(itemPromise);

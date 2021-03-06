@@ -112,10 +112,10 @@ Ex : MyClass_x attribute would be renamed myClassX`;
           // Replace in component helper javascript (send function as parameter)
           return self.processFile(customComponentFolder, filePart, ['Helper.js'], self.replaceAttributeNamesInJs);
         }).then(() => {
-          resolve();
+          resolve(true);
         }).catch(err => {
           console.log('Replacement promise error: ' + err);
-          resolve();
+          resolve(true);
         });
       }));
     });
@@ -130,7 +130,7 @@ Ex : MyClass_x attribute would be renamed myClassX`;
             // Replace in apex class files (.cls) (send function as parameter)
             self.processFile(self.folder + '/classes', reservedAttributeName, ['.cls'], self.replaceAttributeNamesInApex)
               .then(() => {
-                resolve();
+                resolve(true);
               }).catch(err => {
                 console.log('Replacement promise error: ' + err);
                 reject();
@@ -168,7 +168,7 @@ Ex : MyClass_x attribute would be renamed myClassX`;
         }
       });
       if (filePath == null) {
-        resolve();
+        resolve(true);
         return;
       }
 
@@ -176,7 +176,7 @@ Ex : MyClass_x attribute would be renamed myClassX`;
       const fileContent = self.fs.readFileSync(filePath);
       if (fileContent == null) {
         console.log('Warning: empty file -> ' + filePath);
-        resolve();
+        resolve(true);
         return;
       }
       const arrayFileLines = fileContent.toString().split('\n');
@@ -195,7 +195,7 @@ Ex : MyClass_x attribute would be renamed myClassX`;
         self.fs.writeFileSync(filePath, updatedFileContent);
         console.log('Updated ' + filePath); // + ' with content :\n' + updatedFileContent)
       }
-      resolve(); // Resolve promise so then is called
+      resolve(true); // Resolve promise so then is called
     });
   }
 

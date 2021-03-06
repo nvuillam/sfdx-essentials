@@ -37,7 +37,7 @@ export function recordAnonymousEvent(eventType: string, data: any): Promise<any>
             ip: '127.0.0.1'
         });
         debug('Analytics sent: ' + eventType + ' ' + JSON.stringify(eventPayloadFiltered));
-        resolve();
+        resolve(true);
     });
 }
 

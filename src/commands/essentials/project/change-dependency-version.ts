@@ -105,7 +105,7 @@ export default class ProjectChangeDependencyVersion extends Command {
               if (!this.verbose && this.progressBar.terminal.isTTY()) {
                 this.progressBar.increment();
               }
-              resolve();
+              resolve(true);
               return;
             }
             let changed = false;
@@ -155,7 +155,7 @@ export default class ProjectChangeDependencyVersion extends Command {
               this.progressBar.increment();
               this.progressBar.update(null, { file: sfdxXmlFile });
             }
-            resolve();
+            resolve(true);
           });
         });
       });
