@@ -146,7 +146,7 @@ class MetadataUtils {
 
   public static getAroundCharsFieldReplacementList() {
     // Default replacement list for object
-    let aroundCharReplacefieldList = [
+    const aroundCharReplacefieldList = [
       { name: 'simpleQuote', before: '\'', after: '\'', replacementPrefix: null, replacementSuffix: null },
       { name: 'doubleQuoteJson', before: '"', after: '":' },
       { name: 'simpleQuoteFields', before: '\'', after: '.', replacementPrefix: null, replacementSuffix: null },
@@ -191,7 +191,7 @@ class MetadataUtils {
 
   public static getAroundCharsClassReplacementList() {
     // Default replacement list for object
-    let aroundCharReplaceClassList = [
+    const aroundCharReplaceClassList = [
       { name: 'simpleQuote', before: '\'', after: '\'', replacementPrefix: null, replacementSuffix: null },
       { name: 'tag', before: '<', after: '>' },
       { name: 'xmlFile', before: '>', after: '</' },
@@ -220,7 +220,7 @@ class MetadataUtils {
 
   public static getLabelsReplacementList() {
     // Default replacement list for object
-    let aroundCharReplaceLabelList = [
+    const aroundCharReplaceLabelList = [
       { name: 'apexRefSpace', before: 'Label.', after: ' ' },
       { name: 'apexRefClosingBrace', before: 'Label.', after: ')' },
       { name: 'apexRefPlus', before: 'Label.', after: '+' },

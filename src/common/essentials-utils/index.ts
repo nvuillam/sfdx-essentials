@@ -57,7 +57,7 @@ class EssentialsUtils {
             }
             let packageXmlMetadatasTypeLs: any[];
             // get metadata types in parse result
-            try { packageXmlMetadatasTypeLs = result.Package.types; } catch { throw new Error('Unable to parse package Xml file ' + packageXmlFile); }
+            try { packageXmlMetadatasTypeLs = result.Package.types || []; } catch { throw new Error('Unable to parse package Xml file ' + packageXmlFile); }
 
             // Add metadata members in concatenation list of items & store doublings
             for (const typePkg of packageXmlMetadatasTypeLs) {
@@ -105,6 +105,65 @@ class EssentialsUtils {
         }
 
         return allPackageXmlFilesTypes;
+    }
+
+    // Read package.xml files and remove the content of the
+    public static async removePackageXmlFilesContent(packageXmlFile: string, removePackageXmlFile: string, {
+        outputXmlFile = null,
+        logFlag = false }) {
+
+        // Read package.xml file to update
+        const parser = new xml2js.Parser();
+        const data = await fsPromises.readFile(packageXmlFile);
+        const parsedPackageXml: any = await parser.parseStringPromise(data);
+        if (logFlag) {
+            console.log(`Parsed ${packageXmlFile} :\n` + util.inspect(parsedPackageXml, false, null));
+        }
+        let packageXmlMetadatasTypeLs: any;
+         // get metadata types in parse result
+        try { packageXmlMetadatasTypeLs = parsedPackageXml.Package.types || []; } catch { throw new Error('Unable to parse package Xml file ' + packageXmlFile); }
+
+        // Read package.xml file to use for filtering first file
+        const dataRemove = await fsPromises.readFile(removePackageXmlFile);
+        const parsedPackageXmlRemove: any = await parser.parseStringPromise(dataRemove);
+        if (logFlag) {
+            console.log(`Parsed ${removePackageXmlFile} :\n` + util.inspect(parsedPackageXmlRemove, false, null));
+        }
+        let packageXmlRemoveMetadatasTypeLs: any;
+         // get metadata types in parse result
+        try { packageXmlRemoveMetadatasTypeLs = parsedPackageXmlRemove.Package.types || []; } catch { throw new Error('Unable to parse package Xml file ' + removePackageXmlFile); }
+
+        // Filter main package.xml file
+        for (const removeType of Object.keys(packageXmlRemoveMetadatasTypeLs)) {
+            let typeMembers = (packageXmlMetadatasTypeLs[removeType] || {}).members || [] ;
+            const removeTypeMembers = packageXmlRemoveMetadatasTypeLs[removeType].members || [] ;
+            typeMembers = typeMembers.filter(member => !removeTypeMembers.includes(member));
+            if (typeMembers.length > 0) {
+                // Update members for type
+                packageXmlMetadatasTypeLs[removeType].members = typeMembers;
+            } else {
+                // No more member, do not let empty type
+                delete packageXmlMetadatasTypeLs[removeType];
+            }
+        }
+
+        // Sort result & display in logs if requested
+        packageXmlMetadatasTypeLs = this.sortObject(packageXmlMetadatasTypeLs);
+        if (logFlag) {
+            console.log('Package.xml remove results :\n' + util.inspect(packageXmlMetadatasTypeLs, false, null));
+        }
+
+        // Write in output file if required
+        if (outputXmlFile) {
+            parsedPackageXml.Package.types = packageXmlMetadatasTypeLs;
+            const builder = new xml2js.Builder();
+            const updatedObjectXml = builder.buildObject(parsedPackageXml);
+            await fsPromises.writeFile(outputXmlFile, updatedObjectXml);
+            if (logFlag) {
+                console.log('Generated package.xml file: ' + outputXmlFile);
+            }
+        }
+        return packageXmlMetadatasTypeLs;
     }
 
     // Sort object for debug ( yeah yeah I know objects are not sortable , blah blah blah ^^ )

@@ -150,7 +150,7 @@ sfdx force:mdapi:deploy -d tmp/deployDemoQualiFiltered/ -w 60 -u DemoQuali`
           this.logIfVerbose('Parsed package.xml \n' + util.inspect(result, false, null));
 
           // get metadata types in parse result
-          try { this.packageXmlMetadatasTypeLs = result.Package.types; } catch { throw new Error('Unable to parse packageXml file ' + this.packageXmlFile); }
+          try { this.packageXmlMetadatasTypeLs = result.Package.types || []; } catch { throw new Error('Unable to parse packageXml file ' + this.packageXmlFile); }
 
           // Create output folder/empty it if existing
           if (fs.existsSync(this.outputFolder)) {
@@ -176,7 +176,7 @@ sfdx force:mdapi:deploy -d tmp/deployDemoQualiFiltered/ -w 60 -u DemoQuali`
           // Process source folder filtering and copy files into target folder
           await this.filterMetadatasByType();
           await this.copyImpactedObjects();
-          resolve();
+          resolve(true);
         });
       });
 
@@ -399,7 +399,7 @@ sfdx force:mdapi:deploy -d tmp/deployDemoQualiFiltered/ -w 60 -u DemoQuali`
             this.multibars.copyImpactedObjects.increment();
             this.multibar.update();
           }
-          resolve();
+          resolve(true);
           return;
         }
         const parser = new xml2js.Parser();
@@ -454,7 +454,7 @@ sfdx force:mdapi:deploy -d tmp/deployDemoQualiFiltered/ -w 60 -u DemoQuali`
           this.multibars.copyImpactedObjects.increment();
           this.multibar.update();
         }
-        resolve();
+        resolve(true);
       });
       objectPromises.push(objectPromise);
     });
