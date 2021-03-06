@@ -1,5 +1,5 @@
 import * as arrayCompare from 'array-compare';
-import { promises as fsPromises } from 'fs';
+import * as fs from 'fs-extra';
 import * as util from 'util';
 import * as xml2js from 'xml2js';
 
@@ -46,7 +46,7 @@ class EssentialsUtils {
         for (const packageXmlFile of packageXmlFileList) {
             const parser = new xml2js.Parser();
             // read file content
-            const data = await fsPromises.readFile(packageXmlFile);
+            const data = await fs.readFile(packageXmlFile, 'utf8');
             // parse xml content
             const result: any = await parser.parseStringPromise(data);
             if (firstPackageXmlContent == null) {
@@ -57,10 +57,13 @@ class EssentialsUtils {
             }
             let packageXmlMetadatasTypeLs: any[];
             // get metadata types in parse result
-            try { packageXmlMetadatasTypeLs = result.Package.types; } catch { throw new Error('Unable to parse package Xml file ' + packageXmlFile); }
+            try { packageXmlMetadatasTypeLs = result.Package.types || []; } catch { throw new Error('Unable to parse package Xml file ' + packageXmlFile); }
 
             // Add metadata members in concatenation list of items & store doublings
             for (const typePkg of packageXmlMetadatasTypeLs) {
+                if (typePkg.name == null) {
+                    continue;
+                }
                 const nameKey = typePkg.name[0];
                 if (allPackageXmlFilesTypes[nameKey] != null && typePkg.members != null) {
                     const compareRes = arrayCompare(typePkg.members, allPackageXmlFilesTypes[nameKey]);
@@ -98,13 +101,85 @@ class EssentialsUtils {
             firstPackageXmlContent.Package.types = appendTypesXml;
             const builder = new xml2js.Builder();
             const updatedObjectXml = builder.buildObject(firstPackageXmlContent);
-            await fsPromises.writeFile(outputXmlFile, updatedObjectXml);
+            await fs.writeFile(outputXmlFile, updatedObjectXml);
             if (logFlag) {
                 console.log('Generated package.xml file: ' + outputXmlFile);
             }
         }
 
         return allPackageXmlFilesTypes;
+    }
+
+    // Read package.xml files and remove the content of the
+    public static async removePackageXmlFilesContent(packageXmlFile: string, removePackageXmlFile: string, {
+        outputXmlFile = null,
+        logFlag = false }) {
+
+        // Read package.xml file to update
+        const parser = new xml2js.Parser();
+        const data = await fs.readFile(packageXmlFile, 'utf8');
+        const parsedPackageXml: any = await parser.parseStringPromise(data);
+        if (logFlag) {
+            console.log(`Parsed ${packageXmlFile} :\n` + util.inspect(parsedPackageXml, false, null));
+        }
+        let packageXmlMetadatasTypeLs: any;
+        // get metadata types in parse result
+        try { packageXmlMetadatasTypeLs = parsedPackageXml.Package.types || []; } catch { throw new Error('Unable to parse package Xml file ' + packageXmlFile); }
+
+        // Read package.xml file to use for filtering first file
+        const parser2 = new xml2js.Parser();
+        const dataRemove = await fs.readFile(removePackageXmlFile, 'utf8');
+        const parsedPackageXmlRemove: any = await parser2.parseStringPromise(dataRemove);
+        if (logFlag) {
+            console.log(`Parsed ${removePackageXmlFile} :\n` + util.inspect(parsedPackageXmlRemove, false, null));
+        }
+        let packageXmlRemoveMetadatasTypeLs: any;
+        // get metadata types in parse result
+        try { packageXmlRemoveMetadatasTypeLs = parsedPackageXmlRemove.Package.types || []; } catch { throw new Error('Unable to parse package Xml file ' + removePackageXmlFile); }
+
+        // Filter main package.xml file
+        for (const removeType of packageXmlRemoveMetadatasTypeLs) {
+            const removeTypeName = removeType.name[0];
+            const removeTypeMembers = removeType.members;
+            const types = packageXmlMetadatasTypeLs.filter((type1: any) => type1.name[0] === removeTypeName);
+            if (types.length === 0) {
+                continue;
+            }
+            const type = types[0];
+            let typeMembers = type.members;
+            typeMembers = typeMembers.filter((member: string) => !removeTypeMembers.includes(member));
+            if (typeMembers.length > 0) {
+                // Update members for type
+                packageXmlMetadatasTypeLs = packageXmlMetadatasTypeLs.map((type1: any) => {
+                    if (type1.name[0] === type.name[0]) {
+                        type1.members = typeMembers;
+                    }
+                    return type1;
+                });
+            } else {
+                // No more member, do not let empty type
+                packageXmlMetadatasTypeLs = packageXmlMetadatasTypeLs.filter((type1: any) => {
+                    return type1.name[0] !== type.name[0];
+                });
+            }
+        }
+
+        // display in logs if requested
+        if (logFlag) {
+            console.log('Package.xml remove results :\n' + util.inspect(packageXmlMetadatasTypeLs, false, null));
+        }
+
+        // Write in output file if required
+        if (outputXmlFile) {
+            parsedPackageXml.Package.types = packageXmlMetadatasTypeLs;
+            const builder2 = new xml2js.Builder();
+            const updatedObjectXml = builder2.buildObject(parsedPackageXml);
+            await fs.writeFile(outputXmlFile, updatedObjectXml);
+            if (logFlag) {
+                console.log('Generated package.xml file: ' + outputXmlFile);
+            }
+        }
+        return packageXmlMetadatasTypeLs;
     }
 
     // Sort object for debug ( yeah yeah I know objects are not sortable , blah blah blah ^^ )

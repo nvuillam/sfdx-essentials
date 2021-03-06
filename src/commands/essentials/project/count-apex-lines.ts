@@ -72,7 +72,7 @@ export default class ProjectCountLines extends Command {
     // Gather filters from package.xml files
     let pckgXmlApexClasses = [];
     if (this.packageXmlFiles.length > 0 && this.packageXmlFiles[0] !== '') {
-      let allPackageXmlFilesTypes: any = await EssentialsUtils.appendPackageXmlFilesContent(this.packageXmlFiles, {
+      const allPackageXmlFilesTypes: any = await EssentialsUtils.appendPackageXmlFilesContent(this.packageXmlFiles, {
         ignoreDuplicateTypes: ['ApexClass']
       });
       console.assert(allPackageXmlFilesTypes.ApexClass && allPackageXmlFilesTypes.ApexClass.length > 0,

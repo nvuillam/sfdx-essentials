@@ -116,6 +116,7 @@
   },
   "repository": "https://github.com/nvuillam/sfdx-essentials",
   "scripts": {
+    "compile": "tsc --watch",
     "lint": "tslint -c tslint.json 'src/**/*.ts' -t verbose",
     "lint:fix": "tslint -c tslint.json 'src/**/*.ts' --fix -t verbose",
     "oclif:readme": "oclif-dev readme",

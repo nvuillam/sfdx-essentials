@@ -222,8 +222,8 @@ export default class AddNamespace extends Command {
     private buildStringItemReplacementList(type: string, aroundCharsReplaceList: any, prevSubString: string, newSubstring: string) {
         const replacementList = [];
         for (const aroundChars of aroundCharsReplaceList) {
-            let oldString = aroundChars.before + prevSubString + aroundChars.after;
-            let newString = aroundChars.before + newSubstring + aroundChars.after;
+            const oldString = aroundChars.before + prevSubString + aroundChars.after;
+            const newString = aroundChars.before + newSubstring + aroundChars.after;
             let regexStr = this.stringToRegex(oldString);
             if (aroundChars.beforeRegex) {
                 regexStr = aroundChars.beforeRegex + regexStr;

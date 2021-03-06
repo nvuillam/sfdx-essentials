@@ -89,8 +89,8 @@ export default class PermissionSetGenerate extends Command {
                         filterConfigItem = await this.excludeCustomFields(filterConfigItem);
                     }
 
-                    let packageXMLTypeJSONArray = filterConfigItem.packageXMLTypeList;
-                    let packageXMLTypesConfigArray = [];
+                    const packageXMLTypeJSONArray = filterConfigItem.packageXMLTypeList;
+                    const packageXMLTypesConfigArray = [];
                     for (const packageXMLTypeJSON of packageXMLTypeJSONArray) {
                         packageXMLTypesConfigArray.push(packageXMLTypeJSON.typeName);
                     }
@@ -147,7 +147,7 @@ export default class PermissionSetGenerate extends Command {
     // Complete description with extend description
     public mergeExtendDependencies(filterConfigItem: any, filterConfig: any, configName: string) {
         if (filterConfig[configName].extends) {
-            let filterConfigItemExtend = filterConfig[filterConfig[configName].extends];
+            const filterConfigItemExtend = filterConfig[filterConfig[configName].extends];
 
             // Append objects of low-level packageXml in template config
             const packageXmlListItemExtend = filterConfigItemExtend.packageXMLTypeList;
@@ -295,7 +295,7 @@ export default class PermissionSetGenerate extends Command {
     public buildSinglePermissionSetXML(filterConfigData: any) {
 
         let permissionSetsXmlElement = '';
-        for (let filterConfigDataField in filterConfigData) {
+        for (const filterConfigDataField in filterConfigData) {
             if (filterConfigDataField !== 'extends' && filterConfigDataField !== 'packageXMLTypeList') {
                 if (this.nameSuffix && (filterConfigDataField === 'label' || filterConfigDataField === 'description')) {
                     filterConfigData[filterConfigDataField] += ' (' + this.nameSuffix + ')';
@@ -309,8 +309,8 @@ export default class PermissionSetGenerate extends Command {
     // Build permission set information by type for multiple element
     public buildMultiplePermissionSetXML({ packageXMLTypeConfig, typeMember }: { packageXMLTypeConfig: any; typeMember: string; }) {
 
-        let typeName = packageXMLTypeConfig.typeName;
-        let permissionSetElementJSONArray = packageXMLTypeConfig.permissionSetsElementList;
+        const typeName = packageXMLTypeConfig.typeName;
+        const permissionSetElementJSONArray = packageXMLTypeConfig.permissionSetsElementList;
         let permissionSetsXmlElement: any;
         let permissionSetsXMLElmementName: any;
         let permissionSetXMLMemberName: any;
@@ -337,7 +337,7 @@ export default class PermissionSetGenerate extends Command {
     public filterPackageXmlTypes(packageXmlTypes: any, packageXMLTypesAll: any, permissionSetDefinition: any) {
         let permissionSetsXmlElement = '';
 
-        let packageXmlTypesArray = [];
+        const packageXmlTypesArray = [];
         for (const packageXmlTypeElement of packageXmlTypes) {
             packageXmlTypesArray.push(packageXmlTypeElement.name[0]);
         }
@@ -387,13 +387,13 @@ export default class PermissionSetGenerate extends Command {
                     const permissionSetExcludedFilterArray = packageXMLTypeConfig.excludedFilterList || []; // Default is no exclusion
 
                     // Add rights for all elements matching criteria
-                    for (let packageXmlMember of packageXmlMembers) {
+                    for (const packageXmlMember of packageXmlMembers) {
 
                         let isIncludedMatch: boolean = false;
                         let isExcludedMatch: boolean = false;
 
                         // Check if item is in included filters
-                        for (let permissionSetIncludedFilter of permissionSetIncludedFilterArray) {
+                        for (const permissionSetIncludedFilter of permissionSetIncludedFilterArray) {
                             const isRegexIncluded = permissionSetIncludedFilter.startsWith('(');
                             if ((isRegexIncluded && packageXmlMember.match(permissionSetIncludedFilter)) || (!isRegexIncluded && packageXmlMember === permissionSetIncludedFilter)) {
                                 isIncludedMatch = true;
@@ -402,7 +402,7 @@ export default class PermissionSetGenerate extends Command {
 
                         // Check excluded filters if defined
                         if (permissionSetExcludedFilterArray.length > 0) {
-                            for (let permissionSetExcludedFilter of permissionSetExcludedFilterArray) {
+                            for (const permissionSetExcludedFilter of permissionSetExcludedFilterArray) {
                                 const isRegexExcluded = permissionSetExcludedFilter.startsWith('(');
                                 if ((isRegexExcluded && packageXmlMember.match(permissionSetExcludedFilter)) || (!isRegexExcluded && packageXmlMember === permissionSetExcludedFilter)) {
                                     isExcludedMatch = true;

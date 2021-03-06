@@ -252,7 +252,7 @@ Use this command if you need to replace a SObject by another one in all your sfd
         }
         if (excludeList) {
           replace = true;
-          for (let excludeItem of excludeList) {
+          for (const excludeItem of excludeList) {
             if (excludeItem === className) {
               replace = false;
               break;
@@ -261,7 +261,7 @@ Use this command if you need to replace a SObject by another one in all your sfd
               if (rep[3].exceptionExclude) {
 
                 const exceptionExluceList = rep[3].exceptionExclude;
-                for (let exceptionExluce of exceptionExluceList) {
+                for (const exceptionExluce of exceptionExluceList) {
                   if (className === exceptionExluce) {
                     replace = true;
                   }
