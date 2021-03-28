@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [2.7.0] - 2021-03-28
+
+- Improve **essentials:metadata:filter-xml-content** command
+
 ## [2.6.0] - 2021-06-03
 
 - Fix command **essentials:packagexml:append**

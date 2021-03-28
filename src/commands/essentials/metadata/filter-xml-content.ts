@@ -57,17 +57,19 @@ This script requires a filter-config.json file`;
     console.log(util.inspect(filterConfig, false, null));
 
     // Create output folder/empty it if existing
-    if (fs.existsSync(this.outputFolder)) {
+    if (fs.existsSync(this.outputFolder) && this.outputFolder !== this.inputFolder) {
       console.log('Empty output folder ' + this.outputFolder);
       fse.emptyDirSync(this.outputFolder);
-    } else {
+    } else if (!fs.existsSync(this.outputFolder)) {
       console.log('Create output folder ' + this.outputFolder);
       fs.mkdirSync(this.outputFolder);
     }
 
     // Copy input folder to output folder
-    console.log('Copy in output folder ' + this.outputFolder);
-    fse.copySync(this.inputFolder, this.outputFolder);
+    if (this.outputFolder !== this.inputFolder) {
+      console.log('Copy in output folder ' + this.outputFolder);
+      fse.copySync(this.inputFolder, this.outputFolder);
+    }
 
     // Browse filters
     filterConfig.filters.forEach(filter => {
@@ -76,6 +78,9 @@ This script requires a filter-config.json file`;
       filter.folders.forEach(filterFolder => {
 
         // Browse folder files
+        if (!fs.existsSync(this.outputFolder + '/' + filterFolder)) {
+          return ;
+        }
         const folderFiles = fs.readdirSync(this.outputFolder + '/' + filterFolder);
         folderFiles.forEach(file => {
           // Build file name
