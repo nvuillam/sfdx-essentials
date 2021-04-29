@@ -148,7 +148,7 @@ class EssentialsUtils {
             }
             const type = types[0];
             let typeMembers = type.members;
-            typeMembers = typeMembers.filter((member: string) => checkRemove(!removeTypeMembers.includes(member),removedOnly));
+            typeMembers = typeMembers.filter((member: string) => checkRemove(!removeTypeMembers.includes(member), removedOnly));
             if (typeMembers.length > 0) {
                 // Update members for type
                 packageXmlMetadatasTypeLs = packageXmlMetadatasTypeLs.map((type1: any) => {
@@ -190,7 +190,7 @@ class EssentialsUtils {
 
 }
 
-function checkRemove(boolRes,removedOnly=false) {
+function checkRemove(boolRes, removedOnly= false) {
     if (removedOnly === true) {
         return !boolRes;
     }
