@@ -113,7 +113,8 @@ class EssentialsUtils {
     // Read package.xml files and remove the content of the
     public static async removePackageXmlFilesContent(packageXmlFile: string, removePackageXmlFile: string, {
         outputXmlFile = null,
-        logFlag = false }) {
+        logFlag = false,
+        removedOnly = false }) {
 
         // Read package.xml file to update
         const parser = new xml2js.Parser();
@@ -147,7 +148,7 @@ class EssentialsUtils {
             }
             const type = types[0];
             let typeMembers = type.members;
-            typeMembers = typeMembers.filter((member: string) => !removeTypeMembers.includes(member));
+            typeMembers = typeMembers.filter((member: string) => checkRemove(!removeTypeMembers.includes(member),removedOnly));
             if (typeMembers.length > 0) {
                 // Update members for type
                 packageXmlMetadatasTypeLs = packageXmlMetadatasTypeLs.map((type1: any) => {
@@ -187,6 +188,13 @@ class EssentialsUtils {
         return Object.keys(o).sort().reduce((r, k) => (r[k] = o[k], r), {});
     }
 
+}
+
+function checkRemove(boolRes,removedOnly=false) {
+    if (removedOnly === true) {
+        return !boolRes;
+    }
+    return boolRes;
 }
 
 export { EssentialsUtils };

@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [2.8.0] - 2021-04-29
+
+- Improve **essentials:packagexml:remove** command with argument `--removedonly` to generate a package.xml only with removed items
+
 ## [2.7.0] - 2021-03-28
 
 - Improve **essentials:metadata:filter-xml-content** command
