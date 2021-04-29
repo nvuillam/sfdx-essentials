@@ -1,6 +1,6 @@
 import { expect, test } from '@salesforce/command/lib/test';
 
-describe('essentials:packagexml:append', () => {
+describe('essentials:packagexml:remove', () => {
     test
         .stdout()
         .command(['essentials:packagexml:remove',

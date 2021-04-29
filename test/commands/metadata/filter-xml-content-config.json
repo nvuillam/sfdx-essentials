@@ -1,31 +1,22 @@
 {
-    "filters": [
+  "filters": [
+    {
+      "name": "PermissionSetFiltering",
+      "description": "Remove unwanted stuff in PermissionSets",
+      "folders": ["permissionsets"],
+      "file_extensions": ["permissionset"],
+      "exclude_list": [
         {
-            "name": "PermissionSetFiltering",
-            "description": "Remove unwanted stuff in PermissionSets",
-            "folders": [
-                "permissionsets"
-            ],
-            "file_extensions": [
-                "permissionset"
-            ],
-            "exclude_list": [
-                {
-                    "type_tag": "objectPermissions",
-                    "identifier_tag": "object",
-                    "values": [
-                        "Account"
-                    ]
-                },
-                {
-                    "type_tag": "fieldPermissions",
-                    "identifier_tag": "field",
-                    "values": [
-                        "User.URI__c",
-                        "User.WebAppProfiles__c"
-                    ]
-                }
-            ]
+          "type_tag": "objectPermissions",
+          "identifier_tag": "object",
+          "values": ["Account"]
+        },
+        {
+          "type_tag": "fieldPermissions",
+          "identifier_tag": "field",
+          "values": ["User.URI__c", "User.WebAppProfiles__c"]
         }
-    ]
+      ]
+    }
+  ]
 }

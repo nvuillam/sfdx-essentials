@@ -1,32 +1,22 @@
 {
-    "filters": [
+  "filters": [
+    {
+      "name": "ProfileFiltering",
+      "description": "Remove unwanted stuff in profiles",
+      "folders": ["profiles"],
+      "file_extensions": ["profile"],
+      "exclude_list": [
         {
-            "name": "ProfileFiltering",
-            "description": "Remove unwanted stuff in profiles",
-            "folders": [
-                "profiles"
-            ],
-            "file_extensions": [
-                "profile"
-            ],
-            "exclude_list": [
-                {
-                    "type_tag": "userPermissions",
-                    "identifier_tag": "name",
-                    "values": [
-                        "AllowUniversalSearch",
-                        "EnableNotifications"
-                    ]
-                },
-                {
-                    "type_tag": "tabVisibilities",
-                    "identifier_tag": "tab",
-                    "values": [
-                        "TabExportScripts",
-                        "TabInstallScripts"
-                    ]
-                }
-            ]
+          "type_tag": "userPermissions",
+          "identifier_tag": "name",
+          "values": ["AllowUniversalSearch", "EnableNotifications"]
+        },
+        {
+          "type_tag": "tabVisibilities",
+          "identifier_tag": "tab",
+          "values": ["TabExportScripts", "TabInstallScripts"]
         }
-    ]
+      ]
+    }
+  ]
 }

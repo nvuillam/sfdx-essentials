@@ -115,6 +115,9 @@
     "instrument": true
   },
   "repository": "https://github.com/nvuillam/sfdx-essentials",
+  "prettier": {
+    "printWidth": 150
+  },
   "scripts": {
     "compile": "tsc --watch",
     "lint": "tslint -c tslint.json 'src/**/*.ts' -t verbose",

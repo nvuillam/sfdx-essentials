@@ -1,239 +1,190 @@
 {
-   "objects": [
-      {
-         "newLabel": "Account",
-         "fieldsMapping": [
-            {
-               "previousField": "FinServ__TotalInsurancePrimaryOwner__c",
-               "newField": "TotalInsurancePrimaryOwner__c"
-            },
-            {
-               "previousField": "FinServ__CustomerID__c",
-               "newField": "CustomerID__c"
-            },
-            {
-               "previousField": "FinServ__ClientCategory__c",
-               "newField": "ClientCategory__c"
-            },
-            {
-               "previousField": "FinServ__BankNumber__c",
-               "newField": "BankNumber__c"
-            }
-         ]
-      },
-      {
-         "newLabel": "Contact",
-         "fieldsMapping": [
-            {
-               "previousField": "FinServ__MaritalStatus__c",
-               "newField": "MaritalStatus__c"
-            },
-            {
-               "previousField": "FinServ__Occupation__c",
-               "newField": "OccupationLabel__c"
-            },
-            {
-               "previousField": "FinServ__EmployedSince__c",
-               "newField": "EmployedSince__c"
-            }
-         ]
-      },
-      {
-         "previousObject": "FinServ__IdentificationDocument__c",
-         "newObject": "IdentificationDocument__c",
-         "newLabel": "Identification Document",
-         "fieldsMapping": [
-            {
-               "previousField": "FinServ__DocumentType__c",
-               "newField": "DocumentType__c"
-            },
-            {
-               "previousField": "FinServ__ExpirationDate__c",
-               "newField": "ExpirationDate__c"
-            }
-         ]
-      },
-      {
-         "previousObject": "FinServ__AssetsAndLiabilities__c",
-         "newObject": "Estate__c",
-         "fieldsMapping": [
-            {
-               "previousField": "FinServ__Amount__c",
-               "newField": "Amount__c",
-               "include": {
-                  "cls": [
-                     "Asset_m",
-                     "WsAiaAsset",
-                     "Asset_mTest"
-                  ],
-                  "js": [],
-                  "cmp": []
-               },
-               "caseSensitive": true
-            },
-            {
-               "previousField": "FinServ__Ownership__c",
-               "newField": "Level__c",
-               "include": {
-                  "cls": [
-                     "Asset_m",
-                     "WsAiaAsset",
-                     "Asset_mTest"
-                  ],
-                  "js": [],
-                  "cmp": []
-               },
-               "caseSensitive": true
-            },
-            {
-               "previousField": "FinServ__PrimaryOwner__r",
-               "newField": "Owner__r",
-               "include": {
-                  "cls": [
-                     "Asset_m",
-                     "WsAiaAsset",
-                     "Asset_mTest"
-                  ],
-                  "js": [],
-                  "cmp": []
-               },
-               "caseSensitive": true
-            },
-            {
-               "previousField": "FinServ__FinancialAccount__r",
-               "newField": "InsuranceContract__r",
-               "include": {
-                  "cls": [
-                     "Asset_m",
-                     "WsAiaAsset",
-                     "Asset_mTest"
-                  ],
-                  "js": [],
-                  "cmp": []
-               },
-               "caseSensitive": true
-            },
-            {
-               "previousField": "FinServ__FinancialAccount__c",
-               "newField": "InsuranceContract__c",
-               "include": {
-                  "cls": [
-                     "Asset_m",
-                     "WsAiaAsset",
-                     "Asset_mTest",
-                     "WsMockFinancialHoldingTest"
-                  ],
-                  "js": [],
-                  "cmp": []
-               },
-               "caseSensitive": true
-            }
-         ]
-      },
-      {
-         "previousObject": "FinServ__Employment__c",
-         "newObject": "Occupation__c",
-         "fieldsMapping": [
-            {
-               "previousField": "FinServ__StartDate__c",
-               "newField": "StartDate__c",
-               "include": {
-                  "cls": [
-                     "Employment_m",
-                     "WsAIAEmployment"
-                  ],
-                  "js": [
-                     "CmpEmploymentSearchHelper",
-                     "InputxEmployeePeriodHelper"
-                  ],
-                  "cmp": [
-                     "CmpCaseUpdateEmployments",
-                     "InputxEmployeePeriod"
-                  ]
-               },
-               "caseSensitive": true
-            },
-            {
-               "previousField": "FinServ__EndDate__c",
-               "newField": "EndDate__c",
-               "include": {
-                  "cls": [
-                     "CaseProcessTerminateEmployment",
-                     "CaseProcessUpdateEmployment",
-                     "WsMockEmploymentTest"
-                  ],
-                  "js": [
-                     "CmpEmploymentSearchHelper",
-                     "InputxEmployeePeriodHelper"
-                  ],
-                  "cmp": [
-                     "CmpCaseUpdateEmployments",
-                     "InputxEmployeePeriod"
-                  ]
-               },
-               "caseSensitive": true
-            },
-            {
-               "previousField": "FinServ__EmploymentStatus__c",
-               "newField": "OccupationStatus__c",
-               "include": {
-                  "cls": [
-                     "WsMockEmployment",
-                     "WsMockEmploymentTest"
-                  ],
-                  "js": [
-                     "CmpEmploymentSearchHelper",
-                     "InputxEmployeePeriodHelper"
-                  ],
-                  "cmp": [
-                     "CmpCaseUpdateEmployments",
-                     "InputxEmployeePeriod"
-                  ]
-               },
-               "caseSensitive": true
-            }
-         ]
-      }
-   ],
-   "objectToDelete": {
-      "prefixe": "FinServ__",
-      "fetchExpressionList": [
-         "./flexipages/Client*",
-         "./flexipages/Contact_Record*",
-         "./flexipages/Customer*",
-         "./flexipages/Financial_Account*",
-         "./flexipages/Insurance_Quote*",
-         "./flexipages/Membership*",
-         "./flexipages/Test*",
-         "./layouts/Lead*",
-         "./objects/*/compactLayouts/*",
-         "./objects/Lead",
-         "./reports/*"
+  "objects": [
+    {
+      "newLabel": "Account",
+      "fieldsMapping": [
+        {
+          "previousField": "FinServ__TotalInsurancePrimaryOwner__c",
+          "newField": "TotalInsurancePrimaryOwner__c"
+        },
+        {
+          "previousField": "FinServ__CustomerID__c",
+          "newField": "CustomerID__c"
+        },
+        {
+          "previousField": "FinServ__ClientCategory__c",
+          "newField": "ClientCategory__c"
+        },
+        {
+          "previousField": "FinServ__BankNumber__c",
+          "newField": "BankNumber__c"
+        }
       ]
-   },
-   "sfdxProjectFolder": "./migration/sfdx-project-static",
-   "globalConfig": {
-      "aroundCharReplaceObjectListOverride": [
-         {
-            "name": "simpleQuote",
-            "before": "'",
-            "after": "'",
-            "replacementPrefix": "ns.add(",
-            "replacementSuffix": ")",
-            "affecteditems": "cls"
-         }
-      ],
-      "aroundCharReplaceFieldListOverride": [
-         {
-            "name": "simpleQuote",
-            "before": "'",
-            "after": "'",
-            "replacementPrefix": "ns.add(",
-            "replacementSuffix": ")",
-            "affecteditems": "cls"
-         }
-      ],
-      "regexEpressionBeforeElement": "(?<!Label)(?<!Label.c)(?<!System)(?<!tsk)(?<!response)",
-      "regexEpressionAfterElement": "(?!forName)"
-   }
+    },
+    {
+      "newLabel": "Contact",
+      "fieldsMapping": [
+        {
+          "previousField": "FinServ__MaritalStatus__c",
+          "newField": "MaritalStatus__c"
+        },
+        {
+          "previousField": "FinServ__Occupation__c",
+          "newField": "OccupationLabel__c"
+        },
+        {
+          "previousField": "FinServ__EmployedSince__c",
+          "newField": "EmployedSince__c"
+        }
+      ]
+    },
+    {
+      "previousObject": "FinServ__IdentificationDocument__c",
+      "newObject": "IdentificationDocument__c",
+      "newLabel": "Identification Document",
+      "fieldsMapping": [
+        {
+          "previousField": "FinServ__DocumentType__c",
+          "newField": "DocumentType__c"
+        },
+        {
+          "previousField": "FinServ__ExpirationDate__c",
+          "newField": "ExpirationDate__c"
+        }
+      ]
+    },
+    {
+      "previousObject": "FinServ__AssetsAndLiabilities__c",
+      "newObject": "Estate__c",
+      "fieldsMapping": [
+        {
+          "previousField": "FinServ__Amount__c",
+          "newField": "Amount__c",
+          "include": {
+            "cls": ["Asset_m", "WsAiaAsset", "Asset_mTest"],
+            "js": [],
+            "cmp": []
+          },
+          "caseSensitive": true
+        },
+        {
+          "previousField": "FinServ__Ownership__c",
+          "newField": "Level__c",
+          "include": {
+            "cls": ["Asset_m", "WsAiaAsset", "Asset_mTest"],
+            "js": [],
+            "cmp": []
+          },
+          "caseSensitive": true
+        },
+        {
+          "previousField": "FinServ__PrimaryOwner__r",
+          "newField": "Owner__r",
+          "include": {
+            "cls": ["Asset_m", "WsAiaAsset", "Asset_mTest"],
+            "js": [],
+            "cmp": []
+          },
+          "caseSensitive": true
+        },
+        {
+          "previousField": "FinServ__FinancialAccount__r",
+          "newField": "InsuranceContract__r",
+          "include": {
+            "cls": ["Asset_m", "WsAiaAsset", "Asset_mTest"],
+            "js": [],
+            "cmp": []
+          },
+          "caseSensitive": true
+        },
+        {
+          "previousField": "FinServ__FinancialAccount__c",
+          "newField": "InsuranceContract__c",
+          "include": {
+            "cls": ["Asset_m", "WsAiaAsset", "Asset_mTest", "WsMockFinancialHoldingTest"],
+            "js": [],
+            "cmp": []
+          },
+          "caseSensitive": true
+        }
+      ]
+    },
+    {
+      "previousObject": "FinServ__Employment__c",
+      "newObject": "Occupation__c",
+      "fieldsMapping": [
+        {
+          "previousField": "FinServ__StartDate__c",
+          "newField": "StartDate__c",
+          "include": {
+            "cls": ["Employment_m", "WsAIAEmployment"],
+            "js": ["CmpEmploymentSearchHelper", "InputxEmployeePeriodHelper"],
+            "cmp": ["CmpCaseUpdateEmployments", "InputxEmployeePeriod"]
+          },
+          "caseSensitive": true
+        },
+        {
+          "previousField": "FinServ__EndDate__c",
+          "newField": "EndDate__c",
+          "include": {
+            "cls": ["CaseProcessTerminateEmployment", "CaseProcessUpdateEmployment", "WsMockEmploymentTest"],
+            "js": ["CmpEmploymentSearchHelper", "InputxEmployeePeriodHelper"],
+            "cmp": ["CmpCaseUpdateEmployments", "InputxEmployeePeriod"]
+          },
+          "caseSensitive": true
+        },
+        {
+          "previousField": "FinServ__EmploymentStatus__c",
+          "newField": "OccupationStatus__c",
+          "include": {
+            "cls": ["WsMockEmployment", "WsMockEmploymentTest"],
+            "js": ["CmpEmploymentSearchHelper", "InputxEmployeePeriodHelper"],
+            "cmp": ["CmpCaseUpdateEmployments", "InputxEmployeePeriod"]
+          },
+          "caseSensitive": true
+        }
+      ]
+    }
+  ],
+  "objectToDelete": {
+    "prefixe": "FinServ__",
+    "fetchExpressionList": [
+      "./flexipages/Client*",
+      "./flexipages/Contact_Record*",
+      "./flexipages/Customer*",
+      "./flexipages/Financial_Account*",
+      "./flexipages/Insurance_Quote*",
+      "./flexipages/Membership*",
+      "./flexipages/Test*",
+      "./layouts/Lead*",
+      "./objects/*/compactLayouts/*",
+      "./objects/Lead",
+      "./reports/*"
+    ]
+  },
+  "sfdxProjectFolder": "./migration/sfdx-project-static",
+  "globalConfig": {
+    "aroundCharReplaceObjectListOverride": [
+      {
+        "name": "simpleQuote",
+        "before": "'",
+        "after": "'",
+        "replacementPrefix": "ns.add(",
+        "replacementSuffix": ")",
+        "affecteditems": "cls"
+      }
+    ],
+    "aroundCharReplaceFieldListOverride": [
+      {
+        "name": "simpleQuote",
+        "before": "'",
+        "after": "'",
+        "replacementPrefix": "ns.add(",
+        "replacementSuffix": ")",
+        "affecteditems": "cls"
+      }
+    ],
+    "regexEpressionBeforeElement": "(?<!Label)(?<!Label.c)(?<!System)(?<!tsk)(?<!response)",
+    "regexEpressionAfterElement": "(?!forName)"
+  }
 }

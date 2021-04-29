@@ -1,10 +1,7 @@
 {
   "extends": "@salesforce/dev-config/tslint",
   "rules": {
-    "comment-format": [
-      true,
-      "check-space"
-    ],
+    "comment-format": [true, "check-space"],
     "no-any": {
       "severity": "off"
     },
@@ -12,15 +9,11 @@
       "severity": "off"
     },
     "prefer-const": {
-        "severity": "warning"
+      "severity": "warning"
     },
     "prefer-for-of": {
       "severity": "warning"
     },
-    "triple-equals": [
-      true,
-      "allow-null-check",
-      "allow-undefined-check"
-    ]
+    "triple-equals": [true, "allow-null-check", "allow-undefined-check"]
   }
 }
