@@ -140,14 +140,17 @@ class EssentialsUtils {
 
         // Filter main package.xml file
         for (const removeType of packageXmlRemoveMetadatasTypeLs) {
-            const removeTypeName = removeType.name[0];
-            const removeTypeMembers = removeType.members;
+            const removeTypeName = removeType.name[0] || null ;
+            if (removeTypeName === null) {
+                continue ;
+            }
+            const removeTypeMembers = removeType.members || [];
             const types = packageXmlMetadatasTypeLs.filter((type1: any) => type1.name[0] === removeTypeName);
             if (types.length === 0) {
                 continue;
             }
             const type = types[0];
-            let typeMembers = type.members;
+            let typeMembers = type.members || [];
             typeMembers = typeMembers.filter((member: string) => checkRemove(!removeTypeMembers.includes(member), removedOnly));
             if (typeMembers.length > 0) {
                 // Update members for type
