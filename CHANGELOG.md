@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [2.9.0] - 2021-05-20
+
+- essentials:packagexml:remove : Fix bug when there is a name but no members
+
 ## [2.8.0] - 2021-04-29
 
 - Improve **essentials:packagexml:remove** command with argument `--removedonly` to generate a package.xml only with removed items
