@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [2.10.0] - 2021-05-24
+
+- essentials:packagexml:remove : Allow wildcard (*) in <members>
+- essentials:metadata:filter-xml-content : Fix crash when XML tag is missing
+
 ## [2.9.0] - 2021-05-20
 
 - essentials:packagexml:remove : Fix bug when there is a name but no members
