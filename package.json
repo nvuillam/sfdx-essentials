@@ -124,7 +124,7 @@
     "lint:fix": "tslint -c tslint.json 'src/**/*.ts' --fix -t verbose",
     "oclif:readme": "oclif-dev readme",
     "postpack": "rm -f .oclif.manifest.json",
-    "posttest": "tsc -p test --noEmit && tslint -p test -t stylish",
+    "posttest": "tsc -p test --noEmit",
     "prepack": "rm -rf lib && tsc && oclif-dev manifest",
     "prepare": "rm -rf lib && tsc && oclif-dev manifest",
     "test": "mocha --exit --forbid-only --colors \"test/**/*.test.ts\"",
