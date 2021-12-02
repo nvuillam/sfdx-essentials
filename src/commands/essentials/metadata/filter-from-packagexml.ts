@@ -348,7 +348,7 @@ sfdx force:mdapi:deploy -d tmp/deployDemoQualiFiltered/ -w 60 -u DemoQuali`
         }
 
         // Write output .labels file
-        const builder = new xml2js.Builder();
+        const builder = new xml2js.Builder({ renderOpts: { pretty: true, indent: '  ', newline: "\n" } });
         const updatedObjectXml = builder.buildObject(parsedObjectFile);
         const outputObjectFileName = typeOutputFolder + '/CustomLabels.labels';
         fs.writeFileSync(outputObjectFileName, updatedObjectXml);
@@ -413,7 +413,7 @@ sfdx force:mdapi:deploy -d tmp/deployDemoQualiFiltered/ -w 60 -u DemoQuali`
           }
 
           // Write output .object file
-          const builder = new xml2js.Builder();
+          const builder = new xml2js.Builder({ renderOpts: { pretty: true, indent: '  ', newline: "\n" } });
           const updatedObjectXml = builder.buildObject(parsedObjectFile);
           const outputObjectFileName = this.outputFolder + '/objects/' + objectName + '.object';
           fs.writeFileSync(outputObjectFileName, updatedObjectXml);
@@ -441,7 +441,7 @@ sfdx force:mdapi:deploy -d tmp/deployDemoQualiFiltered/ -w 60 -u DemoQuali`
               }
 
               // Write output .objectTranslation file
-              const builderTrx = new xml2js.Builder();
+              const builderTrx = new xml2js.Builder({ renderOpts: { pretty: true, indent: '  ', newline: "\n" } });
               const updatedObjectXmlTr = builderTrx.buildObject(parsedObjectFileTr);
               const outputObjectFileNameTr = this.outputFolder + '/objectTranslations/' + objectName + '-' + translationCode + '.objectTranslation';
               fs.writeFileSync(outputObjectFileNameTr, updatedObjectXmlTr);

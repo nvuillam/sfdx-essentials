@@ -302,7 +302,7 @@ Use this command if you need to replace a SObject by another one in all your sfd
 
   public async processFileXmlFields(xmlFile: any, replaceField: any) {
     const parser = new xml2js.Parser();
-    const builder = new xml2js.Builder();
+    const builder = new xml2js.Builder({ renderOpts: { pretty: true, indent: '  ', newline: "\n" } });
 
     // Create a new file to migrate the lookup field
     const data = fs.readFileSync(xmlFile);

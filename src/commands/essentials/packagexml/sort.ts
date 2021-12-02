@@ -76,7 +76,7 @@ export default class PackageXmlSort extends Command {
         packageXmlData.Package.types = packageXmlData.Package.types.filter((type1: any) =>
             type1.name && type1.name.length > 0 && type1.members && type1.members.length > 0);
 
-        const builder = new xml2js.Builder();
+        const builder = new xml2js.Builder({ renderOpts: { pretty: true, indent: '  ', newline: "\n" } });
         const orderedPackageXml = builder.buildObject(packageXmlData);
 
         // Update file only if updates have been performed
