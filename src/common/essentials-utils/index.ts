@@ -100,7 +100,7 @@ class EssentialsUtils {
         appendTypesXml.push({ members: allPackageXmlFilesTypes[packageXmlType], name: packageXmlType });
       }
       firstPackageXmlContent.Package.types = appendTypesXml;
-      const builder = new xml2js.Builder();
+      const builder = new xml2js.Builder({ renderOpts: { pretty: true, indent: '  ', newline: "\n" } });
       const updatedObjectXml = builder.buildObject(firstPackageXmlContent);
       await fs.writeFile(outputXmlFile, updatedObjectXml);
       if (logFlag) {
@@ -191,7 +191,7 @@ class EssentialsUtils {
     // Write in output file if required
     if (outputXmlFile) {
       parsedPackageXml.Package.types = packageXmlMetadatasTypeLs;
-      const builder2 = new xml2js.Builder();
+      const builder2 = new xml2js.Builder({ renderOpts: { pretty: true, indent: '  ', newline: "\n" } });
       const updatedObjectXml = builder2.buildObject(parsedPackageXml);
       await fs.writeFile(outputXmlFile, updatedObjectXml);
       if (logFlag) {

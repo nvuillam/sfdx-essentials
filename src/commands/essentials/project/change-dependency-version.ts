@@ -143,7 +143,7 @@ export default class ProjectChangeDependencyVersion extends Command {
             }
             // Update file if content updated
             if (changed) {
-              const builder = new xml2js.Builder();
+              const builder = new xml2js.Builder({ renderOpts: { pretty: true, indent: '  ', newline: "\n" } });
               const updatedObjectXml = builder.buildObject(parsedXmlFile);
               fs.writeFileSync(sfdxXmlFile, updatedObjectXml);
               updatedNb++;

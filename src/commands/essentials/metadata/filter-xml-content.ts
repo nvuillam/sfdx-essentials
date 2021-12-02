@@ -105,7 +105,7 @@ This script requires a filter-config.json file`;
   // Filter XML content of the file
   public filterXmlFromFile(filter, file) {
     const parser = new xml2js.Parser();
-    const builder = new xml2js.Builder();
+    const builder = new xml2js.Builder({ renderOpts: { pretty: true, indent: '  ', newline: "\n" } });
     const data = fs.readFileSync(file);
     parser.parseString(data, (err2, fileXmlContent) => {
       console.log("Parsed XML \n" + util.inspect(fileXmlContent, false, null));
