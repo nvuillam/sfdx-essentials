@@ -3,6 +3,7 @@
 ## [2.11.0] - 2021-12-02
 
 - Use same XML indentation than Salesforce
+- Upgrade MegaLinter to v5
 
 ## [2.10.0] - 2021-05-24
 
