@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import * as util from 'util';
 import * as xml2js from 'xml2js';
-import { EssentialsUtils } from '../../../common/essentials-utils';
+import { EssentialsUtils, writeXmlFile } from '../../../common/essentials-utils';
 import { MetadataUtils } from '../../../common/metadata-utils';
 
 export default class MetadataFilterFromPackageXml extends Command {
@@ -348,10 +348,8 @@ sfdx force:mdapi:deploy -d tmp/deployDemoQualiFiltered/ -w 60 -u DemoQuali`
         }
 
         // Write output .labels file
-        const builder = new xml2js.Builder({ renderOpts: { pretty: true, indent: '  ', newline: "\n" } });
-        const updatedObjectXml = builder.buildObject(parsedObjectFile);
         const outputObjectFileName = typeOutputFolder + '/CustomLabels.labels';
-        fs.writeFileSync(outputObjectFileName, updatedObjectXml);
+        writeXmlFile(outputObjectFileName,parsedObjectFile);
       });
     }
   }
@@ -413,10 +411,8 @@ sfdx force:mdapi:deploy -d tmp/deployDemoQualiFiltered/ -w 60 -u DemoQuali`
           }
 
           // Write output .object file
-          const builder = new xml2js.Builder({ renderOpts: { pretty: true, indent: '  ', newline: "\n" } });
-          const updatedObjectXml = builder.buildObject(parsedObjectFile);
           const outputObjectFileName = this.outputFolder + '/objects/' + objectName + '.object';
-          fs.writeFileSync(outputObjectFileName, updatedObjectXml);
+          writeXmlFile(outputObjectFileName,parsedObjectFile);
         });
         this.summaryResult.objects.push(objectName);
 
@@ -441,10 +437,8 @@ sfdx force:mdapi:deploy -d tmp/deployDemoQualiFiltered/ -w 60 -u DemoQuali`
               }
 
               // Write output .objectTranslation file
-              const builderTrx = new xml2js.Builder({ renderOpts: { pretty: true, indent: '  ', newline: "\n" } });
-              const updatedObjectXmlTr = builderTrx.buildObject(parsedObjectFileTr);
               const outputObjectFileNameTr = this.outputFolder + '/objectTranslations/' + objectName + '-' + translationCode + '.objectTranslation';
-              fs.writeFileSync(outputObjectFileNameTr, updatedObjectXmlTr);
+              writeXmlFile(outputObjectFileNameTr,parsedObjectFileTr);
             });
             this.summaryResult.objectsTranslations.push(objectName + '-' + translationCode);
           });

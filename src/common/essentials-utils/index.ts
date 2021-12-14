@@ -1,5 +1,6 @@
 import * as arrayCompare from "array-compare";
 import * as fs from "fs-extra";
+import * as path from "path";
 import * as util from "util";
 import * as xml2js from "xml2js";
 
@@ -100,9 +101,8 @@ class EssentialsUtils {
         appendTypesXml.push({ members: allPackageXmlFilesTypes[packageXmlType], name: packageXmlType });
       }
       firstPackageXmlContent.Package.types = appendTypesXml;
-      const builder = new xml2js.Builder({ renderOpts: { pretty: true, indent: '  ', newline: "\n" } });
-      const updatedObjectXml = builder.buildObject(firstPackageXmlContent);
-      await fs.writeFile(outputXmlFile, updatedObjectXml);
+      writeXmlFile(outputXmlFile, firstPackageXmlContent);
+
       if (logFlag) {
         console.log("Generated package.xml file: " + outputXmlFile);
       }
@@ -191,9 +191,7 @@ class EssentialsUtils {
     // Write in output file if required
     if (outputXmlFile) {
       parsedPackageXml.Package.types = packageXmlMetadatasTypeLs;
-      const builder2 = new xml2js.Builder({ renderOpts: { pretty: true, indent: '  ', newline: "\n" } });
-      const updatedObjectXml = builder2.buildObject(parsedPackageXml);
-      await fs.writeFile(outputXmlFile, updatedObjectXml);
+      writeXmlFile(outputXmlFile, parsedPackageXml);
       if (logFlag) {
         console.log("Generated package.xml file: " + outputXmlFile);
       }
@@ -214,6 +212,20 @@ function checkRemove(boolRes, removedOnly = false) {
     return !boolRes;
   }
   return boolRes;
+}
+
+export function writeXmlFile(xmlFile: string, xmlObject: any) {
+  const builder = new xml2js.Builder({
+    renderOpts: {
+      pretty: true,
+      indent: process.env.SFDX_XML_INDENT || "    ",
+      newline: "\n",
+    },
+    xmldec: { version: "1.0", encoding: "UTF-8" },
+  });
+  const updatedFileContent = builder.buildObject(xmlObject);
+  fs.ensureDirSync(path.dirname(xmlFile));
+  fs.writeFileSync(xmlFile, updatedFileContent);
 }
 
 export { EssentialsUtils };
