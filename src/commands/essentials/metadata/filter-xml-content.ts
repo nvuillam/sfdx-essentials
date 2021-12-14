@@ -4,6 +4,7 @@ import * as fse from "fs-extra";
 import * as path from "path";
 import * as util from "util";
 import * as xml2js from "xml2js";
+import { writeXmlFile } from "../../../common/essentials-utils";
 
 export default class MetadataFilterXmlContent extends Command {
   public static aliases = ["essentials:filter-xml-content"];
@@ -105,7 +106,6 @@ This script requires a filter-config.json file`;
   // Filter XML content of the file
   public filterXmlFromFile(filter, file) {
     const parser = new xml2js.Parser();
-    const builder = new xml2js.Builder({ renderOpts: { pretty: true, indent: '  ', newline: "\n" } });
     const data = fs.readFileSync(file);
     parser.parseString(data, (err2, fileXmlContent) => {
       console.log("Parsed XML \n" + util.inspect(fileXmlContent, false, null));
@@ -113,8 +113,7 @@ This script requires a filter-config.json file`;
         fileXmlContent[eltKey] = this.filterElement(fileXmlContent[eltKey], filter, file);
       });
       if (this.smmryUpdatedFiles[file] != null && this.smmryUpdatedFiles[file].updated === true) {
-        const updatedObjectXml = builder.buildObject(fileXmlContent);
-        fs.writeFileSync(file, updatedObjectXml);
+        writeXmlFile(file,fileXmlContent);
         console.log("Updated " + file);
       }
     });

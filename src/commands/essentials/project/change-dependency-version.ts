@@ -3,7 +3,7 @@ import * as cliProgress from 'cli-progress';
 import * as fs from 'fs';
 import * as glob from 'glob';
 import * as xml2js from 'xml2js';
-import { EssentialsUtils } from '../../../common/essentials-utils';
+import { EssentialsUtils, writeXmlFile } from '../../../common/essentials-utils';
 
 export default class ProjectChangeDependencyVersion extends Command {
   public static aliases = ['essentials:change-dependency-version', 'essentials:change-api-version', 'essentials:project:change-api-version'];
@@ -143,13 +143,8 @@ export default class ProjectChangeDependencyVersion extends Command {
             }
             // Update file if content updated
             if (changed) {
-              const builder = new xml2js.Builder({ renderOpts: { pretty: true, indent: '  ', newline: "\n" } });
-              const updatedObjectXml = builder.buildObject(parsedXmlFile);
-              fs.writeFileSync(sfdxXmlFile, updatedObjectXml);
+              writeXmlFile(sfdxXmlFile,parsedXmlFile);
               updatedNb++;
-              if (this.verbose) {
-                console.log('- updated ' + sfdxXmlFile + ' with ' + updatedObjectXml + '\n');
-              }
             }
             if (!this.verbose && this.progressBar.terminal.isTTY()) {
               this.progressBar.increment();

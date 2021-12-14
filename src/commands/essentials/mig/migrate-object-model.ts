@@ -5,7 +5,7 @@ import * as fsExtra from 'fs-extra';
 import * as glob from 'glob';
 import * as rimraf from 'rimraf';
 import * as xml2js from 'xml2js';
-import { EssentialsUtils } from '../../../common/essentials-utils';
+import { EssentialsUtils, writeXmlFile } from '../../../common/essentials-utils';
 import { MetadataUtils } from '../../../common/metadata-utils';
 
 export default class MigrateObjectModel extends Command {
@@ -302,7 +302,6 @@ Use this command if you need to replace a SObject by another one in all your sfd
 
   public async processFileXmlFields(xmlFile: any, replaceField: any) {
     const parser = new xml2js.Parser();
-    const builder = new xml2js.Builder({ renderOpts: { pretty: true, indent: '  ', newline: "\n" } });
 
     // Create a new file to migrate the lookup field
     const data = fs.readFileSync(xmlFile);
@@ -320,8 +319,7 @@ Use this command if you need to replace a SObject by another one in all your sfd
 
               xmlFile = xmlFile.substring(0, xmlFile.indexOf('fields')) + 'fields/' + replaceField[i].newObject + '.field-meta.xml';
               try {
-                const updatedObjectXml = builder.buildObject(fileXmlContent);
-                fs.writeFileSync(xmlFile, updatedObjectXml);
+                writeXmlFile(xmlFile,fileXmlContent);
               } catch (e) {
                 // Commented : error must have been manually managed in sfdxProjectFiles
                 /*  console.error(e.message);

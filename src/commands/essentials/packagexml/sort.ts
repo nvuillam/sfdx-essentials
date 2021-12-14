@@ -2,6 +2,7 @@ import { Command, flags } from '@oclif/command';
 import { promises as fsPromises } from 'fs';
 import * as glob from 'glob';
 import * as xml2js from 'xml2js';
+import { writeXmlFile } from '../../../common/essentials-utils';
 
 export default class PackageXmlSort extends Command {
 
@@ -81,7 +82,7 @@ export default class PackageXmlSort extends Command {
 
         // Update file only if updates have been performed
         if (currentPackageXml !== orderedPackageXml) {
-            await fsPromises.writeFile(packageXmlUniqueFile, orderedPackageXml);
+            writeXmlFile(packageXmlUniqueFile,packageXmlData);
             this.log(`${packageXmlUniqueFile} file updated`);
         } else {
             this.log(`${packageXmlUniqueFile} file identical`);

@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [2.12.0] - 2021-12-14
+
+- Fix XML indentation (#51). Can also be overriden by using env variable `SFDX_XML_INDENT` (ex: `SFDX_INDENT='  '`)
+
 ## [2.11.0] - 2021-12-02
 
 - Use same XML indentation than Salesforce
