@@ -31,7 +31,7 @@
     "util": "^0.12.1",
     "uuid": "^8.2.0",
     "xml-formatter": "^1.2.0",
-    "xml2js": "^0.4.23"
+    "xml2js": "^0.5.0"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1.22.2",
